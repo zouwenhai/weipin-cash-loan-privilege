@@ -23,7 +23,7 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-        logger.info("nirvana-cash-loan-privilege is runing ...");
+        logger.info("yofiskdk-cash-loan-privilege is runing ...");
     }
 
     @Bean

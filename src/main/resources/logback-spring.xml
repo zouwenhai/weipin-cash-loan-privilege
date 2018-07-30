@@ -20,7 +20,7 @@
         <appender name="LOGSTASH_SOCKET" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
             <destination>10.0.12.25:50005</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-                <customFields>{"index":"nirvana-cash-loan-privilege","type":"logback"}</customFields>
+                <customFields>{"index":"yofiskdk-cash-loan-privilege","type":"logback"}</customFields>
             </encoder>
         </appender>
         <logger name="org.springframework.web" level="INFO">
@@ -38,7 +38,7 @@
         <appender name="LOGSTASH_SOCKET" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
             <destination>192.168.83.60:50005</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-                <customFields>{"index":"nirvana-cash-loan-privilege","type":"logback"}</customFields>
+                <customFields>{"index":"yofiskdk-cash-loan-privilege","type":"logback"}</customFields>
             </encoder>
         </appender>
         <logger name="org.springframework.web" level="INFO">

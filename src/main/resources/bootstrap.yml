@@ -2,7 +2,7 @@ server:
     port: 8080
 spring:
   application:
-    name: nirvana-cash-loan-privilege
+    name: yofiskdk-cash-loan-privilege
   profiles:
     active: dev
   http:
