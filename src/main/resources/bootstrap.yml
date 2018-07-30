@@ -2,7 +2,7 @@ server:
     port: 8080
 spring:
   application:
-    name: yofiskdk-cash-loan-privilege
+    name: yofishdk-cash-loan-privilege
   profiles:
     active: dev
   http:

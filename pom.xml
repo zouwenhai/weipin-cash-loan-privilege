@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.caiyi.financial.cash.loan.system</groupId>
-	<artifactId>yofiskdk-cash-loan-privilege</artifactId>
+	<artifactId>yofishdk-cash-loan-privilege</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>yofiskdk-cash-loan-privilege</name>
+	<name>yofishdk-cash-loan-privilege</name>
 	<description>权限管理路由转发系统</description>
 
 	<parent>
@@ -216,7 +216,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>yofiskdk-cash-loan-privilege</finalName>
+		<finalName>yofishdk-cash-loan-privilege</finalName>
 		<resources>
 			<resource>
 				<directory>docker</directory>
