@@ -159,4 +159,16 @@ public class MenuController extends BaseController {
             return ResponseBo.error("修改" + name + "失败，请联系网站管理员！");
         }
     }
+
+    @RequestMapping("/notauth/menu/findUserPermissions")
+    public ResponseBo findUserPermissions(HttpServletRequest request) {
+        try {
+            User user=this.getLoginUser(request);
+            List<Menu> datalist=this.menuService.findUserPermissions(user.getUsername());
+            return ResponseBo.ok(datalist);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBo.error("查询用户权限失败！");
+        }
+    }
 }
