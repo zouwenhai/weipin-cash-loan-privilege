@@ -19,7 +19,7 @@ import nirvana.cash.loan.privilege.system.domain.Dept;
 import nirvana.cash.loan.privilege.system.service.DeptService;
 import tk.mybatis.mapper.entity.Example;
 
-@Service("deptService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 

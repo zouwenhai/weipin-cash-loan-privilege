@@ -3,9 +3,8 @@ package nirvana.cash.loan.privilege.web.filter;
 import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
-import nirvana.cash.loan.privilege.common.domain.ResponseBo;
 import nirvana.cash.loan.privilege.common.util.GeneratorId;
-import nirvana.cash.loan.privilege.common.util.IPUtils;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.LogService;
 import nirvana.cash.loan.privilege.web.RequestCheck;
@@ -82,8 +81,8 @@ public class RequestLogZullFilter extends ZuulFilter {
             logger.info("PreRequestLogFilter|run|请求json参数:{}", reqBbody);
 
             //check登录和权限
-            ResponseBo res = requestCheck.check(request);
-            if (!res.isOk()) {
+            ResResult res = requestCheck.check(request);
+            if (!res.getCode().equals(ResResult.SUCCESS)) {
                 //过滤该请求，不往下级服务去转发请求，到此结束
                 ctx.setSendZuulResponse(false);
                 ctx.setResponseStatusCode(401);
@@ -91,22 +90,13 @@ public class RequestLogZullFilter extends ZuulFilter {
                 ctx.getResponse().setContentType("text/html;charset=UTF-8");
                 return null;
             }
-            User user = (User) res.get("msg");
+            User user = (User) res.getData();
             request.setAttribute("username", user.getUsername());
-
-//            //输出response响应
-//            InputStream out = ctx.getResponseDataStream();
-//            String outBody = StreamUtils.copyToString(out, Charset.forName("UTF-8"));
-//            if (outBody != null) {
-//                logger.info("PreRequestLogFilter|run|response响应数据:{}", outBody);
-//            }
-//            //ctx.getResponseDataStream取出response信息后,如果不把信息set回去,会导致返回信息为空.
-//            ctx.setResponseBody(outBody);//重要！！！
 
             long endTime = System.currentTimeMillis();
 
             //记录访问日志
-            logService.addLog(user.getUsername(),url,endTime-startTime,sb.toString()+"|jsonParam="+reqBbody, IPUtils.getIpAddr(request));
+            logService.addLog(user.getUsername(),url,endTime-startTime,sb.toString()+"|jsonParam="+reqBbody);
 
         } catch (Exception ex) {
             logger.error("PreRequestLogFilter|run|执行异常:{}", ex);

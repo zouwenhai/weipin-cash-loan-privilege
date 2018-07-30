@@ -1,12 +1,11 @@
 package nirvana.cash.loan.privilege.system.controller;
 
 import nirvana.cash.loan.privilege.common.controller.BaseController;
-import nirvana.cash.loan.privilege.common.domain.ResponseBo;
 import nirvana.cash.loan.privilege.common.domain.Tree;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.MenuService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,105 +19,58 @@ public class MenuController extends BaseController {
     @Autowired
     private MenuService menuService;
 
-    @RequestMapping("menu/menu")
-    public ResponseBo getMenu(String userName) {
+    //菜单列表
+    @RequestMapping("menu/list")
+    public ResResult menuList(Menu menu) {
         try {
-            List<Menu> menus = this.menuService.findUserMenus(userName);
-            return ResponseBo.ok(menus);
+            return ResResult.success(this.menuService.findAllMenus(menu));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseBo.error("获取菜单失败！");
+            return ResResult.error();
         }
     }
 
-    @RequestMapping("menu/getMenu")
-    public ResponseBo getMenu(Long menuId) {
+    //根据menuId，查询指定菜单信息
+    @RequestMapping("notauth/menu/getMenu")
+    public ResResult getMenu(Long menuId) {
         try {
             Menu menu = this.menuService.findById(menuId);
-            return ResponseBo.ok(menu);
+            return ResResult.success(menu);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseBo.error("获取信息失败，请联系网站管理员！");
+            return ResResult.error("获取信息失败！");
         }
     }
 
-    @RequestMapping("menu/menuButtonTree")
-    public ResponseBo getMenuButtonTree() {
-        try {
-            Tree<Menu> tree = this.menuService.getMenuButtonTree();
-            return ResponseBo.ok(tree);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBo.error("获取菜单列表失败！");
-        }
-    }
-
-    @RequestMapping("menu/tree")
-    public ResponseBo getMenuTree() {
+    //查询菜单树（非按钮级别）
+    @RequestMapping("notauth/menu/tree")
+    public ResResult getMenuTree() {
         try {
             Tree<Menu> tree = this.menuService.getMenuTree();
-            return ResponseBo.ok(tree);
+            return ResResult.success(tree);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseBo.error("获取菜单列表失败！");
+            return ResResult.error("获取菜单列表失败！");
         }
     }
 
-    @RequestMapping("menu/getUserMenu")
-    public ResponseBo getUserMenu(HttpServletRequest request) {
+    //查询指定用户菜单树（非按钮级别）
+    @RequestMapping("notauth/menu/getUserMenu")
+    public ResResult getUserMenu(HttpServletRequest request) {
         try {
             User user=this.getLoginUser(request);
             Tree<Menu> tree = this.menuService.getUserMenu(user.getUsername());
-            return ResponseBo.ok(tree);
+            return ResResult.success(tree);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseBo.error("获取用户菜单失败！");
+            return ResResult.error("获取用户菜单失败！");
         }
     }
 
-    @RequestMapping("menu/list")
-    public List<Menu> menuList(Menu menu) {
-        try {
-            return this.menuService.findAllMenus(menu);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
-    @RequestMapping("menu/excel")
-    public ResponseBo menuExcel(Menu menu) {
-        try {
-            List<Menu> list = this.menuService.findAllMenus(menu);
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
-        }
-    }
-
-    @RequestMapping("menu/csv")
-    public ResponseBo menuCsv(Menu menu) {
-        try {
-            List<Menu> list = this.menuService.findAllMenus(menu);
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
-        }
-    }
-
-    @RequestMapping("menu/checkMenuName")
-    public boolean checkMenuName(String menuName, String type, String oldMenuName) {
-        if (StringUtils.isNotBlank(oldMenuName) && menuName.equalsIgnoreCase(oldMenuName)) {
-            return true;
-        }
-        Menu result = this.menuService.findByNameAndType(menuName, type);
-        return result == null;
-    }
-
+    //新增
     @RequestMapping("menu/add")
-    public ResponseBo addMenu(Menu menu) {
+    public ResResult addMenu(Menu menu) {
         String name;
         if (Menu.TYPE_MENU.equals(menu.getType()))
             name = "菜单";
@@ -126,26 +78,16 @@ public class MenuController extends BaseController {
             name = "按钮";
         try {
             this.menuService.addMenu(menu);
-            return ResponseBo.ok("新增" + name + "成功！");
+            return ResResult.success();
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBo.error("新增" + name + "失败，请联系网站管理员！");
+            logger.error("菜单管理|新增菜单|执行异常:{}",e);
+            return ResResult.error("新增" + name + "失败！");
         }
     }
 
-    @RequestMapping("menu/delete")
-    public ResponseBo deleteMenus(String ids) {
-        try {
-            this.menuService.deleteMeuns(ids);
-            return ResponseBo.ok("删除成功！");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBo.error("删除失败，请联系网站管理员！");
-        }
-    }
-
+    //修改菜单
     @RequestMapping("menu/update")
-    public ResponseBo updateMenu(Menu menu) {
+    public ResResult updateMenu(Menu menu) {
         String name;
         if (Menu.TYPE_MENU.equals(menu.getType()))
             name = "菜单";
@@ -153,22 +95,47 @@ public class MenuController extends BaseController {
             name = "按钮";
         try {
             this.menuService.updateMenu(menu);
-            return ResponseBo.ok("修改" + name + "成功！");
+            return ResResult.success();
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBo.error("修改" + name + "失败，请联系网站管理员！");
+            logger.error("菜单管理|修改菜单|执行异常:{}",e);
+            return ResResult.error("修改" + name + "失败！");
         }
     }
 
+    //删除菜单
+    @RequestMapping("menu/delete")
+    public ResResult deleteMenus(String ids) {
+        try {
+            this.menuService.deleteMeuns(ids);
+            return ResResult.success();
+        } catch (Exception e) {
+            logger.error("菜单管理|删除菜单|执行异常:{}",e);
+            return ResResult.error("删除失败！");
+        }
+    }
+
+    //查询菜单树（包含按钮级别）
+    @RequestMapping("notauth/menu/menuButtonTree")
+    public ResResult getMenuButtonTree() {
+        try {
+            Tree<Menu> tree = this.menuService.getMenuButtonTree();
+            return ResResult.success(tree);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResResult.error("获取菜单列表失败！");
+        }
+    }
+
+    //查询用户权限
     @RequestMapping("/notauth/menu/findUserPermissions")
-    public ResponseBo findUserPermissions(HttpServletRequest request) {
+    public ResResult findUserPermissions(HttpServletRequest request) {
         try {
             User user=this.getLoginUser(request);
             List<Menu> datalist=this.menuService.findUserPermissions(user.getUsername());
-            return ResponseBo.ok(datalist);
+            return ResResult.success(datalist);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseBo.error("查询用户权限失败！");
+            return ResResult.error("查询用户权限失败！");
         }
     }
 }

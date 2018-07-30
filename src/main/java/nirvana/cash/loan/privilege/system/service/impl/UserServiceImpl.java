@@ -12,7 +12,6 @@ import nirvana.cash.loan.privilege.system.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
@@ -21,8 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@Service("userService")
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Service
 public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Autowired
@@ -121,11 +119,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public void deleteUsers(String userIds) {
-		List<String> list = Arrays.asList(userIds.split(","));
-		this.batchDelete(list, "userId", User.class);
-
-		this.userRoleService.deleteUserRolesByUserId(userIds);
+	public void deleteUser(Integer userId) {
+		List<String> list = Arrays.asList(userId.toString().split(","));
+		User user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
+		//system账号禁止删除
+		if(user!=null && !"system".equals(user.getUsername().trim())){
+			this.batchDelete(list, "userId", User.class);
+			this.userRoleService.deleteUserRolesByUserId(userId.toString());
+		}
 	}
 
 	@Override

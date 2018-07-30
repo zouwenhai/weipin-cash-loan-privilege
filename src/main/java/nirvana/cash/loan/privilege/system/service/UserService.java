@@ -22,7 +22,7 @@ public interface UserService extends IService<User> {
 
 	void updateUser(User user, Long[] roles);
 	
-	void deleteUsers(String userIds);
+	void deleteUser(Integer userId);
 
 	void updateLoginTime(String userName);
 	

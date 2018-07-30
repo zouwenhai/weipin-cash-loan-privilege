@@ -21,7 +21,7 @@ import nirvana.cash.loan.privilege.system.service.MenuService;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
-@Service("menuService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 
-@Service("roleMenuService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class RoleMenuServiceImpl extends BaseService<RoleMenu> implements RoleMenuServie {
 

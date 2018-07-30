@@ -17,7 +17,7 @@ public class LoginAdapter extends WebMvcConfigurerAdapter {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/privilige/login/**", "/privilige/logout/**","/privilige/error/**","/privilige/notauth/**");
+                .excludePathPatterns("/privilige/notauth/**");
         super.addInterceptors(registry);
     }
 }

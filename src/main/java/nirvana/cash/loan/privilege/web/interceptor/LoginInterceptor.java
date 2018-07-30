@@ -1,9 +1,8 @@
 package nirvana.cash.loan.privilege.web.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
-import nirvana.cash.loan.privilege.common.domain.ResponseBo;
 import nirvana.cash.loan.privilege.common.util.GeneratorId;
-import nirvana.cash.loan.privilege.common.util.IPUtils;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.LogService;
 import nirvana.cash.loan.privilege.web.RequestCheck;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
@@ -60,8 +58,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             }
             logger.info("LoginInterceptor|preHandle|请求json参数:{}", reqBbody);
 
-            ResponseBo res = requestCheck.check(request);
-            if (!res.isOk()) {
+            ResResult res = requestCheck.check(request);
+            if (!res.getCode().equals(ResResult.SUCCESS)) {
                 PrintWriter writer = response.getWriter();
                 response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
                 writer.append(JSONObject.toJSONString(res));
@@ -69,19 +67,19 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 writer.close();
                 return false;
             }
-            User user = (User) res.get("msg");
+            User user = (User) res.getData();
             request.setAttribute("username", user.getUsername());
 
             long endTime = System.currentTimeMillis();
 
             //记录访问日志
-            logService.addLog(user.getUsername(),url,endTime-startTime,sb.toString()+"|jsonParam="+reqBbody, IPUtils.getIpAddr(request));
+            logService.addLog(user.getUsername(),url,endTime-startTime,sb.toString()+"|jsonParam="+reqBbody);
 
         } catch (Exception ex) {
             logger.error("LoginInterceptor|preHandle|执行异常:{}", ex);
             PrintWriter writer = response.getWriter();
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-            writer.append(JSONObject.toJSONString(ResponseBo.error("系统异常")));
+            writer.append(JSONObject.toJSONString(ResResult.error("系统异常")));
             writer.flush();
             writer.close();
             return false;

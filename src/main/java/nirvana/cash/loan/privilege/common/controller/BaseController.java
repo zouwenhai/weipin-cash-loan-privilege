@@ -26,6 +26,7 @@ public class BaseController {
         Map<String, Object> rspData = new HashMap<>();
         rspData.put("rows", pageInfo.getList());
         rspData.put("total", pageInfo.getTotal());
+        rspData.put("pages", pageInfo.getPages());
         return rspData;
     }
 
@@ -33,7 +34,7 @@ public class BaseController {
         User user = null;
         try {
             String jsessionid = CookieUtil.getCookieValue(request, JSESSIONID);
-            String data = redisService.get(jsessionid);
+            String data = redisService.get(jsessionid,String.class);
             user = JSON.parseObject(data, User.class);
         } catch (Exception ex) {
         }
