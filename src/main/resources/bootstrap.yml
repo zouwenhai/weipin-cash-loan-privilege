@@ -1,0 +1,41 @@
+server:
+    port: 8080
+spring:
+  application:
+    name: nirvana-cash-loan-privilege
+  profiles:
+    active: dev
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+  cloud:
+    config:
+      profile: ${spring.profiles.active}
+      discovery:
+        enabled: true
+        serviceId: nirvana-credit-cloud-config-service
+
+eureka:
+  client:
+    serviceUrl.defaultZone: http://192.168.1.51:10115/eureka/
+    register-with-eureka: false
+  instance:
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+
+---
+eureka:
+  instance:
+    hostname: ${HOST}
+    instance-id: ${HOST}:${PORT0:${PORT}}
+    ip-address: ${HOST}
+    non-secure-port: ${PORT0:${PORT:${server.port:8080}}}
+    home-page-url: http://${HOST}:${PORT0:${PORT:${server.port:8080}}}
+    statusPageUrl: ${eureka.instance.home-page-url}/info
+    healthCheckUrl: ${eureka.instance.home-page-url}/health
+  client:
+    serviceUrl.defaultZone: http://credit-card-eureka-server1.marathon.l4lb.thisdcos.directory:8080/eureka/,http://credit-card-eureka-server2.marathon.l4lb.thisdcos.directory:8080/eureka/,http://credit-card-eureka-server3.marathon.l4lb.thisdcos.directory:8080/eureka/
+    register-with-eureka: true
+spring:
+  profiles: test,prod
+

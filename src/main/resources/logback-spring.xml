@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <logger name="org.springframework.web" level="INFO"/>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="projectHost" source="HOST"/>
+    <springProperty scope="context" name="springProfilesActive" source="spring.profiles.active"/>
+
+    <springProfile name="localdev">
+        <logger name="nirvana.cash.loan.privilege" level="DEBUG">
+        </logger>
+    </springProfile>
+
+    <!--本地测试环境 -->
+    <springProfile name="test,dev">
+        <appender name="LOGSTASH_SOCKET" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>10.0.12.25:50005</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"index":"nirvana-cash-loan-privilege","type":"logback"}</customFields>
+            </encoder>
+        </appender>
+        <logger name="org.springframework.web" level="INFO">
+            <appender-ref ref="LOGSTASH_SOCKET"/>
+        </logger>
+        <logger name="org.springboot.sample" level="INFO">
+            <appender-ref ref="LOGSTASH_SOCKET"/>
+        </logger>
+        <logger name="nirvana.cash.loan.privilege" level="INFO">
+            <appender-ref ref="LOGSTASH_SOCKET"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="prd,prod,release">
+        <appender name="LOGSTASH_SOCKET" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>192.168.83.60:50005</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"index":"nirvana-cash-loan-privilege","type":"logback"}</customFields>
+            </encoder>
+        </appender>
+        <logger name="org.springframework.web" level="INFO">
+            <appender-ref ref="LOGSTASH_SOCKET"/>
+        </logger>
+        <logger name="org.springboot.sample" level="INFO">
+            <appender-ref ref="LOGSTASH_SOCKET"/>
+        </logger>
+        <logger name="nirvana.cash.loan.privilege" level="INFO">
+            <appender-ref ref="LOGSTASH_SOCKET"/>
+        </logger>
+    </springProfile>
+
+</configuration>
