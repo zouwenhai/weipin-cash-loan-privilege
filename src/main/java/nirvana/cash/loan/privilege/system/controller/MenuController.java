@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.system.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.Tree;
@@ -61,8 +62,12 @@ public class MenuController extends BaseController {
     public ResResult getUserMenu(HttpServletRequest request) {
         try {
             User user=this.getLoginUser(request);
-            Tree<Menu> tree = this.menuService.getUserMenu(user.getUsername());
-            return ResResult.success(tree);
+            if(user == null){
+                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
+            }
+            String userTreeKey = "userTree-" + user.getUsername();
+            String treestr=redisService.get(userTreeKey,String.class);
+            return ResResult.success(JSON.parseObject(treestr));
         } catch (Exception e) {
             e.printStackTrace();
             return ResResult.error("获取用户菜单失败！");
