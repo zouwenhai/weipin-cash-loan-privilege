@@ -62,10 +62,6 @@ public class UserController extends BaseController {
             if (oldUser != null) {
                 return ResResult.error("用户名已存在！");
             }
-            if (ON.equalsIgnoreCase(user.getStatus()))
-                user.setStatus("1");
-            else
-                user.setStatus("0");
             this.userService.addUser(user, roles);
             return ResResult.success();
         } catch (Exception e) {
