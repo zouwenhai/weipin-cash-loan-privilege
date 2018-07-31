@@ -93,9 +93,9 @@ public class MenuController extends BaseController {
 
     //删除菜单
     @RequestMapping("menu/delete")
-    public ResResult deleteMenus(String ids) {
+    public ResResult deleteMenus(String menuIds) {
         try {
-            this.menuService.deleteMeuns(ids);
+            this.menuService.deleteMeuns(menuIds);
             return ResResult.success();
         } catch (Exception e) {
             logger.error("菜单管理|删除菜单|执行异常:{}",e);
