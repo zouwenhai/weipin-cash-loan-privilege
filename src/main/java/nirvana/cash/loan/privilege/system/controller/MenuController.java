@@ -1,11 +1,13 @@
 package nirvana.cash.loan.privilege.system.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.MenuService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -131,8 +133,12 @@ public class MenuController extends BaseController {
     public ResResult findUserPermissions(HttpServletRequest request) {
         try {
             User user=this.getLoginUser(request);
-            List<Menu> datalist=this.menuService.findUserPermissions(user.getUsername());
-            return ResResult.success(datalist);
+            String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
+            if(StringUtils.isBlank(userPermissions)){
+                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
+            }
+            List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
+            return ResResult.success(permissionList);
         } catch (Exception e) {
             e.printStackTrace();
             return ResResult.error("查询用户权限失败！");
