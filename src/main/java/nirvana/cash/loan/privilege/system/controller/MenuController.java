@@ -133,10 +133,10 @@ public class MenuController extends BaseController {
     public ResResult findUserPermissions(HttpServletRequest request) {
         try {
             User user=this.getLoginUser(request);
-            String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
-            if(StringUtils.isBlank(userPermissions)){
+            if(user == null){
                 return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
             }
+            String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
             List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
             return ResResult.success(permissionList);
         } catch (Exception e) {
