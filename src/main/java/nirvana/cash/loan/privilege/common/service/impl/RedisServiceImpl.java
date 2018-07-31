@@ -27,6 +27,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public <T> boolean put(String key, T obj) {
+        this.delete(key);
         final byte[] bkey = key.getBytes();
         final byte[] bvalue = ProtoStuffSerializerUtil.serialize(obj);
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
@@ -40,6 +41,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public <T> void putWithExpireTime(String key, T obj, final long expireTime) {
+        this.delete(key);
         final byte[] bkey = key.getBytes();
         final byte[] bvalue = ProtoStuffSerializerUtil.serialize(obj);
         redisTemplate.execute(new RedisCallback<Boolean>() {
@@ -53,6 +55,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public <T> boolean putList(String key, List<T> objList) {
+        this.delete(key);
         final byte[] bkey = key.getBytes();
         final byte[] bvalue = ProtoStuffSerializerUtil.serializeList(objList);
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
@@ -67,6 +70,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public <T> boolean putListWithExpireTime(String key, List<T> objList,
                                              final long expireTime) {
+        this.delete(key);
         final byte[] bkey = key.getBytes();
         final byte[] bvalue = ProtoStuffSerializerUtil.serializeList(objList);
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
