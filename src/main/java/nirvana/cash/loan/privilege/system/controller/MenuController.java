@@ -57,24 +57,6 @@ public class MenuController extends BaseController {
         }
     }
 
-    //查询指定用户菜单树（非按钮级别）
-    @RequestMapping("notauth/menu/getUserMenu")
-    public ResResult getUserMenu(HttpServletRequest request) {
-        try {
-            User user=this.getLoginUser(request);
-            if(user == null){
-                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
-            }
-            String userTreeKey = "userTree-" + user.getUsername();
-            String treestr=redisService.get(userTreeKey,String.class);
-            return ResResult.success(JSON.parseObject(treestr));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResResult.error("获取用户菜单失败！");
-        }
-    }
-
-
     //新增
     @RequestMapping("menu/add")
     public ResResult addMenu(Menu menu) {
@@ -130,6 +112,23 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResResult.error("获取菜单列表失败！");
+        }
+    }
+
+    //查询指定用户菜单树（非按钮级别）
+    @RequestMapping("notauth/menu/getUserMenu")
+    public ResResult getUserMenu(HttpServletRequest request) {
+        try {
+            User user=this.getLoginUser(request);
+            if(user == null){
+                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
+            }
+            String userTreeKey = "userTree-" + user.getUsername();
+            String treestr=redisService.get(userTreeKey,String.class);
+            return ResResult.success(JSON.parseObject(treestr));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResResult.error("获取用户菜单失败！");
         }
     }
 
