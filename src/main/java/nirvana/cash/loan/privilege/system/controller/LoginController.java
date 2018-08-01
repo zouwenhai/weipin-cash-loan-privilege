@@ -124,13 +124,13 @@ public class LoginController extends BaseController {
             User user = this.getLoginUser(request);
             if(user != null){
                 CookieUtil.deleteCookie(request,response,JSESSIONID);
+                //清除redis缓存
+                String userPermissionsKey = "userPermissions-" + user.getUsername();
+                String userTreeKey = "userTree-" + user.getUsername();
+                redisService.delete(jessionId);
+                redisService.delete(userPermissionsKey);
+                redisService.delete(userTreeKey);
             }
-            //清除redis缓存
-            String userPermissionsKey = "userPermissions-" + user.getUsername();
-            String userTreeKey = "userTree-" + user.getUsername();
-            redisService.delete(jessionId);
-            redisService.delete(userPermissionsKey);
-            redisService.delete(userTreeKey);
         } catch (Exception e) {
             e.printStackTrace();
         }
