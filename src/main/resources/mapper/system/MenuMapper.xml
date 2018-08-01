@@ -67,6 +67,7 @@
              group by menu_id
            )t2
            on  t1.menu_id = t2.menu_id
+           where t1.type = 0
     </select>
 
 </mapper>
