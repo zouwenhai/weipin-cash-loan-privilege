@@ -74,10 +74,6 @@ public class UserController extends BaseController {
     @RequestMapping("user/update")
     public ResResult updateUser(User user, Long[] rolesSelect) {
         try {
-            if (ON.equalsIgnoreCase(user.getStatus()))
-                user.setStatus("1");
-            else
-                user.setStatus("0");
             this.userService.updateUser(user, rolesSelect);
             return ResResult.success();
         } catch (Exception e) {
