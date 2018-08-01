@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -158,8 +160,19 @@ public class MenuController extends BaseController {
             if(user == null){
                 return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
             }
-            List<LeftMenuVo> res=menuService.findUserMenus();
-            return ResResult.success(res,"查询左侧菜单列表",ResResult.SUCCESS);
+            List<LeftMenuVo> menus=menuService.findUserMenus();
+            //转换为树结构
+            List<Tree<LeftMenuVo>> trees = new ArrayList<>();
+            for (LeftMenuVo menu : menus) {
+                Tree<LeftMenuVo> tree = new Tree<>();
+                tree.setId(menu.getMenuId().toString());
+                tree.setParentId(menu.getParentId().toString());
+                tree.setText(menu.getMenuName());
+                tree.setIcon(menu.getIcon());
+                tree.setUrl(menu.getUrl());
+                trees.add(tree);
+            }
+            return ResResult.success(TreeUtils.build(trees));
         } catch (Exception e) {
             e.printStackTrace();
             return ResResult.error("查询左侧菜单列表失败！");
