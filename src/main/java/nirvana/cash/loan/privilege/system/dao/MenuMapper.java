@@ -5,6 +5,7 @@ import java.util.Map;
 
 import nirvana.cash.loan.privilege.common.config.MyMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
+import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
 
 public interface MenuMapper extends MyMapper<Menu> {
 	
@@ -16,5 +17,5 @@ public interface MenuMapper extends MyMapper<Menu> {
 	void changeToTop(List<String> menuIds);
 
 	//左侧菜单列表
-	List<Menu> findLeftMenuList();
+	List<LeftMenuVo> findLeftMenuList();
 }

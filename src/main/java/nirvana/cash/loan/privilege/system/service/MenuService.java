@@ -6,6 +6,7 @@ import java.util.Map;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.IService;
 import nirvana.cash.loan.privilege.system.domain.Menu;
+import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
 
 public interface MenuService extends IService<Menu> {
 
@@ -31,5 +32,5 @@ public interface MenuService extends IService<Menu> {
 	
 	void deleteMeuns(String menuIds);
 
-	List<Menu> findUserMenus();
+	List<LeftMenuVo> findUserMenus();
 }

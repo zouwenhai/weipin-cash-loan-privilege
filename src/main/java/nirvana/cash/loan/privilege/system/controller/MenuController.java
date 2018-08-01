@@ -7,6 +7,7 @@ import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
+import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
 import nirvana.cash.loan.privilege.system.service.MenuService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,7 +158,7 @@ public class MenuController extends BaseController {
             if(user == null){
                 return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
             }
-            List res=menuService.findUserMenus();
+            List<LeftMenuVo> res=menuService.findUserMenus();
             return ResResult.success(res,"查询左侧菜单列表",ResResult.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

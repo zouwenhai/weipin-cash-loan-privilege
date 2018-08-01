@@ -7,6 +7,7 @@ import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.system.dao.MenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
+import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
 import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,7 +150,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	}
 
 	@Override
-	public List<Menu> findUserMenus() {
+	public List<LeftMenuVo> findUserMenus() {
 		return this.menuMapper.findLeftMenuList();
 	}
 

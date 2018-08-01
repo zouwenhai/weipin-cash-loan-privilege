@@ -33,14 +33,14 @@ public class LoginController extends BaseController {
     public ResResult login(HttpServletRequest request, HttpServletResponse response, String username, String password, String code) {
         User user=null;
         try {
-            if (StringUtils.isBlank(code)) {
-                return ResResult.error("验证码不能为空！");
-            }
-            String sessionCode = redisService.get("_code",String.class);
-            redisService.delete("_code");
-            if (!code.toLowerCase().equals(sessionCode)) {
-                return ResResult.error("验证码错误！");
-            }
+//            if (StringUtils.isBlank(code)) {
+//                return ResResult.error("验证码不能为空！");
+//            }
+//            String sessionCode = redisService.get("_code",String.class);
+//            redisService.delete("_code");
+//            if (!code.toLowerCase().equals(sessionCode)) {
+//                return ResResult.error("验证码错误！");
+//            }
             if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
                 return ResResult.error("用户名或密码错误！");
             }
