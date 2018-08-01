@@ -64,7 +64,7 @@ public class User implements Serializable {
 
 	@Column(name = "STATUS")
 	@ExportConfig(value = "状态", convert = "s:0=锁定,1=有效")
-	private String status = STATUS_VALID;
+	private String status;
 
 	@Column(name = "CRATE_TIME")
 	@ExportConfig(value = "创建时间", convert = "c:TimeConvert")
