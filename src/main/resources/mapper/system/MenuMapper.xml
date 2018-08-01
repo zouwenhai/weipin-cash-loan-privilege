@@ -34,8 +34,10 @@
         left join tb_cl_privilege_user_role ur on(ur.role_id = r.role_id)
         left join tb_cl_privilege_user u on (u.user_id = ur.user_id)
         where u.username = #{userName})
-    start with m.PARENT_ID = 0 connect by m.PARENT_ID = prior m.MENU_ID 
-    order siblings by m.order_num
+       <!-- 排序，前端实现
+       start with m.PARENT_ID = 0 connect by m.PARENT_ID = prior m.MENU_ID
+       order siblings by m.order_num
+       -->
   </select>
   
    <update id="changeToTop" parameterType="java.util.List">
