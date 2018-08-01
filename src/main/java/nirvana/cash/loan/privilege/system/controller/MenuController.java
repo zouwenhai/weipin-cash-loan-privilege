@@ -148,4 +148,20 @@ public class MenuController extends BaseController {
             return ResResult.error("查询用户权限失败！");
         }
     }
+
+    //查询左侧菜单列表
+    @RequestMapping("/notauth/menu/findLeftMenuList")
+    public ResResult findLeftMenuList(HttpServletRequest request) {
+        try {
+            User user=this.getLoginUser(request);
+            if(user == null){
+                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
+            }
+            List res=menuService.findUserMenus();
+            return ResResult.success(res,"查询左侧菜单列表",ResResult.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResResult.error("查询左侧菜单列表失败！");
+        }
+    }
 }

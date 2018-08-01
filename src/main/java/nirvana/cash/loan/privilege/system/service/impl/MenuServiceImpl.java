@@ -1,9 +1,6 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
@@ -150,5 +147,11 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			menu.setParentId(0L);
 		this.updateNotNull(menu);
 	}
+
+	@Override
+	public List<Menu> findUserMenus() {
+		return this.menuMapper.findLeftMenuList();
+	}
+
 
 }

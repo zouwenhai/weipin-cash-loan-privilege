@@ -48,4 +48,17 @@
   	</foreach>
   	)
   </update>
+
+    <select id="findLeftMenuList" resultType="nirvana.cash.loan.privilege.system.domain.Menu">
+         select t1.menu_id,t1.parent_id,t1.menu_name,t1.url,t1.perms,t1.icon,t1.order_num,t2.role_ids
+         from tb_cl_privilege_menu t1
+         left join
+          (
+             select menu_id,wm_concat(role_id) as  role_ids
+             from tb_cl_privilege_role_menu
+             group by menu_id
+           )t2
+           on  t1.menu_id = t2.menu_id
+    </select>
+
 </mapper>
