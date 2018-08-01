@@ -1,22 +1,18 @@
 package nirvana.cash.loan.privilege.system.controller;
 
 import com.alibaba.fastjson.JSON;
-import nirvana.cash.loan.privilege.common.config.FebsProperies;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
 import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
 import nirvana.cash.loan.privilege.common.util.ResResult;
-import nirvana.cash.loan.privilege.common.util.vcode.Captcha;
-import nirvana.cash.loan.privilege.common.util.vcode.GifCaptcha;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.MenuService;
 import nirvana.cash.loan.privilege.system.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,8 +24,6 @@ import java.util.List;
 @RequestMapping("/privilige")
 public class LoginController extends BaseController {
     @Autowired
-    private FebsProperies febsProperies;
-    @Autowired
     private UserService userService;
     @Autowired
     private MenuService menuService;
@@ -39,14 +33,14 @@ public class LoginController extends BaseController {
     public ResResult login(HttpServletRequest request, HttpServletResponse response, String username, String password, String code) {
         User user=null;
         try {
-//            if (StringUtils.isBlank(code)) {
-//                return ResponseBo.warn("验证码不能为空！");
-//            }
-//            String sessionCode = redisService.get("_code");
-//            redisService.del("_code");
-//            if (!code.toLowerCase().equals(sessionCode)) {
-//                return ResponseBo.warn("验证码错误！");
-//            }
+            if (StringUtils.isBlank(code)) {
+                return ResResult.error("验证码不能为空！");
+            }
+            String sessionCode = redisService.get("_code",String.class);
+            redisService.delete("_code");
+            if (!code.toLowerCase().equals(sessionCode)) {
+                return ResResult.error("验证码错误！");
+            }
             if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
                 return ResResult.error("用户名或密码错误！");
             }
@@ -92,27 +86,6 @@ public class LoginController extends BaseController {
         //密码不输出至前端
         user.setPassword(null);
         return ResResult.success(user);
-    }
-
-    //生成图形验证码
-    @GetMapping(value = "/notauth/gifCode")
-    public void getGifCode(HttpServletResponse response, HttpServletRequest request) {
-        try {
-            response.setHeader("Pragma", "No-cache");
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Expires", 0);
-            response.setContentType("image/gif");
-
-            Captcha captcha = new GifCaptcha(
-                    febsProperies.getValidateCode().getWidth(),
-                    febsProperies.getValidateCode().getHeight(),
-                    febsProperies.getValidateCode().getLength());
-            captcha.out(response.getOutputStream());
-            //图形验证码,缓存5min
-            redisService.putWithExpireTime("_code",captcha.text().toLowerCase(),1000 * 60 * 5L);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     //注销
