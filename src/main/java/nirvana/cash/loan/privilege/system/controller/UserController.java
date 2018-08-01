@@ -22,8 +22,6 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    private static final String ON = "on";
-
     //用户列表
     @RequestMapping("user/list")
     public ResResult userList(QueryRequest request, User user) {
