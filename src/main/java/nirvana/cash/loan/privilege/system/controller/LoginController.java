@@ -115,4 +115,25 @@ public class LoginController extends BaseController {
         }
     }
 
+    //注销
+    @RequestMapping(value = "/notauth/logout")
+    public void logout(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            String jessionId=CookieUtil.getCookieValue(request,JSESSIONID);
+            //清除cookies
+            User user = this.getLoginUser(request);
+            if(user != null){
+                CookieUtil.deleteCookie(request,response,JSESSIONID);
+            }
+            //清除redis缓存
+            String userPermissionsKey = "userPermissions-" + user.getUsername();
+            String userTreeKey = "userTree-" + user.getUsername();
+            redisService.delete(jessionId);
+            redisService.delete(userPermissionsKey);
+            redisService.delete(userTreeKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
