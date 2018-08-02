@@ -171,6 +171,7 @@ public class MenuController extends BaseController {
                 tree.setText(menu.getMenuName());
                 tree.setIcon(menu.getIcon());
                 tree.setUrl(menu.getUrl());
+                tree.setRoleIds(menu.getRoleIds());
                 trees.add(tree);
             }
             return ResResult.success(TreeUtils.build(trees));
