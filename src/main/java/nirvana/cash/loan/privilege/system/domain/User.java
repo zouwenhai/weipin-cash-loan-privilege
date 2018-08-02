@@ -41,8 +41,12 @@ public class User implements Serializable {
 	private Long userId;
 
 	@Column(name = "USERNAME")
-	@ExportConfig(value = "用户名")
+	@ExportConfig(value = "登录名")
 	private String username;
+
+	@Column(name = "NAME")
+	@ExportConfig(value = "姓名")
+	private String name;
 
 	@Column(name = "PASSWORD")
 	private String password;
@@ -118,6 +122,14 @@ public class User implements Serializable {
 	 */
 	public void setUsername(String username) {
 		this.username = username == null ? null : username.trim();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
