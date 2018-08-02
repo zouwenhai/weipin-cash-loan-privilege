@@ -28,6 +28,7 @@ public class BaseController {
         rspData.put("total", pageInfo.getTotal());
         rspData.put("pages", pageInfo.getPages());
         rspData.put("pageSize", pageInfo.getPageSize());
+        rspData.put("pageNum", pageInfo.getPageNum());
         return rspData;
     }
 
