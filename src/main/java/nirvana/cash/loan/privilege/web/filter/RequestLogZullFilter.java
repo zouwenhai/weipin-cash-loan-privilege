@@ -92,8 +92,8 @@ public class RequestLogZullFilter extends ZuulFilter {
             }
             User user = (User) res.getData();
             //添加请求头参数
-            ctx.addZuulRequestHeader("loginname",user.getUsername());
-            ctx.addZuulRequestHeader("username",user.getName());
+            ctx.addZuulRequestHeader("logiName",user.getUsername());
+            ctx.addZuulRequestHeader("userName",user.getName());
 
             long endTime = System.currentTimeMillis();
 
