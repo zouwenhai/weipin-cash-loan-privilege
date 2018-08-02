@@ -1,5 +1,8 @@
 package nirvana.cash.loan.privilege.common.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ResResult {
     //成功
     public static final String SUCCESS = "1";
@@ -18,6 +21,8 @@ public class ResResult {
     private Object data;
 
     private String desc = "success";
+
+    private Map<String,Object> other=new HashMap();
 
     public static ResResult success() {
         ResResult res = new ResResult();
@@ -97,4 +102,11 @@ public class ResResult {
         this.desc = desc;
     }
 
+    public Map<String, Object> getOther() {
+        return other;
+    }
+
+    public void setOther(Map<String, Object> other) {
+        this.other = other;
+    }
 }

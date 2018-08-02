@@ -119,6 +119,7 @@ public class MenuController extends BaseController {
     }
 
     //查询指定用户菜单树（非按钮级别）
+    @Deprecated //TODO 此接口废弃，按前端对权限的要求，重写了接口:findLeftMenuList
     @RequestMapping("notauth/menu/getUserMenu")
     public ResResult getUserMenu(HttpServletRequest request) {
         try {

@@ -32,6 +32,7 @@ public class LoginController extends BaseController {
     @RequestMapping("/notauth/login")
     public ResResult login(HttpServletRequest request, HttpServletResponse response, String username, String password, String code) {
         User user=null;
+        String roleIds=null;
         try {
 //            if (StringUtils.isBlank(code)) {
 //                return ResResult.error("验证码不能为空！");
@@ -58,6 +59,9 @@ public class LoginController extends BaseController {
                 return ResResult.error("用户名或密码错误！");
             }
 
+            //查询登录用户角色
+            roleIds=userService.findUserRoldIds(user.getUserId().intValue());
+
             //缓存2小时，登录信息
             String jsessionid = GeneratorId.guuid();
             redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),1000 * 60 * 7200L);
@@ -70,11 +74,11 @@ public class LoginController extends BaseController {
             redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),1000 * 60 * 7200L);
             logger.info("user menuList:{}",JSON.toJSONString(permissionList));
 
-            // 缓存2小时，用户菜单树（非按钮级别）,主要作用:“用户登录后台管理时,左侧菜单列表”
-            Tree<Menu>  tree =  menuService.getUserMenu(user.getUsername());
-            String userTreeKey = "userTree-" + user.getUsername();
-            redisService.putWithExpireTime(userTreeKey,JSON.toJSONString(tree),1000 * 60 * 7200L);
-            logger.info("user tree:{}",JSON.toJSONString(tree));
+//            // 缓存2小时，用户菜单树（非按钮级别）,主要作用:“用户登录后台管理时,左侧菜单列表”
+//            Tree<Menu>  tree =  menuService.getUserMenu(user.getUsername());
+//            String userTreeKey = "userTree-" + user.getUsername();
+//            redisService.putWithExpireTime(userTreeKey,JSON.toJSONString(tree),1000 * 60 * 7200L);
+//            logger.info("user tree:{}",JSON.toJSONString(tree));
 
             //更新登录时间
             this.userService.updateLoginTime(username);
@@ -85,7 +89,9 @@ public class LoginController extends BaseController {
         }
         //密码不输出至前端
         user.setPassword(null);
-        return ResResult.success(user);
+        ResResult res = ResResult.success(user);
+        res.getOther().put("roleIds",roleIds);
+        return res;
     }
 
     //注销

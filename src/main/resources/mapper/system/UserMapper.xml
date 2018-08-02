@@ -79,5 +79,12 @@
 		U .USER_ID,
 		U .dept_id
   </select>
+
+	<select id="findUserRoldIds" resultType="java.lang.String">
+	 select
+	      wm_concat(role_id) as  role_ids
+	 from tb_cl_privilege_user_role
+	 where user_id = #{userId}
+	</select>
   
 </mapper>

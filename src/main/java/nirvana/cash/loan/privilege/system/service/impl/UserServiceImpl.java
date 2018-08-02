@@ -179,4 +179,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		this.updateNotNull(user);
 	}
 
+	@Override
+	public String findUserRoldIds(Integer userId) {
+		return this.userMapper.findUserRoldIds(userId);
+	}
+
 }
