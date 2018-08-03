@@ -60,6 +60,9 @@ public class UserController extends BaseController {
             if (oldUser != null) {
                 return ResResult.error("用户名已存在！");
             }
+            if(roles.length == 0){
+                return ResResult.error("请选择用户角色！");
+            }
             this.userService.addUser(user, roles);
             return ResResult.success();
         } catch (Exception e) {
