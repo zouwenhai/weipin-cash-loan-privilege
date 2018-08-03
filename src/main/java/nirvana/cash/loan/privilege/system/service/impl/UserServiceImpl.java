@@ -1,7 +1,12 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
+import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.fegin.FeginCollectionApi;
+import nirvana.cash.loan.privilege.fegin.NewResponseUtil;
+import nirvana.cash.loan.privilege.fegin.facade.UserAddApiFacade;
 import nirvana.cash.loan.privilege.system.dao.UserMapper;
 import nirvana.cash.loan.privilege.system.dao.UserRoleMapper;
 import nirvana.cash.loan.privilege.system.domain.User;
@@ -10,6 +15,8 @@ import nirvana.cash.loan.privilege.system.domain.UserWithRole;
 import nirvana.cash.loan.privilege.system.service.UserRoleService;
 import nirvana.cash.loan.privilege.system.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +30,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends BaseService<User> implements UserService {
 
+	public static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
 	@Autowired
 	private UserMapper userMapper;
 
@@ -31,6 +40,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Autowired
 	private UserRoleService userRoleService;
+
+	@Autowired
+	private FeginCollectionApi feginCollectionApi;
 
 	@Override
 	public User findByName(String userName) {
@@ -93,6 +105,29 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
 		this.save(user);
 		setUserRoles(user, roles);
+
+		//添加催收人员
+		List<Integer> roleIds=new ArrayList<>();
+		List<String> roleNames = userMapper.findCollectionRoleNamesByRoleIds(roleIds);
+		if(roleNames!=null && roleNames.size()>0){
+			String roleName=roleNames.get(0);
+			//角色:0催收专员 1催收主管
+			int roleType = 0;
+			if(roleName.equals("催收主管")){
+				roleType = 1;
+			}
+			UserAddApiFacade facade = new UserAddApiFacade();
+			facade.setUserName(user.getName());
+			facade.setLoginName(user.getUsername());
+			facade.setMobile(user.getMobile());
+			facade.setRoleType(roleType);
+			NewResponseUtil apiRes = feginCollectionApi.addUser(facade);
+			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
+				logger.error("添加催收员失败|响应数据:{}", JSON.toJSONString(apiRes));
+				throw new RuntimeException("添加催收员失败");
+			}
+		}
+
 	}
 
 	private void setUserRoles(User user, Long[] roles) {

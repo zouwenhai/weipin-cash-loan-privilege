@@ -89,5 +89,17 @@
 	 from tb_cl_privilege_user_role
 	 where user_id = #{userId}
 	</select>
+
+    <select id="findCollectionRoleNamesByRoleIds" resultType="java.lang.String">
+        select
+              role_name
+        from tb_cl_privilege_role
+        where
+            role_name in ('催收主管' ,'催收专员')
+            and role_id in
+            <foreach item="roleId" collection="roleIds"  open="(" separator="," close=")">
+                #{roleId}
+            </foreach>
+    </select>
   
 </mapper>

@@ -5,7 +5,7 @@ import java.util.List;
 import nirvana.cash.loan.privilege.common.config.MyMapper;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.domain.UserWithRole;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper extends MyMapper<User> {
 
@@ -15,5 +15,8 @@ public interface UserMapper extends MyMapper<User> {
 	
 	User findUserProfile(User user);
 
-    String findUserRoldIds(@RequestParam("userId") Integer userId);
+    String findUserRoldIds(@Param("userId") Integer userId);
+
+	//获取用户催收人员角色名称
+    List<String> findCollectionRoleNamesByRoleIds(@Param("roleIds") List<Integer> roleIds);
 }
