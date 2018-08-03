@@ -22,7 +22,7 @@ import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
 import tk.mybatis.mapper.entity.Example;
 
-@Service("roleService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 

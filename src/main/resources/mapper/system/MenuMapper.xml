@@ -34,8 +34,10 @@
         left join tb_cl_privilege_user_role ur on(ur.role_id = r.role_id)
         left join tb_cl_privilege_user u on (u.user_id = ur.user_id)
         where u.username = #{userName})
-    start with m.PARENT_ID = 0 connect by m.PARENT_ID = prior m.MENU_ID 
-    order siblings by m.order_num
+       <!-- 排序，前端实现
+       start with m.PARENT_ID = 0 connect by m.PARENT_ID = prior m.MENU_ID
+       order siblings by m.order_num
+       -->
   </select>
   
    <update id="changeToTop" parameterType="java.util.List">
@@ -46,4 +48,26 @@
   	</foreach>
   	)
   </update>
+
+    <select id="findLeftMenuList" resultType="nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo">
+         select
+               t1.menu_id as  menuId,
+               t1.parent_id as parentId,
+               t1.menu_name as menuName,
+               t1.url as url,
+               t1.perms as perms ,
+               t1.icon as icon ,
+               t1.order_num as orderNum,
+               t2.role_ids as roleIds
+         from tb_cl_privilege_menu t1
+         left join
+          (
+             select menu_id,wm_concat(role_id) as  role_ids
+             from tb_cl_privilege_role_menu
+             group by menu_id
+           )t2
+           on  t1.menu_id = t2.menu_id
+           where t1.type = 0
+    </select>
+
 </mapper>

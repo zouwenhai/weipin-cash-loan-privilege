@@ -54,12 +54,12 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 	}
 
 	@Override
-	public void addLog(String username,String url,long execTime,String params,String ip) {
+	public void addLog(String username,String url,long execTime,String params) {
 		try{
 			//获取"权限方法"
 			String method="";
 			List<Menu> permissionList=new ArrayList<>();
-			String userPermissions = redisService.get("userPermissions-" + username);
+			String userPermissions = redisService.get("userPermissions-" + username,String.class);
 			if(StringUtils.isNotBlank(userPermissions)){
 				permissionList = JSONObject.parseArray(userPermissions, Menu.class);
 			}
@@ -79,9 +79,7 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 			log.setTime(execTime);//毫秒
 			log.setMethod(method);
 			log.setParams(params);
-			log.setIp(ip);
 			log.setCreateTime(new Date());
-			log.setLocation(ip);
 			this.save(log);
 		}catch (Exception ex){
 			ex.printStackTrace();

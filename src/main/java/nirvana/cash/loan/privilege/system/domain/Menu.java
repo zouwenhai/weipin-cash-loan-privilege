@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
@@ -57,6 +58,9 @@ public class Menu implements Serializable {
 
 	@Column(name = "MODIFY_TIME")
 	private Date modifyTime;
+
+	@Transient
+	private String role_ids;
 
 	/**
 	 * @return MENU_ID
@@ -196,5 +200,9 @@ public class Menu implements Serializable {
 	 */
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
 	}
 }

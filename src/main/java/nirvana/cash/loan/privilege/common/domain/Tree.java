@@ -54,6 +54,12 @@ public class Tree<T> {
 	 */
 	private boolean hasChildren = false;
 
+	/**
+	 * 所属角色Ids
+	 */
+	private String roleIds;
+
+
 	public String getId() {
 		return id;
 	}
@@ -142,20 +148,12 @@ public class Tree<T> {
 		this.url = url;
 	}
 
-	public Tree(String id, String text, Map<String, Object> state, boolean checked, Map<String, Object> attributes,
-			List<Tree<T>> children, String icon, String url, boolean isParent, boolean isChildren, String parentID) {
-		super();
-		this.id = id;
-		this.text = text;
-		this.icon = icon;
-		this.url = url;
-		this.state = state;
-		this.checked = checked;
-		this.attributes = attributes;
-		this.children = children;
-		this.hasParent = isParent;
-		this.hasChildren = isChildren;
-		this.parentId = parentID;
+	public String getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(String roleIds) {
+		this.roleIds = roleIds;
 	}
 
 	public Tree() {

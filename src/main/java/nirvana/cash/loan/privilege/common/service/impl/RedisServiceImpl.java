@@ -1,143 +1,150 @@
 package nirvana.cash.loan.privilege.common.service.impl;
 
-import nirvana.cash.loan.privilege.common.domain.RedisInfo;
 import nirvana.cash.loan.privilege.common.service.RedisService;
+import nirvana.cash.loan.privilege.common.util.ProtoStuffSerializerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.Client;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Redis 工具类，只封装了几个常用的 redis 命令，
- * 可根据实际需要按类似的方式扩展即可。
- *
- * @author MrBird
- */
 @Service
-@SuppressWarnings("unchecked")
 public class RedisServiceImpl implements RedisService {
 
+    //缓存名
+    public final static String CAHCENAME = "privilege";
+    //默认缓存时间
+    public final static int CAHCETIME = 60;
+
     @Autowired
-    JedisPool jedisPool;
+    private StringRedisTemplate redisTemplate;
 
+    @Override
+    public <T> boolean put(String key, T obj) {
+        this.delete(key);
+        final byte[] bkey = key.getBytes();
+        final byte[] bvalue = ProtoStuffSerializerUtil.serialize(obj);
+        boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
+            @Override
+            public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+                return connection.setNX(bkey, bvalue);
+            }
+        });
+        return result;
+    }
 
-    /**
-     * 处理jedis请求
-     *
-     * @param f 处理逻辑，通过lambda行为参数化
-     * @return 处理结果
-     */
-    private Object excuteByJedis(Function<Jedis, Object> f) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            return f.apply(jedis);
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Override
+    public <T> void putWithExpireTime(String key, T obj, final long expireTime) {
+        this.delete(key);
+        final byte[] bkey = key.getBytes();
+        final byte[] bvalue = ProtoStuffSerializerUtil.serialize(obj);
+        redisTemplate.execute(new RedisCallback<Boolean>() {
+            @Override
+            public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.setEx(bkey, expireTime, bvalue);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public <T> boolean putList(String key, List<T> objList) {
+        this.delete(key);
+        final byte[] bkey = key.getBytes();
+        final byte[] bvalue = ProtoStuffSerializerUtil.serializeList(objList);
+        boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
+            @Override
+            public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+                return connection.setNX(bkey, bvalue);
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public <T> boolean putListWithExpireTime(String key, List<T> objList,
+                                             final long expireTime) {
+        this.delete(key);
+        final byte[] bkey = key.getBytes();
+        final byte[] bvalue = ProtoStuffSerializerUtil.serializeList(objList);
+        boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
+            @Override
+            public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.setEx(bkey, expireTime, bvalue);
+                return true;
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public <T> T get(final String key, Class<T> targetClass) {
+        byte[] result = redisTemplate.execute(new RedisCallback<byte[]>() {
+            @Override
+            public byte[] doInRedis(RedisConnection connection) throws DataAccessException {
+                return connection.get(key.getBytes());
+            }
+        });
+        if (result == null) {
             return null;
         }
+        return ProtoStuffSerializerUtil.deserialize(result, targetClass);
     }
 
     @Override
-    public List<RedisInfo> getRedisInfo() {
-        String info = (String) this.excuteByJedis(
-                j -> {
-                    Client client = j.getClient();
-                    client.info();
-                    return client.getBulkReply();
-                }
-        );
-        List<RedisInfo> infoList = new ArrayList<>();
-        String[] strs = Objects.requireNonNull(info).split("\n");
-        RedisInfo redisInfo;
-        if (strs.length > 0) {
-            for (String str1 : strs) {
-                redisInfo = new RedisInfo();
-                String[] str = str1.split(":");
-                if (str.length > 1) {
-                    String key = str[0];
-                    String value = str[1];
-                    redisInfo.setKey(key);
-                    redisInfo.setValue(value);
-                    infoList.add(redisInfo);
-                }
+    public <T> List<T> getList(final String key, Class<T> targetClass) {
+        byte[] result = redisTemplate.execute(new RedisCallback<byte[]>() {
+            @Override
+            public byte[] doInRedis(RedisConnection connection) throws DataAccessException {
+                return connection.get(key.getBytes());
             }
+        });
+        if (result == null) {
+            return null;
         }
-        return infoList;
+        return ProtoStuffSerializerUtil.deserializeList(result, targetClass);
     }
 
+    /**
+     * 精确删除key
+     */
     @Override
-    public Map<String, Object> getKeysSize() {
-        long dbSize = (long) this.excuteByJedis(
-                j -> {
-                    Client client = j.getClient();
-                    client.dbSize();
-                    return client.getIntegerReply();
-                }
-        );
-        Map<String, Object> map = new HashMap<>();
-        map.put("create_time", System.currentTimeMillis());
-        map.put("dbSize", dbSize);
-        return map;
+    public void delete(String key) {
+        redisTemplate.delete(key);
     }
 
+    /**
+     * 模糊删除key
+     */
     @Override
-    public Map<String, Object> getMemoryInfo() {
-        String info = (String) this.excuteByJedis(
-                j -> {
-                    Client client = j.getClient();
-                    client.info();
-                    return client.getBulkReply();
-                }
-        );
-        String[] strs = Objects.requireNonNull(info).split("\n");
-        Map<String, Object> map = null;
-        for (String s : strs) {
-            String[] detail = s.split(":");
-            if ("used_memory".equals(detail[0])) {
-                map = new HashMap<>();
-                map.put("used_memory", detail[1].substring(0, detail[1].length() - 1));
-                map.put("create_time", new Date().getTime());
-                break;
-            }
-        }
-        return map;
+    public void deleteWithPattern(String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 
+    /**
+     * 清空所有缓存
+     */
     @Override
-    public Set<String> getKeys(String pattern) {
-        return (Set<String>) this.excuteByJedis(j -> j.keys(pattern));
+    public void clear() {
+        deleteWithPattern(CAHCENAME + "|*");
     }
 
+    /**
+     * 订单获取自增主键
+     */
     @Override
-    public String get(String key) {
-        return (String) this.excuteByJedis(j -> j.get(key));
-    }
-
-    @Override
-    public String set(String key, String value) {
-        return (String) this.excuteByJedis(j -> j.set(key, value));
-    }
-
-    @Override
-    public Long del(String... key) {
-        return (Long) this.excuteByJedis(j -> j.del(key));
-    }
-
-    @Override
-    public Boolean exists(String key) {
-        return (Boolean) this.excuteByJedis(j -> j.exists(key));
-    }
-
-    @Override
-    public Long pttl(String key) {
-        return (Long) this.excuteByJedis(j -> j.pttl(key));
-    }
-
-    @Override
-    public Long pexpire(String key, Long milliseconds) {
-        return (Long) this.excuteByJedis(j -> j.pexpire(key, milliseconds));
+    public Long getOrderId(String key) {
+        RedisAtomicLong entityIdCounter = new RedisAtomicLong(CAHCENAME + "|" + key,
+                redisTemplate.getConnectionFactory());
+        entityIdCounter.expire(1, TimeUnit.DAYS);
+        Long increment = entityIdCounter.incrementAndGet();
+        return increment;
     }
 }

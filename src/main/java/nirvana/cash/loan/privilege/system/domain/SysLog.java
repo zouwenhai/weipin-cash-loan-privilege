@@ -41,18 +41,10 @@ public class SysLog implements Serializable {
 	@ExportConfig(value = "参数")
 	private String params;
 
-	@Column(name = "IP")
-	@ExportConfig(value = "IP地址")
-	private String ip;
-
 	@Column(name = "CREATE_TIME")
 	@ExportConfig(value = "操作时间", convert = "c:TimeConvert")
 	private Date createTime;
 
-	@Column(name = "LOCATION")
-	@ExportConfig(value = "地点")
-	private String location;
-	
 	// 用于搜索条件中的时间字段
 	@Transient
 	private String timeField;
@@ -142,20 +134,6 @@ public class SysLog implements Serializable {
 	}
 
 	/**
-	 * @return IP
-	 */
-	public String getIp() {
-		return ip;
-	}
-
-	/**
-	 * @param ip
-	 */
-	public void setIp(String ip) {
-		this.ip = ip == null ? null : ip.trim();
-	}
-
-	/**
 	 * @return CREATE_TIME
 	 */
 	public Date getCreateTime() {
@@ -167,14 +145,6 @@ public class SysLog implements Serializable {
 	 */
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public String getTimeField() {

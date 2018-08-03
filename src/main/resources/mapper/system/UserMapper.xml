@@ -7,6 +7,7 @@
     -->
     <id column="USER_ID" jdbcType="DECIMAL" property="userId" />
     <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
     <result column="DEPT_ID" jdbcType="DECIMAL" property="deptId" />
     <result column="EMAIL" jdbcType="VARCHAR" property="email" />
@@ -23,7 +24,8 @@
   
   <select id="findUserWithDept" resultType="user" parameterType="user">
   		select u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-  		u.ssex,d.dept_name deptName from tb_cl_privilege_user u
+  		u.ssex,d.dept_name deptName,u.name
+	    from tb_cl_privilege_user u
   		left join tb_cl_privilege_dept d on(u.dept_id = d.dept_id)
   		where 1=1
   		<if test="username != null and username != ''">
@@ -44,7 +46,8 @@
     
   <select id="findUserWithRole" resultType="userWithRole">
 		select u.user_id userId,u.username,u.dept_id deptId,u.email,u.mobile,
-		u.status,u.ssex,ur.role_id roleId from tb_cl_privilege_user u
+		u.status,u.ssex,ur.role_id roleId,u.name
+		from tb_cl_privilege_user u
 		left join tb_cl_privilege_user_role ur on (u.user_id = ur.user_id)
 		where u.user_id = #{userId}
   </select>
@@ -79,5 +82,24 @@
 		U .USER_ID,
 		U .dept_id
   </select>
+
+	<select id="findUserRoldIds" resultType="java.lang.String">
+	 select
+	      wm_concat(role_id) as  role_ids
+	 from tb_cl_privilege_user_role
+	 where user_id = #{userId}
+	</select>
+
+    <select id="findCollectionRoleNamesByRoleIds" resultType="java.lang.String">
+        select
+              role_name
+        from tb_cl_privilege_role
+        where
+            role_name in ('催收主管' ,'催收专员')
+            and role_id in
+            <foreach item="roleId" collection="roleIds"  open="(" separator="," close=")">
+                #{roleId}
+            </foreach>
+    </select>
   
 </mapper>

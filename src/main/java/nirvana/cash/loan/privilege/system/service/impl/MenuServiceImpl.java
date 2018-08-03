@@ -1,15 +1,13 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.system.dao.MenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
+import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
 import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,7 @@ import nirvana.cash.loan.privilege.system.service.MenuService;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
-@Service("menuService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
@@ -150,5 +148,11 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			menu.setParentId(0L);
 		this.updateNotNull(menu);
 	}
+
+	@Override
+	public List<LeftMenuVo> findUserMenus() {
+		return this.menuMapper.findLeftMenuList();
+	}
+
 
 }

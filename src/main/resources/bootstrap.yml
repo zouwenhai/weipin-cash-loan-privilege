@@ -15,7 +15,16 @@ spring:
       discovery:
         enabled: true
         serviceId: nirvana-credit-cloud-config-service
-
+feign:
+  hystrix:
+    enabled: true
+hystrix:
+  command.default.execution.isolation:
+    strategy: SEMAPHORE
+    thread.timeoutInMilliseconds: 6000
+ribbon:
+  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+  MaxAutoRetriesNextServer: 0
 eureka:
   client:
     serviceUrl.defaultZone: http://test-credit-eureka1.gs.9188.com:10115/eureka/,http://test-credit-eureka1.gs.9188.com:10115/eureka/,http://test-credit-eureka1.gs.9188.com:10115/eureka/

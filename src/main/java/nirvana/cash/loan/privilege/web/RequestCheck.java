@@ -2,9 +2,9 @@ package nirvana.cash.loan.privilege.web;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import nirvana.cash.loan.privilege.common.domain.ResponseBo;
 import nirvana.cash.loan.privilege.common.service.RedisService;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
 import org.apache.commons.lang.StringUtils;
@@ -28,25 +28,28 @@ public class RequestCheck {
     private RedisService redisService;
 
     //check登录和权限
-    public ResponseBo check(HttpServletRequest request) {
+    public ResResult check(HttpServletRequest request) {
         //1:check用户是否登录或登录失效
         String jsessionid = CookieUtil.getCookieValue(request, JSESSIONID);
         if (jsessionid == null || jsessionid.trim().length() == 0) {
-            return ResponseBo.loginSessionTimeout("您未进行登录操作或登录超时");
+            return ResResult.error("您未进行登录操作或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
-        if (!redisService.exists(jsessionid)) {
-            return ResponseBo.loginSessionTimeout("您未进行登录操作或登录超时");
-        }
-        String data = redisService.get(jsessionid);
+        String data = redisService.get(jsessionid,String.class);
         if (StringUtils.isBlank(data)) {
-            return ResponseBo.loginSessionTimeout("您未进行登录操作或登录超时");
+            return ResResult.error("您未进行登录操作或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
-        //check用户权限
+
         String url = request.getRequestURL().toString();
         User user = JSON.parseObject(data, User.class);
-        String userPermissions = redisService.get("userPermissions-" + user.getUsername());
+
+        //2:check用户权限
+        if(url.contains("notauth")){
+            //匹配路径:notauth,无需授权可访问
+            return ResResult.success(user);
+        }
+        String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
         if (StringUtils.isBlank(userPermissions)) {
-            return ResponseBo.unauthorizedUrl("您访问的接口未经授权！");
+            return ResResult.error("您访问的接口未经授权或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
         List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
         logger.info("user menuList:{}",JSON.toJSONString(permissionList));
@@ -56,9 +59,9 @@ public class RequestCheck {
             if (priviligeFlag) break;
         }
         if (!priviligeFlag) {
-            return ResponseBo.unauthorizedUrl("您访问的接口未经授权！");
+            return ResResult.error("您访问的接口未经授权!",ResResult.UNAUTHORIZED_URL);
         }
-        return ResponseBo.ok(user);
+        return ResResult.success(user);
     }
 
 }

@@ -11,7 +11,7 @@ import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.system.domain.UserRole;
 import nirvana.cash.loan.privilege.system.service.UserRoleService;
 
-@Service("userRoleService")
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class UserRoleServiceImpl extends BaseService<UserRole> implements UserRoleService {
 
