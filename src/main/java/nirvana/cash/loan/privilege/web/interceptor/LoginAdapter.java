@@ -17,7 +17,7 @@ public class LoginAdapter extends WebMvcConfigurerAdapter {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/notauth/**");
+                .excludePathPatterns("/**/notauth/**");
         super.addInterceptors(registry);
     }
 }
