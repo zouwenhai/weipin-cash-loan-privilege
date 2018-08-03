@@ -17,6 +17,6 @@ public class HystrixCollectionApi implements FeginCollectionApi {
     @Override
     public NewResponseUtil addUser(@RequestBody UserAddApiFacade facade) {
         logger.error("程序进入断路器|添加催收人员失败,请求参数:{}", JSON.toJSONString(facade));
-        return new NewResponseUtil(NewResponseUtil.ERROR,null,"添加催收人员失败");
+        throw new RuntimeException("请求催收服务异常|添加催收人员失败");
     }
 }
