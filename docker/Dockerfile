@@ -1,4 +1,4 @@
-FROM @docker.image.url@/base/docker-java-base:jdk_8
+FROM registry.gs.youyuwo.com/base/docker-java-base:jdk_8
 
 COPY yofishdk-cash-loan-privilege.jar app.jar
 

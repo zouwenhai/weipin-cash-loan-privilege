@@ -262,47 +262,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>test</id>
-			<properties>
-				<docker.image.url>registry.gs.youyuwo.com</docker.image.url>
-			</properties>
-		</profile>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.spotify</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<configuration>
-							<serverId>docker-hub</serverId>
-							<registryUrl>https://${docker.image.url}/v2/</registryUrl>
-							<imageName>${docker.image.url}/youyu/${project.artifactId}</imageName>
-							<imageTags>
-								<imageTag>latest</imageTag>
-							</imageTags>
-							<forceTags>true</forceTags>
-							<dockerDirectory>target/docker</dockerDirectory>
-							<resources>
-								<resource>
-									<targetPath>/</targetPath>
-									<directory>${project.build.directory}</directory>
-									<include>${project.build.finalName}.jar</include>
-								</resource>
-							</resources>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.httpcomponents</groupId>
-								<artifactId>httpclient</artifactId>
-								<version>4.5.3</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

@@ -18,7 +18,7 @@ spring:
 
 eureka:
   client:
-    serviceUrl.defaultZone: http://192.168.1.51:10115/eureka/
+    serviceUrl.defaultZone: http://test-credit-eureka1.gs.9188.com:10115/eureka/,http://test-credit-eureka1.gs.9188.com:10115/eureka/,http://test-credit-eureka1.gs.9188.com:10115/eureka/
     register-with-eureka: false
   instance:
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
@@ -34,7 +34,7 @@ eureka:
     statusPageUrl: ${eureka.instance.home-page-url}/info
     healthCheckUrl: ${eureka.instance.home-page-url}/health
   client:
-    serviceUrl.defaultZone: http://credit-card-eureka-server1.marathon.l4lb.thisdcos.directory:8080/eureka/,http://credit-card-eureka-server2.marathon.l4lb.thisdcos.directory:8080/eureka/,http://credit-card-eureka-server3.marathon.l4lb.thisdcos.directory:8080/eureka/
+    serviceUrl.defaultZone: http://test-credit-eureka1.gs.9188.com:10115/eureka/,http://test-credit-eureka1.gs.9188.com:10115/eureka/,http://test-credit-eureka1.gs.9188.com:10115/eureka/
     register-with-eureka: true
 spring:
   profiles: test,prod
