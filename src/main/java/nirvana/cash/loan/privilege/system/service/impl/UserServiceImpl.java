@@ -108,6 +108,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 		//添加催收人员
 		List<Integer> roleIds=new ArrayList<>();
+		for(Long item:roles){
+			roleIds.add(item.intValue());
+		}
 		List<String> roleNames = userMapper.findCollectionRoleNamesByRoleIds(roleIds);
 		if(roleNames!=null && roleNames.size()>0){
 			String roleName=roleNames.get(0);
