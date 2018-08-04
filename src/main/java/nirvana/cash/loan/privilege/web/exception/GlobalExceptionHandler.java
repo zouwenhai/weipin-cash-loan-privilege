@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ResResult jsonErrorHandler(Exception e) {
         logger.error("[exception]:message==>{} e==>{}", e.getMessage(), e);
-        return ResResult.error(error,ResResult.EXCEPTION);
+        return ResResult.error(error,ResResult.ERROR);
     }
 
 

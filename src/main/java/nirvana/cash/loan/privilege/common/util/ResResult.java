@@ -7,15 +7,13 @@ public class ResResult {
     //成功
     public static final String SUCCESS = "1";
     //失败
-    public static final String ERROR = "500";
+    public static final String ERROR = "0";
     //未授权
     public static final String UNAUTHORIZED_URL = "403";
     //登录session失效
     public static final String LOGIN_SESSION_TIMEOUT = "-1";
     //账户被锁定
     public static final String ACCOUNT_LOCKED = "-2";
-    //异常
-    public static final String EXCEPTION = "-3";
 
     //默认成功
     private String code = SUCCESS;
