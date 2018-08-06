@@ -55,7 +55,8 @@ public class RequestCheck {
         logger.info("user menuList:{}",JSON.toJSONString(permissionList));
         boolean priviligeFlag = false;
         for (Menu menu : permissionList) {
-            priviligeFlag = url.contains(menu.getPerms());
+            if(StringUtils.isBlank(menu.getPerms()))continue;
+            priviligeFlag = url.contains(menu.getPerms().trim());
             if (priviligeFlag) break;
         }
         if (!priviligeFlag) {
