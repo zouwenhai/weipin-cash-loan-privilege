@@ -9,10 +9,12 @@ public interface RedisService {
 
     <T> boolean put(String key, T obj);
 
+    //缓存时间单位：秒
     <T> void putWithExpireTime(String key, T obj, final long expireTime);
 
     <T> boolean putList(String key, List<T> objList);
 
+    //缓存时间单位：秒
     <T> boolean putListWithExpireTime(String key, List<T> objList, final long expireTime);
 
     <T> T get(final String key, Class<T> targetClass);
