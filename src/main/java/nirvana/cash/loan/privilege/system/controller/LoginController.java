@@ -62,23 +62,17 @@ public class LoginController extends BaseController {
             //查询登录用户角色
             roleIds=userService.findUserRoldIds(user.getUserId().intValue());
 
-            //缓存2小时，登录信息
+            //缓存4小时，登录信息
             String jsessionid = GeneratorId.guuid();
-            redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),7200L);
+            redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),60*60*4L);
             //设置登录sessionId,存入cookies
             CookieUtil.setCookie(request, response, JSESSIONID, jsessionid);
 
-            // 缓存2小时，用户权限集,主要作用:“按钮显示”
+            // 缓存4小时，用户权限集,主要作用:“按钮显示”
             List<Menu> permissionList = menuService.findUserPermissions(username);
             String userPermissionsKey = "userPermissions-" + user.getUsername();
-            redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),7200L);
+            redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*4L);
             logger.info("user menuList:{}",JSON.toJSONString(permissionList));
-
-//            // 缓存2小时，用户菜单树（非按钮级别）,主要作用:“用户登录后台管理时,左侧菜单列表”
-//            Tree<Menu>  tree =  menuService.getUserMenu(user.getUsername());
-//            String userTreeKey = "userTree-" + user.getUsername();
-//            redisService.putWithExpireTime(userTreeKey,JSON.toJSONString(tree),1000 * 60 * 7200L);
-//            logger.info("user tree:{}",JSON.toJSONString(tree));
 
             //更新登录时间
             this.userService.updateLoginTime(username);
