@@ -64,14 +64,16 @@ public class LoginController extends BaseController {
 
             //缓存4小时，登录信息
             String jsessionid = GeneratorId.guuid();
-            redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),60*60*4L);
+            //redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),60*60*4L);
+            redisService.put(jsessionid,JSON.toJSONString(user));
             //设置登录sessionId,存入cookies
             CookieUtil.setCookie(request, response, JSESSIONID, jsessionid);
 
             // 缓存4小时，用户权限集,主要作用:“按钮显示”
             List<Menu> permissionList = menuService.findUserPermissions(username);
             String userPermissionsKey = "userPermissions-" + user.getUsername();
-            redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*4L);
+            //redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*4L);
+            redisService.put(userPermissionsKey,JSON.toJSONString(permissionList));
             logger.info("user menuList:{}",JSON.toJSONString(permissionList));
 
             //更新登录时间
