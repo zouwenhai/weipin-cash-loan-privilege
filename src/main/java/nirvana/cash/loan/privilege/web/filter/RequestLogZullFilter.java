@@ -87,7 +87,7 @@ public class RequestLogZullFilter extends ZuulFilter {
                 ctx.setSendZuulResponse(false);
                 ctx.setResponseStatusCode(401);
                 ctx.setResponseBody(JSON.toJSONString(res));
-                ctx.getResponse().setContentType("text/html;charset=UTF-8");
+                ctx.getResponse().setContentType("application/json;charset=UTF-8");
                 return null;
             }
             User user = (User) res.getData();
