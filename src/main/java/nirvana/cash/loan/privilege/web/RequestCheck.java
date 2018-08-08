@@ -56,7 +56,7 @@ public class RequestCheck {
         boolean priviligeFlag = false;
         for (Menu menu : permissionList) {
             if(StringUtils.isBlank(menu.getPerms()))continue;
-            priviligeFlag = url.contains(menu.getPerms().trim());
+            priviligeFlag = url.endsWith(menu.getPerms().trim());
             if (priviligeFlag) break;
         }
         if (!priviligeFlag) {
