@@ -26,7 +26,7 @@ public interface UserService extends IService<User> {
 
 	void updateLoginTime(String userName);
 	
-	void updatePassword(String password,User user);
+	void updatePassword(String password,Long userId);
 	
 	User findUserProfile(User user);
 	

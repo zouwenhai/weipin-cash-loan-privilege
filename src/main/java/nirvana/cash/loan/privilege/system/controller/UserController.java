@@ -97,10 +97,11 @@ public class UserController extends BaseController {
 
     //修改密码
     @RequestMapping("user/updatePassword")
-    public ResResult updatePassword(HttpServletRequest request, HttpServletResponse response, String newpassword) {
+    public ResResult updatePassword(HttpServletRequest request, HttpServletResponse response, String newpassword,Long userId) {
         try {
-            User user = this.getLoginUser(request);
-            this.userService.updatePassword(newpassword, user);
+            User user = new User();
+            user.setUserId(userId);
+            this.userService.updatePassword(newpassword, userId);
             return ResResult.success();
         } catch (Exception e) {
             logger.error("用户管理|修改密码|执行异常:{}", e);

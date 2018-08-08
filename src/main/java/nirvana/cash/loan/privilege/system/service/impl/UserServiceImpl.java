@@ -179,12 +179,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public void updatePassword(String password,User user) {
-		Example example = new Example(User.class);
-		example.createCriteria().andCondition("username=", user.getUsername());
-		String newPassword = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
-		user.setPassword(newPassword);
-		this.userMapper.updateByExampleSelective(user, example);
+	public void updatePassword(String password,Long userId) {
+	    User user=this.userMapper.selectByPrimaryKey(userId);
+        String newPassword = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
+
+        User newUser=new User();
+        newUser.setUserId(userId);
+        newUser.setPassword(newPassword);
+        this.userMapper.updateByPrimaryKeySelective(newUser);
 	}
 
 	@Override
