@@ -37,7 +37,7 @@ public class ImgCodeController extends BaseController {
                     febsProperies.getValidateCode().getLength());
             captcha.out(response.getOutputStream());
             //图形验证码,缓存5min
-            redisService.putWithExpireTime("_code",captcha.text().toLowerCase(),1000 * 60 * 5L);
+            redisService.putWithExpireTime("_code",captcha.text().toLowerCase(),60 * 5L);
         } catch (Exception e) {
             e.printStackTrace();
         }
