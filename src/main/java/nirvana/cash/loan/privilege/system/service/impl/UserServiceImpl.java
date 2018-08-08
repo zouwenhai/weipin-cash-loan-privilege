@@ -106,30 +106,30 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		this.save(user);
 		setUserRoles(user, roles);
 
-		//添加催收人员 TODO 项目发布后，联调催收系统时，打开注释
-//		List<Integer> roleIds=new ArrayList<>();
-//		for(Long item:roles){
-//			roleIds.add(item.intValue());
-//		}
-//		List<String> roleNames = userMapper.findCollectionRoleNamesByRoleIds(roleIds);
-//		if(roleNames!=null && roleNames.size()>0){
-//			String roleName=roleNames.get(0);
-//			//角色:0催收专员 1催收主管
-//			int roleType = 0;
-//			if(roleName.equals("催收主管")){
-//				roleType = 1;
-//			}
-//			UserAddApiFacade facade = new UserAddApiFacade();
-//			facade.setUserName(user.getName());
-//			facade.setLoginName(user.getUsername());
-//			facade.setMobile(user.getMobile());
-//			facade.setRoleType(roleType);
-//			NewResponseUtil apiRes = feginCollectionApi.addUser(facade);
-//			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-//				logger.error("添加催收员失败|响应数据:{}", JSON.toJSONString(apiRes));
-//				throw new RuntimeException("添加催收员失败");
-//			}
-//		}
+		//添加催收人员
+		List<Integer> roleIds=new ArrayList<>();
+		for(Long item:roles){
+			roleIds.add(item.intValue());
+		}
+		List<String> roleNames = userMapper.findCollectionRoleNamesByRoleIds(roleIds);
+		if(roleNames!=null && roleNames.size()>0){
+			String roleName=roleNames.get(0);
+			//角色:0催收专员 1催收主管
+			int roleType = 0;
+			if(roleName.equals("催收主管")){
+				roleType = 1;
+			}
+			UserAddApiFacade facade = new UserAddApiFacade();
+			facade.setUserName(user.getName());
+			facade.setLoginName(user.getUsername());
+			facade.setMobile(user.getMobile());
+			facade.setRoleType(roleType);
+			NewResponseUtil apiRes = feginCollectionApi.addUser(facade);
+			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
+				logger.error("添加催收员失败|响应数据:{}", JSON.toJSONString(apiRes));
+				throw new RuntimeException("添加催收员失败");
+			}
+		}
 
 	}
 
