@@ -222,7 +222,6 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>yofishdk-cash-loan-privilege</finalName>
 		<resources>
 			<resource>
 				<directory>docker</directory>
