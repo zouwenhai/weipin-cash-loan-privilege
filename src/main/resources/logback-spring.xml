@@ -18,7 +18,7 @@
     <!--本地测试环境 -->
     <springProfile name="test,dev">
         <appender name="LOGSTASH_SOCKET" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-            <destination>10.0.12.25:50005</destination>
+            <destination>test-logstash.gs.9188.com:50005</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"yofishdk-cash-loan-privilege","type":"logback"}</customFields>
             </encoder>
@@ -36,7 +36,7 @@
 
     <springProfile name="prd,prod,release">
         <appender name="LOGSTASH_SOCKET" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-            <destination>192.168.83.60:50005</destination>
+            <destination>test-logstash.gs.9188.com:50005</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"yofishdk-cash-loan-privilege","type":"logback"}</customFields>
             </encoder>
