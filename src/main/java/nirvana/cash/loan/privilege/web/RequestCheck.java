@@ -47,6 +47,14 @@ public class RequestCheck {
             //匹配路径:notauth,无需授权可访问
             return ResResult.success(user);
         }
+
+        //TODO ...............
+        //暂不做，权限校验
+        if(url.contains("yofishdk/cash-loan-collection-web")){
+            return ResResult.success(user);
+        }
+        //TODO ...............
+
         String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
         if (StringUtils.isBlank(userPermissions)) {
             return ResResult.error("您访问的接口未经授权或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
