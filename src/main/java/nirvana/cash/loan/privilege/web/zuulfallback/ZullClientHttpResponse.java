@@ -18,6 +18,8 @@ import java.io.InputStream;
 @Component
 public class ZullClientHttpResponse {
 
+    private static final String error = "服务不可用,请稍后再试";
+
     public ClientHttpResponse response(final HttpStatus status) {
         return new ClientHttpResponse() {
             @Override
@@ -41,7 +43,7 @@ public class ZullClientHttpResponse {
 
             @Override
             public InputStream getBody() throws IOException {
-                return new ByteArrayInputStream(JSON.toJSONString(ResResult.error("服务不可用,请稍后再试",ResResult.ERROR)).getBytes());
+                return new ByteArrayInputStream(JSON.toJSONString(ResResult.error(error,ResResult.ERROR)).getBytes());
             }
 
             @Override
