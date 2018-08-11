@@ -14,8 +14,6 @@ public class ResResult {
     public static final String LOGIN_SESSION_TIMEOUT = "-1";
     //账户被锁定
     public static final String ACCOUNT_LOCKED = "-2";
-    //代理转发异常
-    public static final String BAD_GATEWAY = "502";
 
     //默认成功
     private String code = SUCCESS;

@@ -1,5 +1,7 @@
 package nirvana.cash.loan.privilege.web.zuulfallback;
 
+import com.alibaba.fastjson.JSON;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,7 +41,7 @@ public class ZullClientHttpResponse {
 
             @Override
             public InputStream getBody() throws IOException {
-                return new ByteArrayInputStream("代理服务不可用,请稍后再试。".getBytes());
+                return new ByteArrayInputStream(JSON.toJSONString(ResResult.error("服务不可用,请稍后再试",ResResult.ERROR)).getBytes());
             }
 
             @Override

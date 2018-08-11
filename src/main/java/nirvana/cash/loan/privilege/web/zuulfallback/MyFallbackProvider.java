@@ -42,7 +42,7 @@ public class MyFallbackProvider implements FallbackProvider {
 
     @Override
     public ClientHttpResponse fallbackResponse() {
-        return zullClientHttpResponse.response(HttpStatus.INTERNAL_SERVER_ERROR);
+        return zullClientHttpResponse.response(HttpStatus.BAD_GATEWAY);
     }
 }
 
