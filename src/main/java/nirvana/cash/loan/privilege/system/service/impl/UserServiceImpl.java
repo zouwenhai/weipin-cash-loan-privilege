@@ -145,7 +145,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Override
 	@Transactional
 	public void updateUser(User user, Long[] roles) {
-		User oldUser = this.findById(user.getUserId());
+		User oldUser=this.userMapper.selectByPrimaryKey(user.getUserId());
 		user.setCrateTime(oldUser.getCrateTime());
 		user.setPassword(oldUser.getPassword());
 		user.setUsername(oldUser.getUsername());
