@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.common.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Administrator on 2018/8/13.
  */
-public class FilterId {
+public class FilterId implements Serializable {
 
     private long id;
     private long parentId;
