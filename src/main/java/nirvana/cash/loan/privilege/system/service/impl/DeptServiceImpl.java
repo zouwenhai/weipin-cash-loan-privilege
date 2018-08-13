@@ -86,9 +86,9 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 		//this.batchDelete(list, "deptId", Dept.class);
 		//this.deptMapper.changeToTop(list);
 
-		//转换列表
 		List<Dept> depts = this.findAllDepts(new Dept());
 		if(depts!=null && depts.size()>0){
+			//转换列表
 			List<FilterId> allList = new ArrayList<>();
 			depts.forEach(t -> {
 				FilterId filterId = new FilterId(t.getDeptId(), t.getParentId(), t.getDeptName());
