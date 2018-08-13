@@ -119,10 +119,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	@Override
 	@Transactional
 	public void addMenu(Menu menu) {
-		//类型 0菜单 1按钮
-		if("1".equals(menu.getType())){
-			menu.setUrl(null);
-		}
 		menu.setMenuId(this.getSequence(Menu.SEQ));
 		menu.setCreateTime(new Date());
 		if (menu.getParentId() == null)
@@ -150,7 +146,8 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 		menu.setModifyTime(new Date());
 		if (menu.getParentId() == null)
 			menu.setParentId(0L);
-		this.updateNotNull(menu);
+		//this.updateNotNull(menu);
+        this.updateAll(menu);
 	}
 
 	@Override
