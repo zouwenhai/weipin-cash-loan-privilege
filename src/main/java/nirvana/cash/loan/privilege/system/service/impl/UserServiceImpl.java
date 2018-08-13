@@ -145,8 +145,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Override
 	@Transactional
 	public void updateUser(User user, Long[] roles) {
-		user.setPassword(null);
-		user.setUsername(null);
+		User oldUser = this.findById(user.getUserId());
+		user.setCrateTime(oldUser.getCrateTime());
+		user.setPassword(oldUser.getPassword());
+		user.setUsername(oldUser.getUsername());
 		user.setModifyTime(new Date());
 		//this.updateNotNull(user);
 		this.updateAll(user);
