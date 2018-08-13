@@ -132,7 +132,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 		List<String> list = Arrays.asList(menuIds.split(","));
 		this.batchDelete(list, "menuId", Menu.class);
 		this.roleMenuService.deleteRoleMenusByMenuId(menuIds);
-		this.menuMapper.changeToTop(list);
+		//this.menuMapper.changeToTop(list);
 	}
 
 	@Override

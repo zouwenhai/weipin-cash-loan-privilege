@@ -83,7 +83,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	public void deleteDepts(String deptIds) {
 		List<String> list = Arrays.asList(deptIds.split(","));
 		this.batchDelete(list, "deptId", Dept.class);
-		this.deptMapper.changeToTop(list);
+		//this.deptMapper.changeToTop(list);
 	}
 
 	@Override
