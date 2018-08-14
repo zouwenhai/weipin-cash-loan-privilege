@@ -123,7 +123,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 				//菜单级别ID
 				menuList.add(rwm.getMenuId());
 			}
-			else{
+			if(rwm.getMenuType()!=null && rwm.getMenuType() == 1){
 				//按钮级别ID
 				buttonIdList.add(rwm.getMenuId());
 			}
