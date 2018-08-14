@@ -101,16 +101,43 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	public RoleWithMenu findRoleWithMenus(Long roleId) {
+//		List<RoleWithMenu> list = this.roleMapper.findById(roleId);
+//		List<Long> menuList = new ArrayList<>();
+//		for (RoleWithMenu rwm : list) {
+//			menuList.add(rwm.getMenuId());
+//		}
+//		if (list.size() == 0) {
+//			return null;
+//		}
+//		RoleWithMenu roleWithMenu = list.get(0);
+//		roleWithMenu.setMenuIds(menuList);
+//		return roleWithMenu;
+
+		RoleWithMenu roleWithMenu = new RoleWithMenu();
+		//按钮级别列表
 		List<RoleWithMenu> list = this.roleMapper.findById(roleId);
 		List<Long> menuList = new ArrayList<>();
+		List<Long> buttonIdList = new ArrayList<>();
 		for (RoleWithMenu rwm : list) {
-			menuList.add(rwm.getMenuId());
+			if(rwm.getMenuType()!=null && rwm.getMenuType() == 0){
+				//菜单级别ID
+				menuList.add(rwm.getMenuId());
+			}
+			else{
+				//按钮级别ID
+				buttonIdList.add(rwm.getMenuId());
+			}
 		}
-		if (list.size() == 0) {
-			return null;
+		if (list.size() > 0) {
+			roleWithMenu = list.get(0);
 		}
-		RoleWithMenu roleWithMenu = list.get(0);
+		//其他角色信息
+		Role role= this.selectByKey(roleId);
+		roleWithMenu.setRoleId(role.getRoleId());
+		roleWithMenu.setRoleName(role.getRoleName());
+		roleWithMenu.setRemark(role.getRemark());
 		roleWithMenu.setMenuIds(menuList);
+		roleWithMenu.setButtonIds(buttonIdList);
 		return roleWithMenu;
 	}
 

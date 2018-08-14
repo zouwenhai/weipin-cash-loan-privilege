@@ -74,7 +74,7 @@ public class LoginController extends BaseController {
             String userPermissionsKey = "userPermissions-" + user.getUsername();
             //redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*4L);
             redisService.put(userPermissionsKey,JSON.toJSONString(permissionList));
-            logger.info("user menuList:{}",JSON.toJSONString(permissionList));
+            //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
 
             //更新登录时间
             this.userService.updateLoginTime(username);

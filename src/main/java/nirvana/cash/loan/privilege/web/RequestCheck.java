@@ -48,19 +48,12 @@ public class RequestCheck {
             return ResResult.success(user);
         }
 
-        //TODO ...............
-        //暂不做，权限校验
-        if(url.contains("yofishdk/cash-loan-collection-web")){
-            return ResResult.success(user);
-        }
-        //TODO ...............
-
         String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
         if (StringUtils.isBlank(userPermissions)) {
             return ResResult.error("您访问的接口未经授权或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
         List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
-        logger.info("user menuList:{}",JSON.toJSONString(permissionList));
+        //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
         boolean priviligeFlag = false;
         for (Menu menu : permissionList) {
             if(StringUtils.isBlank(menu.getPerms()))continue;
