@@ -59,6 +59,11 @@ public class Tree<T> {
 	 */
 	private String roleIds;
 
+	/**
+	 * 菜单类型
+	 * @return
+	 */
+	private String menuType;
 
 	public String getId() {
 		return id;
@@ -154,6 +159,14 @@ public class Tree<T> {
 
 	public void setRoleIds(String roleIds) {
 		this.roleIds = roleIds;
+	}
+
+	public String getMenuType() {
+		return menuType;
+	}
+
+	public void setMenuType(String menuType) {
+		this.menuType = menuType;
 	}
 
 	public Tree() {

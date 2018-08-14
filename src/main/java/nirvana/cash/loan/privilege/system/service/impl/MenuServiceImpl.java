@@ -85,6 +85,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			tree.setId(menu.getMenuId().toString());
 			tree.setParentId(menu.getParentId().toString());
 			tree.setText(menu.getMenuName());
+			tree.setMenuType(menu.getType());
 			trees.add(tree);
 		}
 	}
