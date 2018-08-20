@@ -34,14 +34,14 @@ public class LoginController extends BaseController {
         User user=null;
         String roleIds=null;
         try {
-            if (StringUtils.isBlank(code)) {
-                return ResResult.error("验证码不能为空！");
-            }
-            String sessionCode = redisService.get("_code",String.class);
-            redisService.delete("_code");
-            if (!code.toLowerCase().equals(sessionCode)) {
-                return ResResult.error("验证码错误！");
-            }
+//            if (StringUtils.isBlank(code)) {
+//                return ResResult.error("验证码不能为空！");
+//            }
+//            String sessionCode = redisService.get("_code",String.class);
+//            redisService.delete("_code");
+//            if (!code.toLowerCase().equals(sessionCode)) {
+//                return ResResult.error("验证码错误！");
+//            }
             if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
                 return ResResult.error("用户名或密码错误！");
             }
@@ -74,7 +74,7 @@ public class LoginController extends BaseController {
             String userPermissionsKey = "userPermissions-" + user.getUsername();
             //redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*4L);
             redisService.put(userPermissionsKey,JSON.toJSONString(permissionList));
-            logger.info("user menuList:{}",JSON.toJSONString(permissionList));
+            //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
 
             //更新登录时间
             this.userService.updateLoginTime(username);

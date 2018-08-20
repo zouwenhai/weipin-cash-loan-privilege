@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import nirvana.cash.loan.privilege.common.domain.SplitMenu;
 import nirvana.cash.loan.privilege.system.dao.RoleMapper;
 import nirvana.cash.loan.privilege.system.dao.RoleMenuMapper;
+import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.domain.RoleMenu;
+import nirvana.cash.loan.privilege.system.service.MenuService;
 import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
 import nirvana.cash.loan.privilege.system.service.RoleService;
 import nirvana.cash.loan.privilege.system.service.UserRoleService;
@@ -37,6 +41,9 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Autowired
 	private RoleMenuServie roleMenuService;
+
+	@Autowired
+	private MenuService menuService;
 
 	@Override
 	public List<Role> findUserRole(String userName) {
@@ -101,16 +108,34 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	public RoleWithMenu findRoleWithMenus(Long roleId) {
-		List<RoleWithMenu> list = this.roleMapper.findById(roleId);
-		List<Long> menuList = new ArrayList<>();
-		for (RoleWithMenu rwm : list) {
-			menuList.add(rwm.getMenuId());
-		}
-		if (list.size() == 0) {
-			return null;
-		}
-		RoleWithMenu roleWithMenu = list.get(0);
-		roleWithMenu.setMenuIds(menuList);
+//		List<RoleWithMenu> list = this.roleMapper.findById(roleId);
+//		List<Long> menuList = new ArrayList<>();
+//		for (RoleWithMenu rwm : list) {
+//			menuList.add(rwm.getMenuId());
+//		}
+//		if (list.size() == 0) {
+//			return null;
+//		}
+//		RoleWithMenu roleWithMenu = list.get(0);
+//		roleWithMenu.setMenuIds(menuList);
+//		return roleWithMenu;
+
+		Role role= this.selectByKey(roleId);
+		List<Menu> allList = menuService.findAllMenus(new Menu());
+		List<RoleWithMenu> roleWithMenuList = this.roleMapper.findById(roleId);
+
+		SplitMenu splitMenu = new SplitMenu();
+		splitMenu.splitMenuList(allList,roleWithMenuList);
+		List<Long> parentIds=splitMenu.getParentList().stream().map(t->t.getMenuId()).collect(Collectors.toList());
+		List<Long> leafIds=splitMenu.getLeafList().stream().map(t->t.getMenuId()).collect(Collectors.toList());
+
+		//其他角色信息
+		RoleWithMenu roleWithMenu = new RoleWithMenu();
+		roleWithMenu.setRoleId(role.getRoleId());
+		roleWithMenu.setRoleName(role.getRoleName());
+		roleWithMenu.setRemark(role.getRemark());
+		roleWithMenu.setMenuIds(parentIds);
+		roleWithMenu.setButtonIds(leafIds);
 		return roleWithMenu;
 	}
 

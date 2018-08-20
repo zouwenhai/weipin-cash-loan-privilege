@@ -29,4 +29,10 @@ public class RoleMenuServiceImpl extends BaseService<RoleMenu> implements RoleMe
 		this.batchDelete(list, "menuId", RoleMenu.class);
 	}
 
+	@Override
+	@Transactional
+	public void deleteRoleMenusByMenuId(List menuIds) {
+		this.batchDelete(menuIds, "menuId", RoleMenu.class);
+	}
+
 }

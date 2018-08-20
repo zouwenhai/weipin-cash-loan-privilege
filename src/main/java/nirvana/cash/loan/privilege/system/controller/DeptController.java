@@ -85,9 +85,9 @@ public class DeptController extends BaseController {
 
 	//删除部门
 	@RequestMapping("dept/delete")
-	public ResResult deleteDept(Integer id) {
+	public ResResult deleteDept(String id) {
 		try {
-			this.deptService.deleteDepts(id.toString());
+			this.deptService.deleteDepts(id);
 			return ResResult.success();
 		} catch (Exception e) {
 			logger.error("部门管理|删除部门|执行异常:{}",e);

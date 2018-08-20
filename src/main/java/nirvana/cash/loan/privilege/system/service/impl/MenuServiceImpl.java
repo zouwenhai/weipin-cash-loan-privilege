@@ -2,6 +2,8 @@ package nirvana.cash.loan.privilege.system.service.impl;
 
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
@@ -83,6 +85,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			tree.setId(menu.getMenuId().toString());
 			tree.setParentId(menu.getParentId().toString());
 			tree.setText(menu.getMenuName());
+			tree.setMenuType(menu.getType());
 			trees.add(tree);
 		}
 	}
@@ -129,10 +132,27 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	@Override
 	@Transactional
 	public void deleteMeuns(String menuIds) {
-		List<String> list = Arrays.asList(menuIds.split(","));
-		this.batchDelete(list, "menuId", Menu.class);
-		this.roleMenuService.deleteRoleMenusByMenuId(menuIds);
-		this.menuMapper.changeToTop(list);
+		//List<String> list = Arrays.asList(menuIds.split(","));
+		//this.batchDelete(list, "menuId", Menu.class);
+		//this.roleMenuService.deleteRoleMenusByMenuId(menuIds);
+		//this.menuMapper.changeToTop(list);
+		List<Menu> menus = this.findAllMenus(new Menu());
+		if (menus != null && menus.size() > 0) {
+			//转换列表
+			List<FilterId> allList = new ArrayList<>();
+			menus.forEach(t -> {
+				FilterId filterId = new FilterId(t.getMenuId(), t.getParentId(), t.getMenuName());
+				allList.add(filterId);
+			});
+			//开始处理...
+			List<FilterId> filterIdList = FilterId.filterRemoveList(allList, Long.valueOf(menuIds));
+			List<String> list =new ArrayList<>();
+			for(FilterId item:filterIdList){
+				list.add(item.getId()+"");
+			}
+			this.batchDelete(list, "menuId", Menu.class);
+			this.roleMenuService.deleteRoleMenusByMenuId(list);
+		}
 	}
 
 	@Override
@@ -143,10 +163,13 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	@Override
 	@Transactional
 	public void updateMenu(Menu menu) {
+        Menu oldMenu = this.findById(menu.getMenuId());
+        menu.setCreateTime(oldMenu.getCreateTime());
 		menu.setModifyTime(new Date());
 		if (menu.getParentId() == null)
 			menu.setParentId(0L);
-		this.updateNotNull(menu);
+		//this.updateNotNull(menu);
+        this.updateAll(menu);
 	}
 
 	@Override

@@ -43,24 +43,17 @@ public class RequestCheck {
         User user = JSON.parseObject(data, User.class);
 
         //2:check用户权限
-        if(url.contains("notauth")){
+        if(url.contains("notauth") || "system".equals(user.getUsername())){
             //匹配路径:notauth,无需授权可访问
             return ResResult.success(user);
         }
-
-        //TODO ...............
-        //暂不做，权限校验
-        if(url.contains("yofishdk/cash-loan-collection-web")){
-            return ResResult.success(user);
-        }
-        //TODO ...............
 
         String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
         if (StringUtils.isBlank(userPermissions)) {
             return ResResult.error("您访问的接口未经授权或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
         List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
-        logger.info("user menuList:{}",JSON.toJSONString(permissionList));
+        //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
         boolean priviligeFlag = false;
         for (Menu menu : permissionList) {
             if(StringUtils.isBlank(menu.getPerms()))continue;
