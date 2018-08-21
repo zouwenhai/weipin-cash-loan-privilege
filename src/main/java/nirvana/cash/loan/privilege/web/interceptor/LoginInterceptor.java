@@ -2,7 +2,12 @@ package nirvana.cash.loan.privilege.web.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import nirvana.cash.loan.privilege.common.util.GeneratorId;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.LogService;
@@ -11,17 +16,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.util.Map;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
@@ -31,8 +28,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     private RequestCheck requestCheck;
     @Autowired
     private LogService logService;
-    @Value("${ignoreContentTypes}")
-    private String ignoreContentTypes;
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -56,7 +52,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             logger.info("LoginInterceptor|preHandle|请求url参数:{}", sb.toString());
             //请求json参数
             String jsonParam=null;
-            if(!request.getContentType().contains(ignoreContentTypes)){
+            if(!request.getContentType().contains(MediaType.MULTIPART_FORM_DATA_VALUE)){
                 InputStream in = request.getInputStream();
                 jsonParam = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
                 if(StringUtils.isNotBlank(jsonParam) && jsonParam.contains("password")){
@@ -64,10 +60,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                      json.put("password",null);
                      json.put("newpassword",null);
                      jsonParam=json.toJSONString();
+                    logger.info("LoginInterceptor|preHandle|请求json参数:{}", jsonParam);
                 }
-                logger.info("PreRequestLogFilter|run|请求json参数:{}", jsonParam);
             }
-            logger.info("LoginInterceptor|preHandle|请求json参数:{}", jsonParam);
 
             ResResult res = requestCheck.check(request);
             if (!res.getCode().equals(ResResult.SUCCESS)) {

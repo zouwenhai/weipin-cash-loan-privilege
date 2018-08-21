@@ -3,6 +3,10 @@ package nirvana.cash.loan.privilege.web.filter;
 import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.LogService;
@@ -10,14 +14,9 @@ import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Map;
 
 /**
  * 用zuulFilter打印请求日志
@@ -33,8 +32,7 @@ public class RequestLogZullFilter extends ZuulFilter {
     private RequestCheck requestCheck;
     @Autowired
     private LogService logService;
-    @Value("${ignoreContentTypes}")
-    private String ignoreContentTypes;
+
 
     @Override
     public String filterType() {
@@ -75,7 +73,7 @@ public class RequestLogZullFilter extends ZuulFilter {
             logger.info("PreRequestLogFilter|run|请求url参数:{}", sb.toString());
             //请求json参数
             String jsonParam=null;
-            if(!request.getContentType().contains(ignoreContentTypes)){
+            if(!request.getContentType().contains(MediaType.MULTIPART_FORM_DATA_VALUE)){
                 InputStream in = request.getInputStream();
                 jsonParam = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
                 logger.info("PreRequestLogFilter|run|请求json参数:{}", jsonParam);
