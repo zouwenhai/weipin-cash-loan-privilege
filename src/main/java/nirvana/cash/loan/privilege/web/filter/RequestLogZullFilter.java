@@ -3,7 +3,8 @@ package nirvana.cash.loan.privilege.web.filter;
 import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
-import nirvana.cash.loan.privilege.common.util.GeneratorId;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.LogService;
@@ -12,12 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
-import org.springframework.util.StreamUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Map;
 
 /**
  * 用zuulFilter打印请求日志
@@ -41,7 +36,7 @@ public class RequestLogZullFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -64,7 +59,7 @@ public class RequestLogZullFilter extends ZuulFilter {
             Map<String, String[]> parameterMap = request.getParameterMap();
             StringBuilder sb = new StringBuilder();
             sb.append("urlParam=\t");
-            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
                 //密码不能输出到日志
                 if(!entry.getKey().contains("password")){
                     sb.append("[" + entry.getKey() + "=" + printArray(entry.getValue()) + "]");
@@ -72,14 +67,14 @@ public class RequestLogZullFilter extends ZuulFilter {
             }
             logger.info("PreRequestLogFilter|run|请求url参数:{}", sb.toString());
             //请求json参数
-            InputStream in = request.getInputStream();
-            String reqBbody = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
-            //密码不能输出到日志
+          /* InputStream in = request.getInputStream();
+               String reqBbody = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
+           //密码不能输出到日志
             if(reqBbody.contains("password")){
                 reqBbody=reqBbody.replaceAll("password", GeneratorId.guuid().substring(16));
             }
             logger.info("PreRequestLogFilter|run|请求json参数:{}", reqBbody);
-
+            */
             //check登录和权限
             ResResult res = requestCheck.check(request);
             if (!res.getCode().equals(ResResult.SUCCESS)) {
@@ -92,13 +87,12 @@ public class RequestLogZullFilter extends ZuulFilter {
             }
             User user = (User) res.getData();
             //添加请求头参数
-            ctx.addZuulRequestHeader("loginName",user.getUsername());
+          ctx.addZuulRequestHeader("loginName",user.getUsername());
             ctx.addZuulRequestHeader("userName",user.getName());
-
             long endTime = System.currentTimeMillis();
 
             //记录访问日志
-            logService.addLog(user.getUsername(),url,endTime-startTime,sb.toString()+"|jsonParam="+reqBbody);
+          // logService.addLog(user.getUsername(),url,endTime-startTime,sb.toString()+"|jsonParam="+reqBbody);
 
         } catch (Exception ex) {
             logger.error("PreRequestLogFilter|run|执行异常:{}", ex);
