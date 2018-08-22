@@ -52,7 +52,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             logger.info("LoginInterceptor|preHandle|请求url参数:{}", sb.toString());
             //请求json参数
             String jsonParam=null;
-            if(!request.getContentType().contains(MediaType.MULTIPART_FORM_DATA_VALUE)){
+            if(request.getContentType()!=null && !request.getContentType().contains(MediaType.MULTIPART_FORM_DATA_VALUE)){
                 InputStream in = request.getInputStream();
                 jsonParam = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
                 if(StringUtils.isNotBlank(jsonParam) && jsonParam.contains("password")){

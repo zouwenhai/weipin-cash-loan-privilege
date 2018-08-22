@@ -73,7 +73,7 @@ public class RequestLogZullFilter extends ZuulFilter {
             logger.info("PreRequestLogFilter|run|请求url参数:{}", sb.toString());
             //请求json参数
             String jsonParam=null;
-            if(!request.getContentType().contains(MediaType.MULTIPART_FORM_DATA_VALUE)){
+            if(request.getContentType()!=null && !request.getContentType().contains(MediaType.MULTIPART_FORM_DATA_VALUE)){
                 InputStream in = request.getInputStream();
                 jsonParam = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
                 logger.info("PreRequestLogFilter|run|请求json参数:{}", jsonParam);
