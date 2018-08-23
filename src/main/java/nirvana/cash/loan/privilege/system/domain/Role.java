@@ -38,6 +38,10 @@ public class Role implements Serializable {
 	@Column(name = "MODIFY_TIME")
 	private Date modifyTime;
 
+	@ExportConfig(value = "角色编码")
+	@Column(name = "role_code")
+	private String roleCode;
+
 	/**
 	 * @return ROLE_ID
 	 */
@@ -106,5 +110,13 @@ public class Role implements Serializable {
 	 */
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public String getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
 	}
 }

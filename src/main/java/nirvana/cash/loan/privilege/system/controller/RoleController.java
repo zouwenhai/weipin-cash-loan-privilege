@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
+import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.service.RoleService;
@@ -11,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/privilige")
@@ -45,9 +49,9 @@ public class RoleController extends BaseController {
 	@RequestMapping("role/add")
 	public ResResult addRole(Role role, Long[] menuId) {
 		try {
-			Role oldRole = this.roleService.findByName(role.getRoleName().trim());
+			Role oldRole = this.roleService.findByCode(role.getRoleCode());
 			if(oldRole != null){
-				return ResResult.error("角色名称已存在！");
+				return ResResult.error("您选择的角色已存在！");
 			}
 			this.roleService.addRole(role, menuId);
 			return ResResult.success();
@@ -79,5 +83,18 @@ public class RoleController extends BaseController {
 			logger.error("角色管理|删除角色|执行异常:{}",e);
 			return ResResult.error("删除角色失败！");
 		}
+	}
+
+	//角色配置下拉列表
+	@RequestMapping("notauth/role/selectList")
+	public ResResult roleList() {
+		List<Map<String, String>> list = new ArrayList<>();
+		for (RoleEnum roleEnum : RoleEnum.values()) {
+			Map itemMap = new HashMap<>();
+			itemMap.put("roleName", roleEnum.getName());
+			itemMap.put("roleCode", roleEnum.getCode());
+			list.add(itemMap);
+		}
+		return ResResult.success(list);
 	}
 }

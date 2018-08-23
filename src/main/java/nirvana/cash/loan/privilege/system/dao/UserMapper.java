@@ -16,7 +16,4 @@ public interface UserMapper extends MyMapper<User> {
 	User findUserProfile(User user);
 
     String findUserRoldIds(@Param("userId") Integer userId);
-
-	//获取用户催收人员角色名称
-    List<String> findCollectionRoleNamesByRoleIds(@Param("roleIds") List<Integer> roleIds);
 }

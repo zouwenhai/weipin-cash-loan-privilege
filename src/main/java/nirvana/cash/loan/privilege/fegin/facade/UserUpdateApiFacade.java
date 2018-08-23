@@ -1,16 +1,16 @@
 package nirvana.cash.loan.privilege.fegin.facade;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by Administrator on 2018/8/2.
+ * Created by Administrator on 2018/8/22.
  */
-public class UserAddApiFacade implements Serializable {
+public class UserUpdateApiFacade {
     private String loginName;
     private String userName;
     private String mobile;
     private List<String> roleCodeList;
+    private Integer status; // 1-修改；2-删除
 
     public String getLoginName() {
         return loginName;
@@ -42,5 +42,13 @@ public class UserAddApiFacade implements Serializable {
 
     public void setRoleCodeList(List<String> roleCodeList) {
         this.roleCodeList = roleCodeList;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

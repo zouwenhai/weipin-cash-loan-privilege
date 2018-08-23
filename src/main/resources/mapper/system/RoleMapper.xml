@@ -10,6 +10,7 @@
     <result column="REMARK" jdbcType="VARCHAR" property="remark" />
     <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
     <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
   </resultMap>
   
   <select id="findUserRole" resultMap="roleMap">
@@ -31,6 +32,17 @@
       left join tb_cl_privilege_role_menu rm on(r.role_id = RM.role_id)
       left join tb_cl_privilege_menu m on (rm.menu_id = m.menu_id)
       where r.role_id = #{roleId}
+  </select>
+
+  <select id="findRoleCodeListByRoleIds" resultType="java.lang.String">
+    select
+       role_code
+    from tb_cl_privilege_role
+    where
+       role_id in
+          <foreach item="roleId" collection="roleIds"  open="(" separator="," close=")">
+            #{roleId}
+          </foreach>
   </select>
   
 </mapper>

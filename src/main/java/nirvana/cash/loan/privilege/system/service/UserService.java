@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.system.service;
 import java.util.List;
 
 import nirvana.cash.loan.privilege.common.service.IService;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.domain.UserWithRole;
 
@@ -18,7 +19,7 @@ public interface UserService extends IService<User> {
 
 	void updateTheme(String theme, String userName);
 
-	void addUser(User user, Long[] roles);
+	ResResult addUser(User user, Long[] roles);
 
 	void updateUser(User user, Long[] roles);
 	

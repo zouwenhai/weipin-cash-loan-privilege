@@ -20,6 +20,7 @@
     <result column="THEME" jdbcType="VARCHAR" property="theme" />
     <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
+    <result column="is_delete" jdbcType="DECIMAL" property="isDelete" />
   </resultMap>
   
   <select id="findUserWithDept" resultType="user" parameterType="user">
@@ -27,7 +28,7 @@
   		u.ssex,d.dept_name deptName,u.name
 	    from tb_cl_privilege_user u
   		left join tb_cl_privilege_dept d on(u.dept_id = d.dept_id)
-  		where 1=1
+  		where is_delete = 0
   		<if test="username != null and username != ''">
         	AND lower(u.username) = #{username}
 	    </if>
@@ -90,16 +91,4 @@
 	 where user_id = #{userId}
 	</select>
 
-    <select id="findCollectionRoleNamesByRoleIds" resultType="java.lang.String">
-        select
-              role_name
-        from tb_cl_privilege_role
-        where
-            role_name in ('催收主管' ,'催收专员')
-            and role_id in
-            <foreach item="roleId" collection="roleIds"  open="(" separator="," close=")">
-                #{roleId}
-            </foreach>
-    </select>
-  
 </mapper>

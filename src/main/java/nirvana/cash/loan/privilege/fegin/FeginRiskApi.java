@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * 催收系统API调用
+ * 风控系统API调用
  * Created by Administrator on 2018/8/2.
  */
-@FeignClient(value = "yofishdk-cash-loan-collection-api", fallback = HystrixCollectionApi.class)
-public interface FeginCollectionApi {
+@FeignClient(value = "yofishdk-cash-loan-collection-api", fallback = HystrixRiskApi.class)
+public interface FeginRiskApi {
 
     @RequestMapping(value = "/api/user/addUser", method = RequestMethod.POST, consumes = "application/json")
     NewResponseUtil addUser(@RequestBody UserAddApiFacade facade);

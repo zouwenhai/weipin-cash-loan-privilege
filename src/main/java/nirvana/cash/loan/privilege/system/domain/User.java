@@ -92,6 +92,9 @@ public class User implements Serializable {
 
 	@Column(name = "DESCRIPTION")
 	private String description;
+
+	@Column(name = "is_delete")
+	private Integer isDelete;
 	
 	@Transient
 	private String roleName;
@@ -298,4 +301,11 @@ public class User implements Serializable {
 		this.roleName = roleName;
 	}
 
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
 }

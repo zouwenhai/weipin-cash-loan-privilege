@@ -7,6 +7,7 @@ import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.UserService;
+import nirvana.cash.loan.privilege.web.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,14 +59,18 @@ public class UserController extends BaseController {
             user.setUsername(user.getUsername().trim());
             User oldUser = this.userService.findByName(user.getUsername());
             if (oldUser != null) {
-                return ResResult.error("用户名已存在！");
+                return ResResult.error("登录名不可用！");
             }
             if(roles.length == 0){
                 return ResResult.error("请选择用户角色！");
             }
-            this.userService.addUser(user, roles);
-            return ResResult.success();
-        } catch (Exception e) {
+            return this.userService.addUser(user, roles);
+        }
+        catch (BizException e) {
+            logger.error("用户管理|新增用户|执行异常:{}", e);
+            return ResResult.error(e.getMessage());
+        }
+        catch (Exception e) {
             logger.error("用户管理|新增用户|执行异常:{}", e);
             return ResResult.error("新增用户失败！");
         }
@@ -106,6 +111,21 @@ public class UserController extends BaseController {
         } catch (Exception e) {
             logger.error("用户管理|修改密码|执行异常:{}", e);
             return ResResult.error("修改密码失败！");
+        }
+    }
+
+    //校验登录名
+    @RequestMapping("notauth/user/checkUserName")
+    public ResResult checkUserName(String userName) {
+        try {
+            User user = this.userService.findByName(userName.trim());
+            if (user != null) {
+                return ResResult.error("登录名不可用！");
+            }
+            return ResResult.success("登录名可用！");
+        } catch (Exception e) {
+            logger.error("用户管理|校验登录名|执行异常:{}", e);
+            return ResResult.error("校验登录名失败！");
         }
     }
 

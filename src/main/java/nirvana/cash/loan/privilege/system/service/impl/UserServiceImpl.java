@@ -1,12 +1,16 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.fegin.FeginCollectionApi;
+import nirvana.cash.loan.privilege.fegin.FeginRiskApi;
 import nirvana.cash.loan.privilege.fegin.NewResponseUtil;
 import nirvana.cash.loan.privilege.fegin.facade.UserAddApiFacade;
+import nirvana.cash.loan.privilege.fegin.facade.UserUpdateApiFacade;
+import nirvana.cash.loan.privilege.system.dao.RoleMapper;
 import nirvana.cash.loan.privilege.system.dao.UserMapper;
 import nirvana.cash.loan.privilege.system.dao.UserRoleMapper;
 import nirvana.cash.loan.privilege.system.domain.User;
@@ -14,7 +18,9 @@ import nirvana.cash.loan.privilege.system.domain.UserRole;
 import nirvana.cash.loan.privilege.system.domain.UserWithRole;
 import nirvana.cash.loan.privilege.system.service.UserRoleService;
 import nirvana.cash.loan.privilege.system.service.UserService;
+import nirvana.cash.loan.privilege.web.exception.BizException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,23 +32,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl extends BaseService<User> implements UserService {
-
 	public static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
 	@Autowired
 	private UserMapper userMapper;
-
 	@Autowired
 	private UserRoleMapper userRoleMapper;
-
 	@Autowired
 	private UserRoleService userRoleService;
-
+	@Autowired
+	private RoleMapper roleMapper;
 	@Autowired
 	private FeginCollectionApi feginCollectionApi;
+	@Autowired
+	private FeginRiskApi feginRiskApi;
 
 	@Override
 	public User findByName(String userName) {
@@ -97,40 +103,69 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public void addUser(User user, Long[] roles) {
+	public ResResult addUser(User user, Long[] roles) {
 		user.setUserId(this.getSequence(User.SEQ));
 		user.setCrateTime(new Date());
 		user.setTheme(User.DEFAULT_THEME);
 		user.setAvatar(User.DEFAULT_AVATAR);
 		user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
+        user.setIsDelete(0);
 		this.save(user);
 		setUserRoles(user, roles);
 
-		//添加催收人员
+		//子系统用户同步
 		List<Integer> roleIds=new ArrayList<>();
 		for(Long item:roles){
 			roleIds.add(item.intValue());
 		}
-		List<String> roleNames = userMapper.findCollectionRoleNamesByRoleIds(roleIds);
-		if(roleNames!=null && roleNames.size()>0){
-			String roleName=roleNames.get(0);
-			//角色:0催收专员 1催收主管
-			int roleType = 0;
-			if(roleName.equals("催收主管")){
-				roleType = 1;
+		List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
+		//催收用户
+		List<String> collRoleCodeList = new ArrayList<>();
+		for(String roleCode:roleCodeList){
+			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			if(service!=null && service.equals("coll")){
+				collRoleCodeList.add(service);
+			}
+		}
+		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
+			if(collRoleCodeList.size()>1){
+				throw new BizException("添加催收用户失败:一个催收登录帐号只能拥有催收一个角色");
 			}
 			UserAddApiFacade facade = new UserAddApiFacade();
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleType(roleType);
+			facade.setRoleCodeList(collRoleCodeList);
 			NewResponseUtil apiRes = feginCollectionApi.addUser(facade);
 			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-				logger.error("添加催收员失败|响应数据:{}", JSON.toJSONString(apiRes));
-				throw new RuntimeException("添加催收员失败");
+				logger.error("添加催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				throw new BizException("添加催收用户失败");
 			}
 		}
-
+		//风控
+		List<String> riskRoleCodeList = new ArrayList<>();
+		for(String roleCode:roleCodeList){
+			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			if(service!=null && service.equals("risk")){
+				riskRoleCodeList.add(service);
+			}
+		}
+		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
+            if(riskRoleCodeList.size()>1){
+                throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有风控一个角色");
+            }
+			UserAddApiFacade facade = new UserAddApiFacade();
+			facade.setUserName(user.getName());
+			facade.setLoginName(user.getUsername());
+			facade.setMobile(user.getMobile());
+			facade.setRoleCodeList(riskRoleCodeList);
+			NewResponseUtil apiRes = feginRiskApi.addUser(facade);
+			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
+				logger.error("添加风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				throw new BizException("添加风控用户失败");
+			}
+		}
+		return ResResult.success();
 	}
 
 	private void setUserRoles(User user, Long[] roles) {
@@ -150,23 +185,111 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		user.setPassword(oldUser.getPassword());
 		user.setUsername(oldUser.getUsername());
 		user.setModifyTime(new Date());
-		//this.updateNotNull(user);
+        user.setIsDelete(0);
 		this.updateAll(user);
 		Example example = new Example(UserRole.class);
 		example.createCriteria().andCondition("user_id=", user.getUserId());
 		this.userRoleMapper.deleteByExample(example);
 		setUserRoles(user, roles);
+
+		//子系统用户同步
+		List<Integer> roleIds=new ArrayList<>();
+		for(Long item:roles){
+			roleIds.add(item.intValue());
+		}
+		List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
+		//催收用户
+		List<String> collRoleCodeList = new ArrayList<>();
+		for(String roleCode:roleCodeList){
+			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			if(service!=null && service.equals("coll")){
+				collRoleCodeList.add(service);
+			}
+		}
+		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
+			if(collRoleCodeList.size()>1){
+				throw new BizException("修改催收用户失败:一个催收登录帐号只能拥有一个催收角色");
+			}
+			UserUpdateApiFacade facade = new UserUpdateApiFacade();
+			facade.setUserName(user.getName());
+			facade.setLoginName(user.getUsername());
+			facade.setMobile(user.getMobile());
+			facade.setRoleCodeList(collRoleCodeList);
+			facade.setStatus(1);
+			NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
+			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
+				logger.error("修改催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				throw new BizException("修改催收用户失败");
+			}
+		}
+		//风控
+		List<String> riskRoleCodeList = new ArrayList<>();
+		for(String roleCode:roleCodeList){
+			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			if(service!=null && service.equals("risk")){
+				riskRoleCodeList.add(service);
+			}
+		}
+		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
+            if(riskRoleCodeList.size()>1){
+                throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有一个风控角色");
+            }
+			UserUpdateApiFacade facade = new UserUpdateApiFacade();
+			facade.setUserName(user.getName());
+			facade.setLoginName(user.getUsername());
+			facade.setMobile(user.getMobile());
+			facade.setRoleCodeList(riskRoleCodeList);
+			facade.setStatus(1);
+			NewResponseUtil apiRes = feginRiskApi.updateUser(facade);
+			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
+				logger.error("修改风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				throw new BizException("修改风控用户失败");
+			}
+		}
 	}
 
 	@Override
 	@Transactional
 	public void deleteUser(Integer userId) {
-		List<String> list = Arrays.asList(userId.toString().split(","));
 		User user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
 		//system账号禁止删除
 		if(user!=null && !"system".equals(user.getUsername().trim())){
-			this.batchDelete(list, "userId", User.class);
+            user.setIsDelete(1);
+            this.updateNotNull(user);
 			this.userRoleService.deleteUserRolesByUserId(userId.toString());
+
+			//子系统用户同步
+			List<String> roleCodeList = userRoleService.findRoleCodeListByUserId(userId);
+			//催收用户
+			List<String> collRoleCodeList=roleCodeList.stream().filter(t->t.equals("coll")).collect(Collectors.toList());
+			if(collRoleCodeList!=null && collRoleCodeList.size()>0){
+				UserUpdateApiFacade facade = new UserUpdateApiFacade();
+				facade.setUserName(user.getName());
+				facade.setLoginName(user.getUsername());
+				facade.setMobile(user.getMobile());
+				facade.setRoleCodeList(collRoleCodeList);
+				facade.setStatus(2);
+				NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
+				if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
+					logger.error("删除催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+					throw new BizException("删除催收用户失败");
+				}
+			}
+			//风控
+			List<String> riskRoleCodeList=roleCodeList.stream().filter(t->t.equals("risk")).collect(Collectors.toList());
+			if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
+				UserUpdateApiFacade facade = new UserUpdateApiFacade();
+				facade.setUserName(user.getName());
+				facade.setLoginName(user.getUsername());
+				facade.setMobile(user.getMobile());
+				facade.setRoleCodeList(riskRoleCodeList);
+				facade.setStatus(2);
+				NewResponseUtil apiRes = feginRiskApi.updateUser(facade);
+				if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
+					logger.error("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+					throw new BizException("删除风控用户失败");
+				}
+			}
 		}
 	}
 
