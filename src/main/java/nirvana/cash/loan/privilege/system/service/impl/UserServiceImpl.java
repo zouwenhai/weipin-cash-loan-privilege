@@ -226,6 +226,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Transactional
 	public void deleteUser(Integer userId) {
 		User user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
+        List<String> roleCodeList = userRoleService.findRoleCodeListByUserId(userId);
 		//system账号禁止删除
 		if(user!=null && !"system".equals(user.getUsername().trim())){
             user.setIsDelete(1);
@@ -233,7 +234,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			this.userRoleService.deleteUserRolesByUserId(userId.toString());
 
 			//子系统用户同步
-			List<String> roleCodeList = userRoleService.findRoleCodeListByUserId(userId);
 			//催收用户
 			List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
 			if(collRoleCodeList!=null && collRoleCodeList.size()>0){
