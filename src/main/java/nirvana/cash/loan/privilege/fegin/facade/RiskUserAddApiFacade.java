@@ -1,7 +1,6 @@
 package nirvana.cash.loan.privilege.fegin.facade;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by Administrator on 2018/8/2.
