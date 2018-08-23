@@ -112,10 +112,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		setUserRoles(user, roles);
 
 		//子系统用户同步
-		List<Integer> roleIds=new ArrayList<>();
-		for(Long item:roles){
-			roleIds.add(item.intValue());
-		}
+		List<Integer> roleIds = this.transRoleIds(roles);
 		List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
 		//催收用户
 		List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
@@ -180,11 +177,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		setUserRoles(user, roles);
 
 		//子系统用户同步
-		//新角色IDs
-		List<Integer> roleIds=new ArrayList<>();
-		for(Long item:roles){
-			roleIds.add(item.intValue());
-		}
+		List<Integer> roleIds = this.transRoleIds(roles);
 		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
 		//催收用户
 		List<String> oldCollRoleCodeList = filterRoleCodeList(oldRoleCodeList,"coll");
@@ -342,6 +335,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			}
 		}
 		return  collRoleCodeList;
+	}
+
+	public List<Integer> transRoleIds(Long[] roles){
+		List<Integer> roleIds=new ArrayList<>();
+		for(Long item:roles){
+			roleIds.add(item.intValue());
+		}
+		return roleIds;
 	}
 
 }
