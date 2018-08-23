@@ -164,7 +164,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Transactional
 	public void updateUser(User user, Long[] roles) {
 		List<String> oldRoleCodeList = userRoleService.findRoleCodeListByUserId(user.getUserId().intValue());
+		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(this.transRoleIds(roles));
 		User oldUser=this.userMapper.selectByPrimaryKey(user.getUserId());
+
 		user.setCrateTime(oldUser.getCrateTime());
 		user.setPassword(oldUser.getPassword());
 		user.setUsername(oldUser.getUsername());
@@ -177,11 +179,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		setUserRoles(user, roles);
 
 		//子系统用户同步
-		List<Integer> roleIds = this.transRoleIds(roles);
-		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
 		//催收用户
 		List<String> oldCollRoleCodeList = filterRoleCodeList(oldRoleCodeList,"coll");
-		List<String> newCollRoleCodeList = filterRoleCodeList(oldRoleCodeList,"coll");
+		List<String> newCollRoleCodeList = filterRoleCodeList(newRoleCodeList,"coll");
 		if(oldCollRoleCodeList.size()>0 || newCollRoleCodeList.size()>0){
 			if(newCollRoleCodeList.size()>1){
 				throw new BizException("修改催收用户失败:一个催收登录帐号只能拥有一个催收角色");
@@ -201,7 +201,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 		//风控
 		List<String> oldRriskRoleCodeList = filterRoleCodeList(oldRoleCodeList,"risk");
-		List<String> newRriskRoleCodeList = filterRoleCodeList(oldRoleCodeList,"risk");
+		List<String> newRriskRoleCodeList = filterRoleCodeList(newRoleCodeList,"risk");
 		if(oldRriskRoleCodeList.size()>0 || newRriskRoleCodeList.size()>0){
 			if(newCollRoleCodeList.size()>1){
 				throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
