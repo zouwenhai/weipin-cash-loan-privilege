@@ -1,18 +1,14 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import nirvana.cash.loan.privilege.common.domain.SplitMenu;
 import nirvana.cash.loan.privilege.common.enums.RoleEnum;
+import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.system.dao.RoleMapper;
 import nirvana.cash.loan.privilege.system.dao.RoleMenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.domain.RoleMenu;
+import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
 import nirvana.cash.loan.privilege.system.service.MenuService;
 import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
 import nirvana.cash.loan.privilege.system.service.RoleService;
@@ -22,15 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import nirvana.cash.loan.privilege.common.service.impl.BaseService;
-import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class RoleServiceImpl extends BaseService<Role> implements RoleService {
-
 	@Autowired
 	private RoleMapper roleMapper;
 
@@ -61,7 +59,6 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 			example.setOrderByClause("create_time");
 			return this.selectByExample(example);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
@@ -124,18 +121,6 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	public RoleWithMenu findRoleWithMenus(Long roleId) {
-//		List<RoleWithMenu> list = this.roleMapper.findById(roleId);
-//		List<Long> menuList = new ArrayList<>();
-//		for (RoleWithMenu rwm : list) {
-//			menuList.add(rwm.getMenuId());
-//		}
-//		if (list.size() == 0) {
-//			return null;
-//		}
-//		RoleWithMenu roleWithMenu = list.get(0);
-//		roleWithMenu.setMenuIds(menuList);
-//		return roleWithMenu;
-
 		Role role= this.selectByKey(roleId);
 		List<Menu> allList = menuService.findAllMenus(new Menu());
 		List<RoleWithMenu> roleWithMenuList = this.roleMapper.findById(roleId);
