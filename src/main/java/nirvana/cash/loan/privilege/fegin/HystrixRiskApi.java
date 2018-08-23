@@ -1,8 +1,8 @@
 package nirvana.cash.loan.privilege.fegin;
 
 import com.alibaba.fastjson.JSON;
-import nirvana.cash.loan.privilege.fegin.facade.UserAddApiFacade;
-import nirvana.cash.loan.privilege.fegin.facade.UserUpdateApiFacade;
+import nirvana.cash.loan.privilege.fegin.facade.RiskUserAddApiFacade;
+import nirvana.cash.loan.privilege.fegin.facade.RiskUserUpdateApiFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,13 +16,13 @@ public class HystrixRiskApi implements FeginRiskApi {
     public static final Logger logger = LoggerFactory.getLogger(HystrixRiskApi.class);
 
     @Override
-    public NewResponseUtil addUser(@RequestBody UserAddApiFacade facade) {
+    public NewResponseUtil addOrderUser(@RequestBody RiskUserAddApiFacade facade) {
         logger.error("程序进入断路器|添加风控人员失败,请求参数:{}", JSON.toJSONString(facade));
         throw new RuntimeException("请求风控服务异常|添加风控人员失败");
     }
 
     @Override
-    public NewResponseUtil updateUser(@RequestBody UserUpdateApiFacade facade) {
+    public NewResponseUtil updateOrderUser(@RequestBody RiskUserUpdateApiFacade facade) {
         logger.error("程序进入断路器|更新催收风控失败,请求参数:{}", JSON.toJSONString(facade));
         throw new RuntimeException("请求风控服务异常|更新风控人员失败");
     }

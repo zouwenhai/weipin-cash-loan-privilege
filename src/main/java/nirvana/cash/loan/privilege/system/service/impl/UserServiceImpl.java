@@ -8,6 +8,8 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.fegin.FeginCollectionApi;
 import nirvana.cash.loan.privilege.fegin.FeginRiskApi;
 import nirvana.cash.loan.privilege.fegin.NewResponseUtil;
+import nirvana.cash.loan.privilege.fegin.facade.RiskUserAddApiFacade;
+import nirvana.cash.loan.privilege.fegin.facade.RiskUserUpdateApiFacade;
 import nirvana.cash.loan.privilege.fegin.facade.UserAddApiFacade;
 import nirvana.cash.loan.privilege.fegin.facade.UserUpdateApiFacade;
 import nirvana.cash.loan.privilege.system.dao.RoleMapper;
@@ -30,7 +32,6 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl extends BaseService<User> implements UserService {
@@ -137,12 +138,13 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             if(riskRoleCodeList.size()>1){
                 throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有一个风控角色");
             }
-			UserAddApiFacade facade = new UserAddApiFacade();
+			RiskUserAddApiFacade facade = new RiskUserAddApiFacade();
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleCodeList(riskRoleCodeList);
-			NewResponseUtil apiRes = feginRiskApi.addUser(facade);
+			facade.setRoleType(riskRoleCodeList.get(0));
+			facade.setUserStatus("1");
+			NewResponseUtil apiRes = feginRiskApi.addOrderUser(facade);
 			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
 				logger.error("添加风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
 				throw new BizException("添加风控用户失败");
@@ -206,13 +208,18 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			if(newCollRoleCodeList.size()>1){
 				throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
 			}
-			UserUpdateApiFacade facade = new UserUpdateApiFacade();
+			RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleCodeList(newRriskRoleCodeList);
-			facade.setStatus(1);
-			NewResponseUtil apiRes = feginRiskApi.updateUser(facade);
+			facade.setRoleType(newRriskRoleCodeList.get(0));
+			if(newRriskRoleCodeList.size() == 0){
+				facade.setUserStatus("2");//下线
+			}
+			else{
+				facade.setUserStatus("1");//在线
+			}
+			NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
 			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
 				logger.error("修改风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
 				throw new BizException("修改风控用户失败");
@@ -250,13 +257,13 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			//风控
 			List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
 			if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
-				UserUpdateApiFacade facade = new UserUpdateApiFacade();
+				RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
 				facade.setUserName(user.getName());
 				facade.setLoginName(user.getUsername());
 				facade.setMobile(user.getMobile());
-				facade.setRoleCodeList(riskRoleCodeList);
-				facade.setStatus(2);
-				NewResponseUtil apiRes = feginRiskApi.updateUser(facade);
+				facade.setRoleType(riskRoleCodeList.get(0));
+				facade.setUserStatus("0");//删除
+				NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
 				if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
 					logger.error("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
 					throw new BizException("删除风控用户失败");
