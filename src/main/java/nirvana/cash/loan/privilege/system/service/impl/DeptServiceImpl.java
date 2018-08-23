@@ -1,31 +1,24 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import nirvana.cash.loan.privilege.common.domain.FilterId;
+import nirvana.cash.loan.privilege.common.domain.Tree;
+import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
+import nirvana.cash.loan.privilege.system.domain.Dept;
+import nirvana.cash.loan.privilege.system.service.DeptService;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import nirvana.cash.loan.privilege.common.domain.Tree;
-import nirvana.cash.loan.privilege.common.service.impl.BaseService;
-import nirvana.cash.loan.privilege.system.dao.DeptMapper;
-import nirvana.cash.loan.privilege.system.domain.Dept;
-import nirvana.cash.loan.privilege.system.service.DeptService;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
-
-	@Autowired
-	private DeptMapper deptMapper;
 
 	@Override
 	public Tree<Dept> getDeptTree() {
@@ -51,7 +44,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 			example.setOrderByClause("dept_id");
 			return this.selectByExample(example);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
@@ -82,10 +74,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	@Override
 	@Transactional
 	public void deleteDepts(String deptIds) {
-		//List<String> list = Arrays.asList(deptIds.split(","));
-		//this.batchDelete(list, "deptId", Dept.class);
-		//this.deptMapper.changeToTop(list);
-
 		List<Dept> depts = this.findAllDepts(new Dept());
 		if(depts!=null && depts.size()>0){
 			//转换列表
