@@ -25,7 +25,6 @@ public class DeptController extends BaseController {
 		try {
 			 list = this.deptService.findAllDepts(dept);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return ResResult.error();
 		}
 		return ResResult.success(list);
@@ -38,7 +37,6 @@ public class DeptController extends BaseController {
 			Tree<Dept> tree = this.deptService.getDeptTree();
 			return ResResult.success(tree);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return ResResult.error("获取部门列表失败！");
 		}
 	}
@@ -50,7 +48,6 @@ public class DeptController extends BaseController {
 			Dept dept = this.deptService.findById(deptId);
 			return ResResult.success(dept);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return ResResult.error("获取部门信息失败！");
 		}
 	}
