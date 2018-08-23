@@ -82,7 +82,12 @@ public class UserController extends BaseController {
         try {
             this.userService.updateUser(user, rolesSelect);
             return ResResult.success();
-        } catch (Exception e) {
+        }
+        catch (BizException e) {
+            logger.error("用户管理|修改用户|执行异常:{}", e);
+            return ResResult.error(e.getMessage());
+        }
+        catch (Exception e) {
             logger.error("用户管理|修改用户|执行异常:{}", e);
             return ResResult.error("修改用户失败！");
         }
