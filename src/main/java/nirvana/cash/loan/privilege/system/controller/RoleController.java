@@ -40,7 +40,6 @@ public class RoleController extends BaseController {
 			Role role = this.roleService.findRoleWithMenus(roleId);
 			return ResResult.success(role);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return ResResult.error("获取角色信息失败！");
 		}
 	}
