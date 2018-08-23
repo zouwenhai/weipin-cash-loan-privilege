@@ -120,7 +120,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		//催收用户
 		List<String> collRoleCodeList = new ArrayList<>();
 		for(String roleCode:roleCodeList){
-			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
+			String service = roleEnum==null?null:roleEnum.getService();
 			if(service!=null && service.equals("coll")){
 				collRoleCodeList.add(roleCode);
 			}
@@ -143,7 +144,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		//风控
 		List<String> riskRoleCodeList = new ArrayList<>();
 		for(String roleCode:roleCodeList){
-			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
+			String service = roleEnum==null?null:roleEnum.getService();
 			if(service!=null && service.equals("risk")){
 				riskRoleCodeList.add(roleCode);
 			}
@@ -199,7 +201,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		//催收用户
 		List<String> collRoleCodeList = new ArrayList<>();
 		for(String roleCode:roleCodeList){
-			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
+			String service = roleEnum==null?null:roleEnum.getService();
 			if(service!=null && service.equals("coll")){
 				collRoleCodeList.add(roleCode);
 			}
@@ -223,7 +226,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		//风控
 		List<String> riskRoleCodeList = new ArrayList<>();
 		for(String roleCode:roleCodeList){
-			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
+			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
+			String service = roleEnum==null?null:roleEnum.getService();
 			if(service!=null && service.equals("risk")){
 				riskRoleCodeList.add(roleCode);
 			}
@@ -259,7 +263,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			//子系统用户同步
 			List<String> roleCodeList = userRoleService.findRoleCodeListByUserId(userId);
 			//催收用户
-			List<String> collRoleCodeList=roleCodeList.stream().filter(t->t.equals("coll")).collect(Collectors.toList());
+			List<String> collRoleCodeList = new ArrayList<>();
+			for(String roleCode:roleCodeList){
+				RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
+				String service = roleEnum==null?null:roleEnum.getService();
+				if(service!=null && service.equals("coll")){
+					collRoleCodeList.add(roleCode);
+				}
+			}
 			if(collRoleCodeList!=null && collRoleCodeList.size()>0){
 				UserUpdateApiFacade facade = new UserUpdateApiFacade();
 				facade.setUserName(user.getName());
@@ -274,7 +285,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				}
 			}
 			//风控
-			List<String> riskRoleCodeList=roleCodeList.stream().filter(t->t.equals("risk")).collect(Collectors.toList());
+			List<String> riskRoleCodeList = new ArrayList<>();
+			for(String roleCode:roleCodeList){
+				RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
+				String service = roleEnum==null?null:roleEnum.getService();
+				if(service!=null && service.equals("risk")){
+					riskRoleCodeList.add(roleCode);
+				}
+			}
 			if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
 				UserUpdateApiFacade facade = new UserUpdateApiFacade();
 				facade.setUserName(user.getName());
