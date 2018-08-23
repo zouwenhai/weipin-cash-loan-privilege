@@ -212,11 +212,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleType(newRriskRoleCodeList.get(0));
 			if(newRriskRoleCodeList.size() == 0){
+                facade.setRoleType(oldRriskRoleCodeList.get(0));
 				facade.setUserStatus("2");//下线
 			}
 			else{
+                facade.setRoleType(newRriskRoleCodeList.get(0));
 				facade.setUserStatus("1");//在线
 			}
 			NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
