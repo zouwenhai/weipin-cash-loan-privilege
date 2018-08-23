@@ -1,8 +1,5 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import java.util.*;
-
-import com.alibaba.fastjson.JSON;
 import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
@@ -10,16 +7,19 @@ import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.system.dao.MenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
+import nirvana.cash.loan.privilege.system.service.MenuService;
 import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import nirvana.cash.loan.privilege.system.service.MenuService;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -55,7 +55,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			example.setOrderByClause("menu_id");
 			return this.selectByExample(example);
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
