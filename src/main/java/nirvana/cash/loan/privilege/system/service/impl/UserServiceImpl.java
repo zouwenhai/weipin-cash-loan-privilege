@@ -127,7 +127,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		}
 		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
 			if(collRoleCodeList.size()>1){
-				throw new BizException("添加催收用户失败:一个催收登录帐号只能拥有催收一个角色");
+				throw new BizException("添加催收用户失败:一个催收登录帐号只能拥有一个催收角色");
 			}
 			UserAddApiFacade facade = new UserAddApiFacade();
 			facade.setUserName(user.getName());
@@ -150,7 +150,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		}
 		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
             if(riskRoleCodeList.size()>1){
-                throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有风控一个角色");
+                throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有一个风控角色");
             }
 			UserAddApiFacade facade = new UserAddApiFacade();
 			facade.setUserName(user.getName());
