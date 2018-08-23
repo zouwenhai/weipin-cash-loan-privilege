@@ -31,7 +31,6 @@ public class MenuController extends BaseController {
         try {
             return ResResult.success(this.menuService.findAllMenus(menu));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error();
         }
     }
@@ -43,7 +42,6 @@ public class MenuController extends BaseController {
             Menu menu = this.menuService.findById(menuId);
             return ResResult.success(menu);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error("获取信息失败！");
         }
     }
@@ -55,7 +53,6 @@ public class MenuController extends BaseController {
             Tree<Menu> tree = this.menuService.getMenuTree();
             return ResResult.success(tree);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error("获取菜单列表失败！");
         }
     }
@@ -113,7 +110,6 @@ public class MenuController extends BaseController {
             Tree<Menu> tree = this.menuService.getMenuButtonTree();
             return ResResult.success(tree);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error("获取菜单列表失败！");
         }
     }
@@ -131,7 +127,6 @@ public class MenuController extends BaseController {
             String treestr=redisService.get(userTreeKey,String.class);
             return ResResult.success(JSON.parseObject(treestr));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error("获取用户菜单失败！");
         }
     }
@@ -148,7 +143,6 @@ public class MenuController extends BaseController {
             List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
             return ResResult.success(permissionList);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error("查询用户权限失败！");
         }
     }
@@ -176,7 +170,6 @@ public class MenuController extends BaseController {
             }
             return ResResult.success(TreeUtils.build(trees));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error("查询左侧菜单列表失败！");
         }
     }
