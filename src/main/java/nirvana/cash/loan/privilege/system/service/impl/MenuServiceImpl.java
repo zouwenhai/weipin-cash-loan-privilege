@@ -131,10 +131,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	@Override
 	@Transactional
 	public void deleteMeuns(String menuIds) {
-		//List<String> list = Arrays.asList(menuIds.split(","));
-		//this.batchDelete(list, "menuId", Menu.class);
-		//this.roleMenuService.deleteRoleMenusByMenuId(menuIds);
-		//this.menuMapper.changeToTop(list);
 		List<Menu> menus = this.findAllMenus(new Menu());
 		if (menus != null && menus.size() > 0) {
 			//转换列表
@@ -167,7 +163,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 		menu.setModifyTime(new Date());
 		if (menu.getParentId() == null)
 			menu.setParentId(0L);
-		//this.updateNotNull(menu);
         this.updateAll(menu);
 	}
 
