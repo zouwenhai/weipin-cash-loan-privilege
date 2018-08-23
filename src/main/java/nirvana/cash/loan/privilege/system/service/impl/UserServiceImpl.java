@@ -211,7 +211,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		List<String> newRriskRoleCodeList = filterRoleCodeList(oldRoleCodeList,"risk");
 		if(oldRriskRoleCodeList.size()>0 || newRriskRoleCodeList.size()>0){
 			if(newCollRoleCodeList.size()>1){
-				throw new BizException("修改催收用户失败:一个催收登录帐号只能拥有一个催收角色");
+				throw new BizException("修改风控用户失败:一个催收风控帐号只能拥有一个催收角色");
 			}
 			UserUpdateApiFacade facade = new UserUpdateApiFacade();
 			facade.setUserName(user.getName());
