@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,7 +122,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		for(String roleCode:roleCodeList){
 			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
 			if(service!=null && service.equals("coll")){
-				collRoleCodeList.add(service);
+				collRoleCodeList.add(roleCode);
 			}
 		}
 		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
@@ -146,7 +145,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		for(String roleCode:roleCodeList){
 			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
 			if(service!=null && service.equals("risk")){
-				riskRoleCodeList.add(service);
+				riskRoleCodeList.add(roleCode);
 			}
 		}
 		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
@@ -202,7 +201,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		for(String roleCode:roleCodeList){
 			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
 			if(service!=null && service.equals("coll")){
-				collRoleCodeList.add(service);
+				collRoleCodeList.add(roleCode);
 			}
 		}
 		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
@@ -226,7 +225,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		for(String roleCode:roleCodeList){
 			String service =RoleEnum.getPaymentStatusEnumByValue(roleCode).getService();
 			if(service!=null && service.equals("risk")){
-				riskRoleCodeList.add(service);
+				riskRoleCodeList.add(roleCode);
 			}
 		}
 		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
