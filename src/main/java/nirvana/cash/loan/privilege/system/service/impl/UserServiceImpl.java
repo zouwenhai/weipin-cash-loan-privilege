@@ -75,32 +75,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public void registUser(User user) {
-		user.setUserId(this.getSequence(User.SEQ));
-		user.setCrateTime(new Date());
-		user.setTheme(User.DEFAULT_THEME);
-		user.setAvatar(User.DEFAULT_AVATAR);
-		user.setSsex(User.SEX_UNKNOW);
-		user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
-		this.save(user);
-		UserRole ur = new UserRole();
-		ur.setUserId(user.getUserId());
-		ur.setRoleId(3L);
-		this.userRoleMapper.insert(ur);
-	}
-
-	@Override
-	@Transactional
-	public void updateTheme(String theme, String userName) {
-		Example example = new Example(User.class);
-		example.createCriteria().andCondition("username=", userName);
-		User user = new User();
-		user.setTheme(theme);
-		this.userMapper.updateByExampleSelective(user, example);
-	}
-
-	@Override
-	@Transactional
 	public ResResult addUser(User user, Long[] roles) {
 		user.setUserId(this.getSequence(User.SEQ));
 		user.setCrateTime(new Date());
@@ -319,21 +293,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		UserWithRole userWithRole = list.get(0);
 		userWithRole.setRoleIds(roleList);
 		return userWithRole;
-	}
-
-	@Override
-	public User findUserProfile(User user) {
-		return this.userMapper.findUserProfile(user);
-	}
-
-	@Override
-	@Transactional
-	public void updateUserProfile(User user) {
-		user.setUsername(null);
-		user.setPassword(null);
-		if (user.getDeptId() == null)
-			user.setDeptId(0L);
-		this.updateNotNull(user);
 	}
 
 	@Override

@@ -37,11 +37,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	}
 
 	@Override
-	public List<Menu> findUserMenus(String userName) {
-		return this.menuMapper.findUserMenus(userName);
-	}
-
-	@Override
 	public List<Menu> findAllMenus(Menu menu) {
 		try {
 			Example example = new Example(Menu.class);
@@ -86,35 +81,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			tree.setText(menu.getMenuName());
 			tree.setMenuType(menu.getType());
 			trees.add(tree);
-		}
-	}
-
-	@Override
-	public Tree<Menu> getUserMenu(String userName) {
-		List<Tree<Menu>> trees = new ArrayList<>();
-		List<Menu> menus = this.findUserMenus(userName);
-		for (Menu menu : menus) {
-			Tree<Menu> tree = new Tree<>();
-			tree.setId(menu.getMenuId().toString());
-			tree.setParentId(menu.getParentId().toString());
-			tree.setText(menu.getMenuName());
-			tree.setIcon(menu.getIcon());
-			tree.setUrl(menu.getUrl());
-			trees.add(tree);
-		}
-		return TreeUtils.build(trees);
-	}
-
-	@Override
-	public Menu findByNameAndType(String menuName, String type) {
-		Example example = new Example(Menu.class);
-		example.createCriteria().andCondition("lower(menu_name)=", menuName.toLowerCase()).andEqualTo("type",
-				Long.valueOf(type));
-		List<Menu> list = this.selectByExample(example);
-		if (list.size() == 0) {
-			return null;
-		} else {
-			return list.get(0);
 		}
 	}
 

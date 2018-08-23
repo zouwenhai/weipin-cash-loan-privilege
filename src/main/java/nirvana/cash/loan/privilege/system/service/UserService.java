@@ -1,11 +1,11 @@
 package nirvana.cash.loan.privilege.system.service;
 
-import java.util.List;
-
 import nirvana.cash.loan.privilege.common.service.IService;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.domain.UserWithRole;
+
+import java.util.List;
 
 public interface UserService extends IService<User> {
 
@@ -14,10 +14,6 @@ public interface UserService extends IService<User> {
 	User findByName(String userName);
 
 	List<User> findUserWithDept(User user);
-
-	void registUser(User user);
-
-	void updateTheme(String theme, String userName);
 
 	ResResult addUser(User user, Long[] roles);
 
@@ -28,10 +24,6 @@ public interface UserService extends IService<User> {
 	void updateLoginTime(String userName);
 	
 	void updatePassword(String password,Long userId);
-	
-	User findUserProfile(User user);
-	
-	void updateUserProfile(User user);
 
 	String findUserRoldIds(Integer userId);
 }

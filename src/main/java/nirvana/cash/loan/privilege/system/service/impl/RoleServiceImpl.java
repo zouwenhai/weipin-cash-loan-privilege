@@ -45,11 +45,6 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 	private MenuService menuService;
 
 	@Override
-	public List<Role> findUserRole(String userName) {
-		return this.roleMapper.findUserRole(userName);
-	}
-
-	@Override
 	public List<Role> findAllRole(Role role) {
 		try {
 			Example example = new Example(Role.class);
@@ -60,18 +55,6 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 			return this.selectByExample(example);
 		} catch (Exception e) {
 			return new ArrayList<>();
-		}
-	}
-
-	@Override
-	public Role findByName(String roleName) {
-		Example example = new Example(Role.class);
-		example.createCriteria().andCondition("lower(role_name)=", roleName.toLowerCase());
-		List<Role> list = this.selectByExample(example);
-		if (list.size() == 0) {
-			return null;
-		} else {
-			return list.get(0);
 		}
 	}
 

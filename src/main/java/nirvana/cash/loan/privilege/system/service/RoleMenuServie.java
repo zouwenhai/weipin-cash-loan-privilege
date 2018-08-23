@@ -9,7 +9,5 @@ public interface RoleMenuServie extends IService<RoleMenu> {
 
 	void deleteRoleMenusByRoleId(String roleIds);
 
-	void deleteRoleMenusByMenuId(String menuIds);
-
 	void deleteRoleMenusByMenuId(List menuIds);
 }
