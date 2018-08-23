@@ -20,7 +20,6 @@ import nirvana.cash.loan.privilege.system.service.UserRoleService;
 import nirvana.cash.loan.privilege.system.service.UserService;
 import nirvana.cash.loan.privilege.web.exception.BizException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
