@@ -192,8 +192,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleCodeList(newCollRoleCodeList);
-			facade.setStatus(1);
+            if(newCollRoleCodeList.size() == 0){
+                facade.setStatus(2);//删除
+                facade.setRoleCodeList(oldCollRoleCodeList);
+            }
+            else{
+                facade.setStatus(1);//修改
+                facade.setRoleCodeList(newCollRoleCodeList);
+            }
 			NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
 			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
 				logger.error("修改催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
