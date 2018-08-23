@@ -190,7 +190,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleCodeList(newRoleCodeList);
+			facade.setRoleCodeList(newCollRoleCodeList);
 			facade.setStatus(1);
 			NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
 			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
