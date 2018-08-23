@@ -166,6 +166,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Override
 	@Transactional
 	public void updateUser(User user, Long[] roles) {
+		List<String> oldRoleCodeList = userRoleService.findRoleCodeListByUserId(user.getUserId().intValue());
 		User oldUser=this.userMapper.selectByPrimaryKey(user.getUserId());
 		user.setCrateTime(oldUser.getCrateTime());
 		user.setPassword(oldUser.getPassword());
@@ -179,22 +180,24 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		setUserRoles(user, roles);
 
 		//子系统用户同步
+		//新角色IDs
 		List<Integer> roleIds=new ArrayList<>();
 		for(Long item:roles){
 			roleIds.add(item.intValue());
 		}
-		List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
+		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
 		//催收用户
-		List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
-		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
-			if(collRoleCodeList.size()>1){
+		List<String> oldCollRoleCodeList = filterRoleCodeList(oldRoleCodeList,"coll");
+		List<String> newCollRoleCodeList = filterRoleCodeList(oldRoleCodeList,"coll");
+		if(oldCollRoleCodeList.size()>0 || newCollRoleCodeList.size()>0){
+			if(newCollRoleCodeList.size()>1){
 				throw new BizException("修改催收用户失败:一个催收登录帐号只能拥有一个催收角色");
 			}
 			UserUpdateApiFacade facade = new UserUpdateApiFacade();
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleCodeList(collRoleCodeList);
+			facade.setRoleCodeList(newRoleCodeList);
 			facade.setStatus(1);
 			NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
 			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
@@ -202,17 +205,19 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				throw new BizException("修改催收用户失败");
 			}
 		}
+
 		//风控
-		List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
-		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
-            if(riskRoleCodeList.size()>1){
-                throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有一个风控角色");
-            }
+		List<String> oldRriskRoleCodeList = filterRoleCodeList(oldRoleCodeList,"risk");
+		List<String> newRriskRoleCodeList = filterRoleCodeList(oldRoleCodeList,"risk");
+		if(oldRriskRoleCodeList.size()>0 || newRriskRoleCodeList.size()>0){
+			if(newCollRoleCodeList.size()>1){
+				throw new BizException("修改催收用户失败:一个催收登录帐号只能拥有一个催收角色");
+			}
 			UserUpdateApiFacade facade = new UserUpdateApiFacade();
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
-			facade.setRoleCodeList(riskRoleCodeList);
+			facade.setRoleCodeList(newRriskRoleCodeList);
 			facade.setStatus(1);
 			NewResponseUtil apiRes = feginRiskApi.updateUser(facade);
 			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
