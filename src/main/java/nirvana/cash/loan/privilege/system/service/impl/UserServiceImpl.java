@@ -126,10 +126,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
 			facade.setRoleCodeList(collRoleCodeList);
-			NewResponseUtil apiRes = feginCollectionApi.addUser(facade);
-			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-				logger.error("添加催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-				throw new BizException("添加催收用户失败");
+			try{
+				NewResponseUtil apiRes = feginCollectionApi.addUser(facade);
+				logger.info("添加催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+			} catch (Exception ex){
+				logger.error("添加催收用户失败|程序异常:{}", ex);
 			}
 		}
 		//风控
@@ -144,10 +145,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setMobile(user.getMobile());
 			facade.setRoleType(riskRoleCodeList.get(0));
 			facade.setUserStatus("1");
-			NewResponseUtil apiRes = feginRiskApi.addOrderUser(facade);
-			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-				logger.error("添加风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-				throw new BizException("添加风控用户失败");
+			try{
+				NewResponseUtil apiRes = feginRiskApi.addOrderUser(facade);
+				logger.info("添加风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+			} catch (Exception ex){
+				logger.error("添加风控用户失败|程序异常:{}", ex);
 			}
 		}
 		return ResResult.success();
@@ -200,10 +202,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
                 facade.setStatus(1);//修改
                 facade.setRoleCodeList(newCollRoleCodeList);
             }
-			NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
-			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-				logger.error("修改催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-				throw new BizException("修改催收用户失败");
+            try{
+				NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
+				logger.info("修改催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+			} catch (Exception ex){
+				logger.error("修改催收用户失败|程序异常:{}", ex);
 			}
 		}
 
@@ -226,10 +229,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
                 facade.setRoleType(newRriskRoleCodeList.get(0));
 				facade.setUserStatus("1");//在线
 			}
-			NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
-			if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-				logger.error("修改风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-				throw new BizException("修改风控用户失败");
+			try{
+				NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
+				logger.info("修改风用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+			} catch (Exception ex){
+				logger.error("修改风用户失败|程序异常:{}", ex);
 			}
 		}
 	}
@@ -255,10 +259,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				facade.setMobile(user.getMobile());
 				facade.setRoleCodeList(collRoleCodeList);
 				facade.setStatus(2);
-				NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
-				if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-					logger.error("删除催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-					throw new BizException("删除催收用户失败");
+				try{
+					NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
+					logger.info("删除催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				} catch (Exception ex){
+					logger.error("删除催收用户失败|程序异常:{}", ex);
 				}
 			}
 			//风控
@@ -270,10 +275,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				facade.setMobile(user.getMobile());
 				facade.setRoleType(riskRoleCodeList.get(0));
 				facade.setUserStatus("0");//删除
-				NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
-				if (!ResResult.SUCCESS.equals(apiRes.getCode())) {
-					logger.error("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-					throw new BizException("删除风控用户失败");
+				try{
+					NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
+					logger.info("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				} catch (Exception ex){
+					logger.error("删除风控用户失败|程序异常:{}", ex);
 				}
 			}
 		}
