@@ -42,7 +42,6 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 			example.setOrderByClause("create_time");
 			return this.selectByExample(example);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
