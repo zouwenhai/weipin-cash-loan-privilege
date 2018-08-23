@@ -46,7 +46,6 @@ public class UserController extends BaseController {
             User user = this.userService.findById(userId);
             return ResResult.success(user);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResResult.error("获取用户信息失败！");
         }
     }
