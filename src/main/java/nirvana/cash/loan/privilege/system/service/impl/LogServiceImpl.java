@@ -81,7 +81,6 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 			log.setCreateTime(new Date());
 			this.save(log);
 		}catch (Exception ex){
-			ex.printStackTrace();
 		}
 	}
 
