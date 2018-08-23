@@ -118,14 +118,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		}
 		List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
 		//催收用户
-		List<String> collRoleCodeList = new ArrayList<>();
-		for(String roleCode:roleCodeList){
-			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
-			String service = roleEnum==null?null:roleEnum.getService();
-			if(service!=null && service.equals("coll")){
-				collRoleCodeList.add(roleCode);
-			}
-		}
+		List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
 		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
 			if(collRoleCodeList.size()>1){
 				throw new BizException("添加催收用户失败:一个催收登录帐号只能拥有一个催收角色");
@@ -142,14 +135,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			}
 		}
 		//风控
-		List<String> riskRoleCodeList = new ArrayList<>();
-		for(String roleCode:roleCodeList){
-			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
-			String service = roleEnum==null?null:roleEnum.getService();
-			if(service!=null && service.equals("risk")){
-				riskRoleCodeList.add(roleCode);
-			}
-		}
+		List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
 		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
             if(riskRoleCodeList.size()>1){
                 throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有一个风控角色");
@@ -199,14 +185,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		}
 		List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
 		//催收用户
-		List<String> collRoleCodeList = new ArrayList<>();
-		for(String roleCode:roleCodeList){
-			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
-			String service = roleEnum==null?null:roleEnum.getService();
-			if(service!=null && service.equals("coll")){
-				collRoleCodeList.add(roleCode);
-			}
-		}
+		List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
 		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
 			if(collRoleCodeList.size()>1){
 				throw new BizException("修改催收用户失败:一个催收登录帐号只能拥有一个催收角色");
@@ -224,14 +203,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			}
 		}
 		//风控
-		List<String> riskRoleCodeList = new ArrayList<>();
-		for(String roleCode:roleCodeList){
-			RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
-			String service = roleEnum==null?null:roleEnum.getService();
-			if(service!=null && service.equals("risk")){
-				riskRoleCodeList.add(roleCode);
-			}
-		}
+		List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
 		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
             if(riskRoleCodeList.size()>1){
                 throw new BizException("添加风控用户失败:一个风控登录帐号只能拥有一个风控角色");
@@ -263,14 +235,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			//子系统用户同步
 			List<String> roleCodeList = userRoleService.findRoleCodeListByUserId(userId);
 			//催收用户
-			List<String> collRoleCodeList = new ArrayList<>();
-			for(String roleCode:roleCodeList){
-				RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
-				String service = roleEnum==null?null:roleEnum.getService();
-				if(service!=null && service.equals("coll")){
-					collRoleCodeList.add(roleCode);
-				}
-			}
+			List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
 			if(collRoleCodeList!=null && collRoleCodeList.size()>0){
 				UserUpdateApiFacade facade = new UserUpdateApiFacade();
 				facade.setUserName(user.getName());
@@ -285,14 +250,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				}
 			}
 			//风控
-			List<String> riskRoleCodeList = new ArrayList<>();
-			for(String roleCode:roleCodeList){
-				RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
-				String service = roleEnum==null?null:roleEnum.getService();
-				if(service!=null && service.equals("risk")){
-					riskRoleCodeList.add(roleCode);
-				}
-			}
+			List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
 			if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
 				UserUpdateApiFacade facade = new UserUpdateApiFacade();
 				facade.setUserName(user.getName());
@@ -364,6 +322,21 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Override
 	public String findUserRoldIds(Integer userId) {
 		return this.userMapper.findUserRoldIds(userId);
+	}
+
+
+	public List<String> filterRoleCodeList(List<String> roleCodeList,String syncService){
+		List<String> collRoleCodeList = new ArrayList<>();
+		if(roleCodeList!=null){
+			for(String roleCode:roleCodeList){
+				RoleEnum roleEnum=RoleEnum.getPaymentStatusEnumByValue(roleCode);
+				String service = roleEnum==null?null:roleEnum.getService();
+				if(service!=null && service.equals(syncService)){
+					collRoleCodeList.add(roleCode);
+				}
+			}
+		}
+		return  collRoleCodeList;
 	}
 
 }
