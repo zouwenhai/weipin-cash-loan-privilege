@@ -60,7 +60,6 @@ public class GifCaptcha extends Captcha {
 			try {
 				os.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
