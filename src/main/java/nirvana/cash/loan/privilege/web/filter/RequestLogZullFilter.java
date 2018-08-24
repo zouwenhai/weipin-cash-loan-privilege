@@ -3,10 +3,6 @@ package nirvana.cash.loan.privilege.web.filter;
 import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.service.LogService;
@@ -17,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Map;
 
 /**
  * 用zuulFilter打印请求日志
@@ -67,7 +68,7 @@ public class RequestLogZullFilter extends ZuulFilter {
             for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
                 //密码不能输出到日志
                 if(!entry.getKey().contains("password")){
-                    sb.append("[" + entry.getKey() + "=" + printArray(entry.getValue()) + "]");
+                    sb.append("[" + entry.getKey() + "=" + requestCheck.printArray(entry.getValue()) + "]");
                 }
             }
             logger.info("PreRequestLogFilter|run|请求url参数:{}", sb.toString());
@@ -103,14 +104,4 @@ public class RequestLogZullFilter extends ZuulFilter {
         return null;
     }
 
-    private String printArray(String[] arr) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < arr.length; i++) {
-            sb.append(arr[i]);
-            if (i < arr.length - 1) {
-                sb.append(",");
-            }
-        }
-        return sb.toString();
-    }
 }

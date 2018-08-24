@@ -46,7 +46,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
                 //密码不能输出到日志
                 if(!entry.getKey().contains("password")){
-                    sb.append("[" + entry.getKey() + "=" + printArray(entry.getValue()) + "]");
+                    sb.append("[" + entry.getKey() + "=" + requestCheck.printArray(entry.getValue()) + "]");
                 }
             }
             logger.info("LoginInterceptor|preHandle|请求url参数:{}", sb.toString());
@@ -91,17 +91,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         return true;
-    }
-
-    private String printArray(String[] arr) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < arr.length; i++) {
-            sb.append(arr[i]);
-            if (i < arr.length - 1) {
-                sb.append(",");
-            }
-        }
-        return sb.toString();
     }
 
 }
