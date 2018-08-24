@@ -52,37 +52,6 @@
 		left join tb_cl_privilege_user_role ur on (u.user_id = ur.user_id)
 		where u.user_id = #{userId}
   </select>
-  
-  <select id="findUserProfile" resultType="user" parameterType="user">
-	SELECT
-		U .USERNAME,
-		U .USER_ID userId,
-		D .DEPT_NAME deptName,
-		U .mobile,
-		U .email,
-		U .avatar,
-		U .description,
-		U .ssex,
-		U .dept_id deptId,
-		listagg (r.role_name, '，') WITHIN GROUP (ORDER BY r.role_id) AS roleName
-	FROM
-		tb_cl_privilege_user U
-	LEFT JOIN tb_cl_privilege_dept D ON U .DEPT_ID = D .DEPT_ID
-	LEFT JOIN tb_cl_privilege_USER_ROLE ur ON U .user_id = ur.user_id
-	LEFT JOIN tb_cl_privilege_role r ON r.role_id = ur.role_id
-	WHERE
-		U .USER_ID = #{userId}
-	GROUP BY
-		U .username,
-		D .dept_name,
-		U .mobile,
-		U .email,
-		U .avatar,
-		U .description,
-		U .ssex,
-		U .USER_ID,
-		U .dept_id
-  </select>
 
 	<select id="findUserRoldIds" resultType="java.lang.String">
 	 select
