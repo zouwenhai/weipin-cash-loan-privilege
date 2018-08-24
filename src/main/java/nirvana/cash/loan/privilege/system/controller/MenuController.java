@@ -1,6 +1,5 @@
 package nirvana.cash.loan.privilege.system.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.Tree;
@@ -10,7 +9,6 @@ import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
 import nirvana.cash.loan.privilege.system.service.MenuService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -111,23 +109,6 @@ public class MenuController extends BaseController {
             return ResResult.success(tree);
         } catch (Exception e) {
             return ResResult.error("获取菜单列表失败！");
-        }
-    }
-
-    //查询指定用户菜单树（非按钮级别）
-    @Deprecated //TODO 此接口废弃，按前端对权限的要求，重写了接口:findLeftMenuList
-    @RequestMapping("notauth/menu/getUserMenu")
-    public ResResult getUserMenu(HttpServletRequest request) {
-        try {
-            User user=this.getLoginUser(request);
-            if(user == null){
-                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
-            }
-            String userTreeKey = "userTree-" + user.getUsername();
-            String treestr=redisService.get(userTreeKey,String.class);
-            return ResResult.success(JSON.parseObject(treestr));
-        } catch (Exception e) {
-            return ResResult.error("获取用户菜单失败！");
         }
     }
 
