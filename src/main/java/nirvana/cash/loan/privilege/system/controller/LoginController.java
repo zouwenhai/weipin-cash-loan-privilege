@@ -2,7 +2,6 @@ package nirvana.cash.loan.privilege.system.controller;
 
 import com.alibaba.fastjson.JSON;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
-import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
 import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
@@ -107,7 +106,7 @@ public class LoginController extends BaseController {
                 redisService.delete(userTreeKey);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("注销失败:{}",e);
         }
     }
 
