@@ -39,6 +39,7 @@ public class BaseController {
             String data = redisService.get(jsessionid,String.class);
             user = JSON.parseObject(data, User.class);
         } catch (Exception ex) {
+            logger.error(ex.getMessage());
         }
         return user;
     }
