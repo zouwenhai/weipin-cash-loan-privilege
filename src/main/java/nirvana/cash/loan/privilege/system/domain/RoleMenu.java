@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-@Table(name = "TB_CL_PRIVILEGE_ROLE_MENU")
+@Table(name = "tb_yofishdk_auth_role_menu")
 public class RoleMenu implements Serializable {
 	
 	private static final long serialVersionUID = -7573904024872252113L;

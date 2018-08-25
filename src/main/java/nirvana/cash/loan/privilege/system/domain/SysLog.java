@@ -10,12 +10,12 @@ import javax.persistence.Transient;
 
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
-@Table(name = "TB_CL_PRIVILEGE_LOG")
+@Table(name = "tb_yofishdk_auth_log")
 public class SysLog implements Serializable {
 
 	private static final long serialVersionUID = -8878596941954995444L;
 
-	public static final String SEQ = "SEQ_TB_CL_PRIVILEGE_LOG";
+	public static final String SEQ = "seq_tb_yofishdk_auth_log";
 	
 	@Id
 	@Column(name = "ID")

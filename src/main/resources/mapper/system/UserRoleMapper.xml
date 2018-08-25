@@ -11,8 +11,8 @@
 
   <select id="findRoleCodeListByUserId" resultType="java.lang.String">
       select t2.role_code
-      from tb_cl_privilege_user_role t1
-      inner join  tb_cl_privilege_role t2 on t1.role_id = t2.role_id
+      from tb_yofishdk_auth_user_role t1
+      inner join  tb_yofishdk_auth_role t2 on t1.role_id = t2.role_id
       where t1.user_id = #{userId}
   </select>
 

@@ -10,10 +10,13 @@ import javax.persistence.Transient;
 
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
-@Table(name = "TB_CL_PRIVILEGE_USER")
+@Table(name = "tb_yofishdk_auth_user")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = -4852732617765810959L;
+
+	public static final String SEQ = "seq_tb_yofishdk_auth_user";
+
 	/**
 	 * 账户状态
 	 */
@@ -34,7 +37,6 @@ public class User implements Serializable {
 
 	public static final String SEX_UNKNOW = "2";
 
-	public static final String SEQ = "SEQ_TB_CL_PRIVILEGE_USER";
 
 	@Id
 	@Column(name = "USER_ID")

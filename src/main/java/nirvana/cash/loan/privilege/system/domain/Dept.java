@@ -9,12 +9,12 @@ import javax.persistence.Table;
 
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
-@Table(name = "TB_CL_PRIVILEGE_DEPT")
+@Table(name = "tb_yofishdk_auth_dept")
 public class Dept implements Serializable {
 
 	private static final long serialVersionUID = -7790334862410409053L;
 
-	public static final String SEQ = "SEQ_TB_CL_PRIVILEGE_DEPT";
+	public static final String SEQ = "seq_tb_yofishdk_auth_dept";
 
 	@Id
 	@Column(name = "DEPT_ID")

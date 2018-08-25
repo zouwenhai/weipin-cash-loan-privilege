@@ -18,11 +18,11 @@
   </resultMap>
   
   <select id="findUserPermissions" resultMap="menu">
-  	select m.perms from tb_cl_privilege_role r
-        left join tb_cl_privilege_user_role ur on(r.role_id = ur.role_id)
-        left join tb_cl_privilege_user u on(u.user_id = ur.user_id)
-        left join tb_cl_privilege_role_menu rm on(rm.role_id = r.role_id)
-        left join tb_cl_privilege_menu m on(m.menu_id = rm.menu_id and m.type = 1 )
+  	select m.perms from tb_yofishdk_auth_role r
+        left join tb_yofishdk_auth_user_role ur on(r.role_id = ur.role_id)
+        left join tb_yofishdk_auth_user u on(u.user_id = ur.user_id)
+        left join tb_yofishdk_auth_role_menu rm on(rm.role_id = r.role_id)
+        left join tb_yofishdk_auth_menu m on(m.menu_id = rm.menu_id and m.type = 1 )
         where u.username = #{userName} and m.perms is not null
   </select>
 
@@ -36,11 +36,11 @@
                t1.icon as icon ,
                t1.order_num as orderNum,
                t2.role_ids as roleIds
-         from tb_cl_privilege_menu t1
+         from tb_yofishdk_auth_menu t1
          left join
           (
              select menu_id,wm_concat(role_id) as  role_ids
-             from tb_cl_privilege_role_menu
+             from tb_yofishdk_auth_role_menu
              group by menu_id
            )t2
            on  t1.menu_id = t2.menu_id
