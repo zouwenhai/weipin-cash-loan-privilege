@@ -2,6 +2,7 @@ package nirvana.cash.loan.privilege.web.config;
 
 
 import javax.annotation.PostConstruct;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -28,10 +29,10 @@ public class WebConfigBeans {
             genericConversionService.addConverter(new Converter<String, String>() {
                 @Override
                 public String convert(String value) {
-                    if (value != null && value.trim().length() == 0) {
+                    if (StringUtils.isBlank(value)) {
                         return null;
                     }
-                    return value;
+                    return value.trim();
                 }
             });
         }
