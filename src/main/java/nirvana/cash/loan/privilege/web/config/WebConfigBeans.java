@@ -1,14 +1,13 @@
 package nirvana.cash.loan.privilege.web.config;
 
 
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.core.convert.converter.Converter;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 注册转换器
@@ -29,7 +28,9 @@ public class WebConfigBeans {
             genericConversionService.addConverter(new Converter<String, String>() {
                 @Override
                 public String convert(String value) {
-                    if (value != null && value.trim().length() == 0) return null;
+                    if (value != null && value.trim().length() == 0) {
+                        return null;
+                    }
                     return value;
                 }
             });

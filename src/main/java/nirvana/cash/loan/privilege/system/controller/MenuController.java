@@ -1,6 +1,9 @@
 package nirvana.cash.loan.privilege.system.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
@@ -12,10 +15,6 @@ import nirvana.cash.loan.privilege.system.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/privilige")
@@ -59,10 +58,11 @@ public class MenuController extends BaseController {
     @RequestMapping("menu/add")
     public ResResult addMenu(Menu menu) {
         String name;
-        if (Menu.TYPE_MENU.equals(menu.getType()))
+        if (Menu.TYPE_MENU.equals(menu.getType())) {
             name = "菜单";
-        else
+        } else {
             name = "按钮";
+        }
         try {
             this.menuService.addMenu(menu);
             return ResResult.success();
@@ -76,10 +76,11 @@ public class MenuController extends BaseController {
     @RequestMapping("menu/update")
     public ResResult updateMenu(Menu menu) {
         String name;
-        if (Menu.TYPE_MENU.equals(menu.getType()))
+        if (Menu.TYPE_MENU.equals(menu.getType())) {
             name = "菜单";
-        else
+        } else {
             name = "按钮";
+        }
         try {
             this.menuService.updateMenu(menu);
             return ResResult.success();
