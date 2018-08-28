@@ -39,7 +39,9 @@
          from tb_yofishdk_auth_menu t1
          left join
           (
-             select menu_id,wm_concat(role_id) as  role_ids
+             select
+                  menu_id,
+                  listagg(role_id,',') within group (order by role_id)  as  role_ids
              from tb_yofishdk_auth_role_menu
              group by menu_id
            )t2

@@ -55,7 +55,7 @@
 
 	<select id="findUserRoldIds" resultType="java.lang.String">
 	 select
-	      wm_concat(role_id) as  role_ids
+	      listagg(role_id,',') within group (order by role_id)  as  role_ids
 	 from tb_yofishdk_auth_user_role
 	 where user_id = #{userId}
 	</select>

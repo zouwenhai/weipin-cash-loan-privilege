@@ -118,9 +118,8 @@
 		<!-- oracle驱动 -->
 		<dependency>
 			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<!--<version>6.0</version>-->
-			<version>11.2.0.3</version>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.2.0.1</version>
 		</dependency>
 
 		<!-- druid数据源驱动 -->
