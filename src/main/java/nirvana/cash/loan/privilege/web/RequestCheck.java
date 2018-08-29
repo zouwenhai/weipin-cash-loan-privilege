@@ -43,7 +43,7 @@ public class RequestCheck {
         User user = JSON.parseObject(data, User.class);
 
         //2:check用户权限
-        if(url.contains("notauth") || "system".equals(user.getUsername())){
+        if(url.contains("notauth")){
             //匹配路径:notauth,无需授权可访问
             return ResResult.success(user);
         }
