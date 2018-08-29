@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.common.service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Administrator on 2018/7/27.
@@ -28,4 +29,8 @@ public interface RedisService {
     void clear();
 
     Long getOrderId(String key);
+
+    Set<String> getKeysWithPattern(String pattern);
+
+    void deleteWithKeys(Set<String> keys);
 }

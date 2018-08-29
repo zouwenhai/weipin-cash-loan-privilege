@@ -147,4 +147,14 @@ public class RedisServiceImpl implements RedisService {
         Long increment = entityIdCounter.incrementAndGet();
         return increment;
     }
+
+    @Override
+    public Set<String> getKeysWithPattern(String pattern) {
+         return redisTemplate.keys(pattern);
+    }
+
+    @Override
+    public void deleteWithKeys(Set<String> keys) {
+        redisTemplate.delete(keys);
+    }
 }
