@@ -5,7 +5,9 @@ import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.domain.User;
+import nirvana.cash.loan.privilege.system.service.RoleService;
 import nirvana.cash.loan.privilege.system.service.UserService;
 import nirvana.cash.loan.privilege.web.exception.BizException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     //用户列表
     @RequestMapping("user/list")
@@ -131,6 +136,15 @@ public class UserController extends BaseController {
             logger.error("用户管理|校验登录名|执行异常:{}", e);
             return ResResult.error("校验登录名失败！");
         }
+    }
+
+    //角色列表,新增用户时使用
+    @RequestMapping("/notauth/user/roleList")
+    public ResResult roleList() {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
+        List<Role> list = roleService.findAllRole(new Role());
+        PageInfo<Role> pageInfo = new PageInfo<>(list);
+        return ResResult.success(getDataTable(pageInfo));
     }
 
 }
