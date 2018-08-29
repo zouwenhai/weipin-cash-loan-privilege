@@ -67,19 +67,19 @@ public class LoginController extends BaseController {
             //查询登录用户角色
             roleIds=userService.findUserRoldIds(user.getUserId().intValue());
 
-            //缓存4小时，登录信息
+            //缓存2小时，登录信息
             String jsessionid = user.getUserId()+"#"+GeneratorId.guuid();
             jsessionid = URLEncoder.encode(CaiyiEncrypt.encryptStr(jsessionid),"UTF-8");
-            //redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),60*60*4L);
-            redisService.put(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user));
+            redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),60*60*2L);
+            //redisService.put(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user));
             //设置登录sessionId,存入cookies
             CookieUtil.setCookie(request, response, RedisKeyContant.JSESSIONID, jsessionid);
 
-            // 缓存4小时，用户权限集,主要作用:“按钮显示”
+            // 缓存2小时，用户权限集,主要作用:“按钮显示”
             List<Menu> permissionList = menuService.findUserPermissions(username);
             String userPermissionsKey = RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername();
-            //redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*4L);
-            redisService.put(userPermissionsKey,JSON.toJSONString(permissionList));
+            redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*2L);
+            //redisService.put(userPermissionsKey,JSON.toJSONString(permissionList));
             //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
 
             //更新登录时间
