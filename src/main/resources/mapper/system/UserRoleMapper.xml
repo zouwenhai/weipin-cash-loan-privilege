@@ -17,7 +17,7 @@
   </select>
 
     <select id="findUserIdListByRoleId" resultType="java.lang.Long">
-       SELECT ROLE_ID FROM tb_yofishdk_auth_user_role  WHERE role_id = #{roleId}
+       SELECT user_id FROM tb_yofishdk_auth_user_role  WHERE role_id = #{roleId}
     </select>
 
 </mapper>
