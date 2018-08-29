@@ -206,6 +206,13 @@
 			<version>1.0</version>
 		</dependency>
 
+		<!-- 彩亿加密工具-->
+		<dependency>
+			<groupId>com.caiyi</groupId>
+			<artifactId>CaiyiEncrypt</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>

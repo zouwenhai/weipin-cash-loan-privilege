@@ -2,6 +2,7 @@ package nirvana.cash.loan.privilege.common.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.service.RedisService;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
 import nirvana.cash.loan.privilege.system.domain.User;
@@ -16,8 +17,6 @@ import java.util.Map;
 
 public class BaseController {
     public static final Logger logger = LoggerFactory.getLogger(BaseController.class);
-
-    public final static String JSESSIONID = "JSESSIONID";
 
     @Autowired
     public RedisService redisService;
@@ -35,8 +34,8 @@ public class BaseController {
     public User getLoginUser(HttpServletRequest request) {
         User user = null;
         try {
-            String jsessionid = CookieUtil.getCookieValue(request, JSESSIONID);
-            String data = redisService.get(jsessionid,String.class);
+            String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+            String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,String.class);
             user = JSON.parseObject(data, User.class);
         } catch (Exception ex) {
             logger.error(ex.getMessage());

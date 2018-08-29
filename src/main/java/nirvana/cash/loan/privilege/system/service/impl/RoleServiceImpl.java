@@ -9,10 +9,7 @@ import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.domain.RoleMenu;
 import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
-import nirvana.cash.loan.privilege.system.service.MenuService;
-import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
-import nirvana.cash.loan.privilege.system.service.RoleService;
-import nirvana.cash.loan.privilege.system.service.UserRoleService;
+import nirvana.cash.loan.privilege.system.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +40,9 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Autowired
 	private MenuService menuService;
+
+	@Autowired
+	private LogoutUserService logoutUserService;
 
 	@Override
 	public List<Role> findAllRole(Role role) {
@@ -92,13 +92,15 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	@Transactional
-	public void deleteRoles(String roleIds) {
-		List<String> list = Arrays.asList(roleIds.split(","));
+	public void deleteRoles(Long roleId) {
+		List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
+		logoutUserService.batchLogoutUser(userIdList);
+
+		List<String> list = new ArrayList<>();
+		list.add(roleId.toString());
 		this.batchDelete(list, "roleId", Role.class);
-
-		this.roleMenuService.deleteRoleMenusByRoleId(roleIds);
-		this.userRoleService.deleteUserRolesByRoleId(roleIds);
-
+		this.roleMenuService.deleteRoleMenusByRoleId(roleId.toString());
+		this.userRoleService.deleteUserRolesByRoleId(roleId.toString());
 	}
 
 
@@ -130,6 +132,10 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 		role.setModifyTime(new Date());
 		role.setRoleName(RoleEnum.getPaymentStatusEnumByValue(role.getRoleCode()).getName());
 		this.updateNotNull(role);
+
+		List<Long> userIdList = userRoleService.findUserIdListByRoleId(role.getRoleId());
+		logoutUserService.batchLogoutUser(userIdList);
+
 		Example example = new Example(RoleMenu.class);
 		example.createCriteria().andCondition("role_id=", role.getRoleId());
 		this.roleMenuMapper.deleteByExample(example);

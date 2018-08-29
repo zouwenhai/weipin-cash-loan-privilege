@@ -7,6 +7,7 @@ import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.system.dao.MenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
+import nirvana.cash.loan.privilege.system.service.LogoutUserService;
 import nirvana.cash.loan.privilege.system.service.MenuService;
 import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +31,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
 	@Autowired
 	private RoleMenuServie roleMenuService;
+
+	@Autowired
+	private LogoutUserService logoutUserService;
 
 	@Override
 	public List<Menu> findUserPermissions(String userName) {
@@ -96,9 +100,11 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
 	@Override
 	@Transactional
-	public void deleteMeuns(String menuIds) {
+	public void deleteMeuns(Long menuId) {
 		List<Menu> menus = this.findAllMenus(new Menu());
 		if (menus != null && menus.size() > 0) {
+			List<Long> userIdList = roleMenuService.findUserIdListByMenuId(menuId);
+			logoutUserService.batchLogoutUser(userIdList);
 			//转换列表
 			List<FilterId> allList = new ArrayList<>();
 			menus.forEach(t -> {
@@ -106,7 +112,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 				allList.add(filterId);
 			});
 			//开始处理...
-			List<FilterId> filterIdList = FilterId.filterRemoveList(allList, Long.valueOf(menuIds));
+			List<FilterId> filterIdList = FilterId.filterRemoveList(allList, menuId);
 			List<String> list =new ArrayList<>();
 			for(FilterId item:filterIdList){
 				list.add(item.getId()+"");
@@ -124,11 +130,15 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	@Override
 	@Transactional
 	public void updateMenu(Menu menu) {
+		List<Long> userIdList = roleMenuService.findUserIdListByMenuId(menu.getMenuId());
+		logoutUserService.batchLogoutUser(userIdList);
+
         Menu oldMenu = this.findById(menu.getMenuId());
         menu.setCreateTime(oldMenu.getCreateTime());
 		menu.setModifyTime(new Date());
-		if (menu.getParentId() == null)
+		if (menu.getParentId() == null){
 			menu.setParentId(0L);
+		}
         this.updateAll(menu);
 	}
 

@@ -74,7 +74,7 @@ public class RoleController extends BaseController {
 
 	//删除角色
 	@RequestMapping("role/delete")
-	public ResResult deleteRoles(String ids) {
+	public ResResult deleteRoles(Long ids) {
 		try {
 			this.roleService.deleteRoles(ids);
 			return ResResult.success();

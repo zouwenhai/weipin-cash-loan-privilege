@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.service.RedisService;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
 import nirvana.cash.loan.privilege.common.util.ResResult;
@@ -21,7 +23,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RequestCheck {
     private static final Logger logger = LoggerFactory.getLogger(RequestCheck.class);
-    private final static String JSESSIONID = "JSESSIONID";
 
     @Autowired
     private RedisService redisService;
@@ -29,11 +30,11 @@ public class RequestCheck {
     //check登录和权限
     public ResResult check(HttpServletRequest request) {
         //1:check用户是否登录或登录失效
-        String jsessionid = CookieUtil.getCookieValue(request, JSESSIONID);
+        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
         if (jsessionid == null || jsessionid.trim().length() == 0) {
             return ResResult.error("您未进行登录操作或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
-        String data = redisService.get(jsessionid,String.class);
+        String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,String.class);
         if (StringUtils.isBlank(data)) {
             return ResResult.error("您未进行登录操作或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
@@ -47,7 +48,7 @@ public class RequestCheck {
             return ResResult.success(user);
         }
 
-        String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
+        String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(),String.class);
         if (StringUtils.isBlank(userPermissions)) {
             return ResResult.error("您访问的接口未经授权或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }

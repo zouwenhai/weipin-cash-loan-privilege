@@ -16,7 +16,8 @@ public interface RoleService extends IService<Role> {
 	
 	void updateRole(Role role, Long[] menuIds);
 
-	void deleteRoles(String roleIds);
+	void deleteRoles(Long roleId);
 
 	Role findByCode(String roleCode);
+
 }

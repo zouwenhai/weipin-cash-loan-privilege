@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
@@ -92,7 +94,7 @@ public class MenuController extends BaseController {
 
     //删除菜单
     @RequestMapping("menu/delete")
-    public ResResult deleteMenus(String menuIds) {
+    public ResResult deleteMenus(Long menuIds) {
         try {
             this.menuService.deleteMeuns(menuIds);
             return ResResult.success();
@@ -121,7 +123,7 @@ public class MenuController extends BaseController {
             if(user == null){
                 return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
             }
-            String userPermissions = redisService.get("userPermissions-" + user.getUsername(),String.class);
+            String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(),String.class);
             List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
             return ResResult.success(permissionList);
         } catch (Exception e) {

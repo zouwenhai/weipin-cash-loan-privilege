@@ -8,4 +8,6 @@ import java.util.List;
 public interface UserRoleMapper extends MyMapper<UserRole> {
 
     List<String> findRoleCodeListByUserId(Integer userId);
+
+    List<Long> findUserIdListByRoleId(Long roleId);
 }

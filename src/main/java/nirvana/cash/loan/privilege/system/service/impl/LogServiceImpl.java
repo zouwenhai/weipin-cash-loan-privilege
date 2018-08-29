@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.service.RedisService;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.system.domain.Menu;
@@ -58,7 +59,7 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 			//获取"权限方法"
 			String method="";
 			List<Menu> permissionList=new ArrayList<>();
-			String userPermissions = redisService.get("userPermissions-" + username,String.class);
+			String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + username,String.class);
 			if(StringUtils.isNotBlank(userPermissions)){
 				permissionList = JSONObject.parseArray(userPermissions, Menu.class);
 			}

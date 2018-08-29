@@ -18,6 +18,7 @@ import nirvana.cash.loan.privilege.system.dao.UserRoleMapper;
 import nirvana.cash.loan.privilege.system.domain.User;
 import nirvana.cash.loan.privilege.system.domain.UserRole;
 import nirvana.cash.loan.privilege.system.domain.UserWithRole;
+import nirvana.cash.loan.privilege.system.service.LogoutUserService;
 import nirvana.cash.loan.privilege.system.service.UserRoleService;
 import nirvana.cash.loan.privilege.system.service.UserService;
 import nirvana.cash.loan.privilege.web.exception.BizException;
@@ -48,6 +49,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	private FeginCollectionApi feginCollectionApi;
 	@Autowired
 	private FeginRiskApi feginRiskApi;
+	@Autowired
+	private LogoutUserService logoutUserService;
 
 	@Override
 	public User findByName(String userName) {
@@ -209,6 +212,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				logger.error("修改风用户失败|程序异常:{}", ex);
 			}
 		}
+		logoutUserService.logoutUser(user.getUserId());
 	}
 
 	@Override
@@ -256,6 +260,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				}
 			}
 		}
+		logoutUserService.logoutUser(user.getUserId());
 	}
 
 	@Override

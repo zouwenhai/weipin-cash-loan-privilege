@@ -23,7 +23,7 @@ public interface MenuService extends IService<Menu> {
 
 	void updateMenu(Menu menu);
 	
-	void deleteMeuns(String menuIds);
+	void deleteMeuns(Long menuIds);
 
 	List<LeftMenuVo> findUserMenus();
 }
