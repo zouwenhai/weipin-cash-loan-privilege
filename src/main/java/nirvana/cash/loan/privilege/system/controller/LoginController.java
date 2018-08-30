@@ -106,7 +106,6 @@ public class LoginController extends BaseController {
               if(user != null){
                   //清除Cookies缓存
                   CookieUtil.deleteCookie(request,response,RedisKeyContant.JSESSIONID);
-                  logoutUserService.logoutUser(user.getUserId());
               }
         } catch (Exception e) {
             logger.error("注销失败:{}",e);
