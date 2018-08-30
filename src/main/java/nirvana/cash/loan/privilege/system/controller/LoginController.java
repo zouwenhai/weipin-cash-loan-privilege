@@ -100,11 +100,7 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/notauth/logout")
     public void logout(HttpServletResponse response, HttpServletRequest request) {
         try {
-              User user = this.getLoginUser(request);
-              if(user != null){
-                  //清除Cookies缓存
-                  CookieUtil.deleteCookie(request,response,RedisKeyContant.JSESSIONID);
-              }
+            CookieUtil.deleteCookie(request,response,RedisKeyContant.JSESSIONID);
         } catch (Exception e) {
             logger.error("注销失败:{}",e);
         }
