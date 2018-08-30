@@ -220,44 +220,41 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	public void deleteUser(Integer userId) {
 		User user = userMapper.selectByPrimaryKey(Long.valueOf(userId));
         List<String> roleCodeList = userRoleService.findRoleCodeListByUserId(userId);
-		//system账号禁止删除
-		if(user!=null && !"system".equals(user.getUsername().trim())){
-            user.setIsDelete(1);
-            this.updateNotNull(user);
-			this.userRoleService.deleteUserRolesByUserId(userId.toString());
+		user.setIsDelete(1);
+		this.updateNotNull(user);
+		this.userRoleService.deleteUserRolesByUserId(userId.toString());
 
-			//子系统用户同步
-			//催收用户
-			List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
-			if(collRoleCodeList!=null && collRoleCodeList.size()>0){
-				UserUpdateApiFacade facade = new UserUpdateApiFacade();
-				facade.setUserName(user.getName());
-				facade.setLoginName(user.getUsername());
-				facade.setMobile(user.getMobile());
-				facade.setRoleCodeList(collRoleCodeList);
-				facade.setStatus(2);
-				try{
-					NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
-					logger.info("删除催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-				} catch (Exception ex){
-					logger.error("删除催收用户失败|程序异常:{}", ex);
-				}
+		//子系统用户同步
+		//催收用户
+		List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
+		if(collRoleCodeList!=null && collRoleCodeList.size()>0){
+			UserUpdateApiFacade facade = new UserUpdateApiFacade();
+			facade.setUserName(user.getName());
+			facade.setLoginName(user.getUsername());
+			facade.setMobile(user.getMobile());
+			facade.setRoleCodeList(collRoleCodeList);
+			facade.setStatus(2);
+			try{
+				NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
+				logger.info("删除催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+			} catch (Exception ex){
+				logger.error("删除催收用户失败|程序异常:{}", ex);
 			}
-			//风控
-			List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
-			if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
-				RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
-				facade.setUserName(user.getName());
-				facade.setLoginName(user.getUsername());
-				facade.setMobile(user.getMobile());
-				facade.setRoleType(riskRoleCodeList.get(0));
-				facade.setUserStatus("0");//删除
-				try{
-					NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
-					logger.info("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-				} catch (Exception ex){
-					logger.error("删除风控用户失败|程序异常:{}", ex);
-				}
+		}
+		//风控
+		List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
+		if(riskRoleCodeList!=null && riskRoleCodeList.size()>0){
+			RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
+			facade.setUserName(user.getName());
+			facade.setLoginName(user.getUsername());
+			facade.setMobile(user.getMobile());
+			facade.setRoleType(riskRoleCodeList.get(0));
+			facade.setUserStatus("0");//删除
+			try{
+				NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
+				logger.info("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+			} catch (Exception ex){
+				logger.error("删除风控用户失败|程序异常:{}", ex);
 			}
 		}
 		logoutUserService.logoutUser(user.getUserId());
