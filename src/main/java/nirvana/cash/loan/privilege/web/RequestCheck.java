@@ -32,11 +32,11 @@ public class RequestCheck {
         //1:check用户是否登录或登录失效
         String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
         if (jsessionid == null || jsessionid.trim().length() == 0) {
-            return ResResult.error("您未进行登录操作或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
+            return ResResult.error("登录失效!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
         String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,String.class);
         if (StringUtils.isBlank(data)) {
-            return ResResult.error("您未进行登录操作或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
+            return ResResult.error("登录失效!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
 
         String url = request.getRequestURL().toString();
@@ -50,7 +50,7 @@ public class RequestCheck {
 
         String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(),String.class);
         if (StringUtils.isBlank(userPermissions)) {
-            return ResResult.error("您访问的接口未经授权或登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
+            return ResResult.error("登录失效!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
         List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
         //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
