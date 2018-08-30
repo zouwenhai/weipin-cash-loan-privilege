@@ -78,7 +78,7 @@ public class LogoutUserServiceImpl implements LogoutUserService {
             for (long userId : userIdList) {
                 String jsessionid = findJsessionidByUserId(userId, keys);
                 if (StringUtils.isNotBlank(jsessionid)) {
-                    redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
+                    redisService.deleteWithPattern(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX +userId+"#*");
                 }
             }
         }
