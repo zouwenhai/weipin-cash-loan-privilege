@@ -9,7 +9,6 @@ import nirvana.cash.loan.privilege.common.util.MD5Utils;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.User;
-import nirvana.cash.loan.privilege.system.service.LogoutUserService;
 import nirvana.cash.loan.privilege.system.service.MenuService;
 import nirvana.cash.loan.privilege.system.service.UserService;
 import org.apache.commons.lang.StringUtils;
@@ -28,8 +27,6 @@ public class LoginController extends BaseController {
     private UserService userService;
     @Autowired
     private MenuService menuService;
-    @Autowired
-    private LogoutUserService logoutUserService;
 
     //登录
     @RequestMapping("/notauth/login")
