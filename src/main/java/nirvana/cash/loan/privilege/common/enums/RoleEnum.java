@@ -10,7 +10,7 @@ public enum RoleEnum {
     SUPERVISOR("supervisor", "超级管理员"),
 
     //催收角色
-    COLL_MANAGER("coll_supervisor", "催收系統管理员"),
+    COLL_MANAGER("coll_supervisor", "催收系统管理员"),
     COLL_ADMIN("coll_admin", "催收主管", "coll"),
     COLL_USER("coll_user", "催收专员", "coll"),
 
