@@ -25,9 +25,9 @@ import java.util.Map;
  * (1)https://blog.csdn.net/kysmkj/article/details/79159421
  * (2)https://www.hhfate.cn/t/598
  */
-public class RequestLogZullFilter extends ZuulFilter {
+public class AccessZullFilter extends ZuulFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestLogZullFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccessZullFilter.class);
 
     @Autowired
     private RequestCheck requestCheck;

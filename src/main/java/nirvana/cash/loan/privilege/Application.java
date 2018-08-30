@@ -1,7 +1,7 @@
 package nirvana.cash.loan.privilege;
 
 import nirvana.cash.loan.privilege.common.config.FebsProperies;
-import nirvana.cash.loan.privilege.web.filter.RequestLogZullFilter;
+import nirvana.cash.loan.privilege.web.filter.AccessZullFilter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class Application {
     }
 
     @Bean
-    public RequestLogZullFilter requestLogZullFilter() {
-        return new RequestLogZullFilter();
+    public AccessZullFilter requestLogZullFilter() {
+        return new AccessZullFilter();
     }
 }
