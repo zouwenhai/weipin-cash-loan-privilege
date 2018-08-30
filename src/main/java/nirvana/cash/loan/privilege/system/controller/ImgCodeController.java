@@ -36,8 +36,10 @@ public class ImgCodeController extends BaseController {
                     febsProperies.getValidateCode().getHeight(),
                     febsProperies.getValidateCode().getLength());
             captcha.out(response.getOutputStream());
-            //图形验证码,缓存5min
-            redisService.putWithExpireTime("_code",captcha.text().toLowerCase(),60 * 5L);
+            //验证码,缓存5min
+            String redisKey = captcha.text().toLowerCase();
+            redisService.putWithExpireTime(redisKey,redisKey,60 * 5L);
+
         } catch (Exception e) {
             logger.error("生成图形验证码失败:{}",e);
         }

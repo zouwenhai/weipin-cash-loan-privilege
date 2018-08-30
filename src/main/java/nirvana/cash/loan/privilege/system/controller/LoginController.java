@@ -42,8 +42,8 @@ public class LoginController extends BaseController {
             if (StringUtils.isBlank(code)) {
                 return ResResult.error("验证码不能为空！");
             }
-            String sessionCode = redisService.get("_code",String.class);
-            redisService.delete("_code");
+            String sessionCode = redisService.get(code,String.class);
+            redisService.delete(code);
             if (!code.toLowerCase().equals(sessionCode)) {
                 return ResResult.error("验证码错误！");
             }
