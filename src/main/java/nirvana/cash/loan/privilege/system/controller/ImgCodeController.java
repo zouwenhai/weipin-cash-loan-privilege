@@ -1,7 +1,10 @@
 package nirvana.cash.loan.privilege.system.controller;
 
 import nirvana.cash.loan.privilege.common.config.FebsProperies;
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
+import nirvana.cash.loan.privilege.common.util.CookieUtil;
+import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.vcode.Captcha;
 import nirvana.cash.loan.privilege.common.util.vcode.GifCaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +38,12 @@ public class ImgCodeController extends BaseController {
                     febsProperies.getValidateCode().getWidth(),
                     febsProperies.getValidateCode().getHeight(),
                     febsProperies.getValidateCode().getLength());
+            String verifyId=GeneratorId.guuid();
+            CookieUtil.setCookie(request, response, RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE, verifyId);
             captcha.out(response.getOutputStream());
             //验证码,缓存5min
-            String redisKey = captcha.text().toLowerCase();
-            redisService.putWithExpireTime(redisKey,redisKey,60 * 5L);
+            String verifyCode = captcha.text().toLowerCase();
+            redisService.putWithExpireTime(verifyId,verifyCode,60 * 5L);
 
         } catch (Exception e) {
             logger.error("生成图形验证码失败:{}",e);

@@ -42,8 +42,13 @@ public class LoginController extends BaseController {
             if (StringUtils.isBlank(code)) {
                 return ResResult.error("验证码不能为空！");
             }
-            String sessionCode = redisService.get(code,String.class);
-            redisService.delete(code);
+            String verifyId = CookieUtil.getCookieValue(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
+            CookieUtil.deleteCookie(request,response,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
+            if(StringUtils.isBlank(verifyId)){
+                return ResResult.error("验证码已失效！");
+            }
+            String sessionCode = redisService.get(verifyId,String.class);
+            redisService.delete(verifyId);
             if (!code.toLowerCase().equals(sessionCode)) {
                 return ResResult.error("验证码错误！");
             }
