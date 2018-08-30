@@ -76,7 +76,7 @@ public class MenuController extends BaseController {
 
     //修改菜单
     @RequestMapping("menu/update")
-    public ResResult updateMenu(Menu menu) {
+    public ResResult updateMenu(Menu menu,HttpServletRequest request) {
         String name;
         if (Menu.TYPE_MENU.equals(menu.getType())) {
             name = "菜单";
@@ -84,7 +84,8 @@ public class MenuController extends BaseController {
             name = "按钮";
         }
         try {
-            this.menuService.updateMenu(menu);
+            Long loginUserId=this.getLoginUser(request).getUserId();
+            this.menuService.updateMenu(menu,loginUserId);
             return ResResult.success();
         } catch (Exception e) {
             logger.error("菜单管理|修改菜单|执行异常:{}",e);
@@ -94,9 +95,10 @@ public class MenuController extends BaseController {
 
     //删除菜单
     @RequestMapping("menu/delete")
-    public ResResult deleteMenus(Long menuIds) {
+    public ResResult deleteMenus(Long menuIds,HttpServletRequest request) {
         try {
-            this.menuService.deleteMeuns(menuIds);
+            Long loginUserId=this.getLoginUser(request).getUserId();
+            this.menuService.deleteMeuns(menuIds,loginUserId);
             return ResResult.success();
         } catch (Exception e) {
             logger.error("菜单管理|删除菜单|执行异常:{}",e);

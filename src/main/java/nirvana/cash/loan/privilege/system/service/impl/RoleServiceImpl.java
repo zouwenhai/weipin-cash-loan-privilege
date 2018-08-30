@@ -92,9 +92,12 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	@Transactional
-	public void deleteRoles(Long roleId) {
+	public void deleteRoles(Long roleId,Long loginUserId) {
 		List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
-		logoutUserService.batchLogoutUser(userIdList);
+		if(userIdList!=null && userIdList.size()>0){
+			List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
+			logoutUserService.batchLogoutUser(newUserIdList);
+		}
 
 		List<String> list = new ArrayList<>();
 		list.add(roleId.toString());
@@ -128,13 +131,16 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	@Transactional
-	public void updateRole(Role role, Long[] menuIds) {
+	public void updateRole(Role role, Long[] menuIds,Long loginUserId) {
 		role.setModifyTime(new Date());
 		role.setRoleName(RoleEnum.getPaymentStatusEnumByValue(role.getRoleCode()).getName());
 		this.updateNotNull(role);
 
 		List<Long> userIdList = userRoleService.findUserIdListByRoleId(role.getRoleId());
-		logoutUserService.batchLogoutUser(userIdList);
+		if(userIdList!=null && userIdList.size()>0){
+			List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
+			logoutUserService.batchLogoutUser(newUserIdList);
+		}
 
 		Example example = new Example(RoleMenu.class);
 		example.createCriteria().andCondition("role_id=", role.getRoleId());

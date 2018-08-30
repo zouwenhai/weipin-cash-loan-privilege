@@ -1,7 +1,6 @@
 package nirvana.cash.loan.privilege.system.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.caiyi.common.security.CaiyiEncrypt;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -73,9 +71,8 @@ public class LoginController extends BaseController {
             roleIds=userService.findUserRoldIds(user.getUserId().intValue());
 
             //缓存2小时，登录信息
-            String jsessionid = user.getUserId()+"#"+GeneratorId.guuid();
-            jsessionid = URLEncoder.encode(CaiyiEncrypt.encryptStr(jsessionid),"UTF-8");
-            redisService.putWithExpireTime(jsessionid,JSON.toJSONString(user),60*60*2L);
+            String jsessionid = user.getUserId()+GeneratorId.guuid();
+            redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*2L);
             //redisService.put(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user));
             //设置登录sessionId,存入cookies
             CookieUtil.setCookie(request, response, RedisKeyContant.JSESSIONID, jsessionid);

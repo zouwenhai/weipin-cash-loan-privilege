@@ -1,6 +1,5 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import com.caiyi.common.security.CaiyiEncrypt;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.service.RedisService;
 import nirvana.cash.loan.privilege.system.service.LogoutUserService;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -53,8 +51,7 @@ public class LogoutUserServiceImpl implements LogoutUserService {
             Iterator<String> it = jsessionids.iterator();
             while (it.hasNext()) {
                 String jessionId = it.next();
-                String str = CaiyiEncrypt.dencryptStr(URLDecoder.decode(jessionId, "UTF-8"));
-                if (str.split("#")[0].equals(userId.toString())) {
+                if (jessionId.split("-")[0].equals(userId.toString())) {
                     res = jessionId;
                     break;
                 }

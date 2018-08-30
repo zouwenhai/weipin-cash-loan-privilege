@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,9 +63,10 @@ public class RoleController extends BaseController {
 
 	//修改角色
 	@RequestMapping("role/update")
-	public ResResult updateRole(Role role, Long[] menuId) {
+	public ResResult updateRole(Role role, Long[] menuId,HttpServletRequest request) {
 		try {
-			this.roleService.updateRole(role, menuId);
+			Long loginUserId=this.getLoginUser(request).getUserId();
+			this.roleService.updateRole(role, menuId,loginUserId);
 			return ResResult.success();
 		} catch (Exception e) {
 			logger.error("角色管理|修改角色|执行异常:{}",e);
@@ -74,9 +76,10 @@ public class RoleController extends BaseController {
 
 	//删除角色
 	@RequestMapping("role/delete")
-	public ResResult deleteRoles(Long ids) {
+	public ResResult deleteRoles(Long ids,HttpServletRequest request) {
 		try {
-			this.roleService.deleteRoles(ids);
+			Long loginUserId=this.getLoginUser(request).getUserId();
+			this.roleService.deleteRoles(ids,loginUserId);
 			return ResResult.success();
 		} catch (Exception e) {
 			logger.error("角色管理|删除角色|执行异常:{}",e);

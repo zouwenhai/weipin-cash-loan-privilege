@@ -21,6 +21,7 @@ import tk.mybatis.mapper.entity.Example.Criteria;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -100,11 +101,15 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
 	@Override
 	@Transactional
-	public void deleteMeuns(Long menuId) {
+	public void deleteMeuns(Long menuId,Long loginUserId) {
 		List<Menu> menus = this.findAllMenus(new Menu());
 		if (menus != null && menus.size() > 0) {
 			List<Long> userIdList = roleMenuService.findUserIdListByMenuId(menuId);
-			logoutUserService.batchLogoutUser(userIdList);
+			if(userIdList!=null && userIdList.size()>0){
+				List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
+				logoutUserService.batchLogoutUser(newUserIdList);
+			}
+
 			//转换列表
 			List<FilterId> allList = new ArrayList<>();
 			menus.forEach(t -> {
@@ -129,9 +134,12 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
 	@Override
 	@Transactional
-	public void updateMenu(Menu menu) {
+	public void updateMenu(Menu menu,Long loginUserId) {
 		List<Long> userIdList = roleMenuService.findUserIdListByMenuId(menu.getMenuId());
-		logoutUserService.batchLogoutUser(userIdList);
+		if(userIdList!=null && userIdList.size()>0){
+			List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
+			logoutUserService.batchLogoutUser(newUserIdList);
+		}
 
         Menu oldMenu = this.findById(menu.getMenuId());
         menu.setCreateTime(oldMenu.getCreateTime());

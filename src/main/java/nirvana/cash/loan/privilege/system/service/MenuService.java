@@ -21,9 +21,9 @@ public interface MenuService extends IService<Menu> {
 
 	void addMenu(Menu menu);
 
-	void updateMenu(Menu menu);
+	void updateMenu(Menu menu,Long loginUserId);
 	
-	void deleteMeuns(Long menuIds);
+	void deleteMeuns(Long menuIds,Long loginUserId);
 
 	List<LeftMenuVo> findUserMenus();
 }

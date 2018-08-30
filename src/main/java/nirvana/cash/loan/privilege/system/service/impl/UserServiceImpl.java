@@ -142,7 +142,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public void updateUser(User user, Long[] roles) {
+	public void updateUser(User user, Long[] roles,Long loginUserId) {
 		List<String> oldRoleCodeList = userRoleService.findRoleCodeListByUserId(user.getUserId().intValue());
 		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(this.transRoleIds(roles));
 		User oldUser=this.userMapper.selectByPrimaryKey(user.getUserId());
@@ -157,6 +157,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		example.createCriteria().andCondition("user_id=", user.getUserId());
 		this.userRoleMapper.deleteByExample(example);
 		setUserRoles(user, roles);
+
+		if(user.getUserId().longValue() != loginUserId){
+			logoutUserService.logoutUser(user.getUserId());
+		}
 
 		//子系统用户同步
 		//催收用户
@@ -212,7 +216,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				logger.error("修改风用户失败|程序异常:{}", ex);
 			}
 		}
-		logoutUserService.logoutUser(user.getUserId());
+
 	}
 
 	@Override
@@ -223,6 +227,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		user.setIsDelete(1);
 		this.updateNotNull(user);
 		this.userRoleService.deleteUserRolesByUserId(userId.toString());
+
+		logoutUserService.logoutUser(user.getUserId());
 
 		//子系统用户同步
 		//催收用户
@@ -257,7 +263,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				logger.error("删除风控用户失败|程序异常:{}", ex);
 			}
 		}
-		logoutUserService.logoutUser(user.getUserId());
 	}
 
 	@Override

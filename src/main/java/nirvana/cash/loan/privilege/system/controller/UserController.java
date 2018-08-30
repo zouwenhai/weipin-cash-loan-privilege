@@ -82,9 +82,10 @@ public class UserController extends BaseController {
 
     //修改用户
     @RequestMapping("user/update")
-    public ResResult updateUser(User user, Long[] rolesSelect) {
+    public ResResult updateUser(User user, Long[] rolesSelect,HttpServletRequest request) {
         try {
-            this.userService.updateUser(user, rolesSelect);
+            Long loginUserId=this.getLoginUser(request).getUserId();
+            this.userService.updateUser(user, rolesSelect,loginUserId);
             return ResResult.success();
         }
         catch (BizException e) {
