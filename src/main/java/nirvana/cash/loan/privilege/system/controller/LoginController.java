@@ -73,7 +73,6 @@ public class LoginController extends BaseController {
             //缓存2小时，登录信息
             String jsessionid = user.getUserId()+"#"+GeneratorId.guuid();
             redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*2L);
-            //redisService.put(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user));
             //设置登录sessionId,存入cookies
             CookieUtil.setCookie(request, response, RedisKeyContant.JSESSIONID, jsessionid);
 
@@ -81,7 +80,6 @@ public class LoginController extends BaseController {
             List<Menu> permissionList = menuService.findUserPermissions(username);
             String userPermissionsKey = RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername();
             redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*2L);
-            //redisService.put(userPermissionsKey,JSON.toJSONString(permissionList));
             //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
 
             //更新登录时间
