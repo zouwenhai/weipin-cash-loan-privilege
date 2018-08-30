@@ -71,7 +71,7 @@ public class LoginController extends BaseController {
             roleIds=userService.findUserRoldIds(user.getUserId().intValue());
 
             //缓存2小时，登录信息
-            String jsessionid = user.getUserId()+GeneratorId.guuid();
+            String jsessionid = user.getUserId()+"#"+GeneratorId.guuid();
             redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*2L);
             //redisService.put(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user));
             //设置登录sessionId,存入cookies

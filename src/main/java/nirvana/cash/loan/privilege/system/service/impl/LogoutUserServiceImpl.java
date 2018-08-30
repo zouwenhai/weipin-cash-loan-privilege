@@ -51,7 +51,7 @@ public class LogoutUserServiceImpl implements LogoutUserService {
             Iterator<String> it = jsessionids.iterator();
             while (it.hasNext()) {
                 String jessionId = it.next();
-                if (jessionId.split("-")[0].equals(userId.toString())) {
+                if (jessionId.split("#")[0].equals(userId.toString())) {
                     res = jessionId;
                     break;
                 }
