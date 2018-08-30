@@ -55,7 +55,7 @@ public class LoginController extends BaseController {
             }
 
             user = this.userService.findByName(username);
-            if (user == null) {
+            if (user == null || user.getIsDelete() != 0) {
                 return ResResult.error("用户名或密码错误！");
             }
             if (User.STATUS_LOCK.equals(user.getStatus())) {
