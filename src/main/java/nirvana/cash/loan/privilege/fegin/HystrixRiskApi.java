@@ -17,13 +17,11 @@ public class HystrixRiskApi implements FeginRiskApi {
 
     @Override
     public NewResponseUtil addOrderUser(@RequestBody RiskUserAddApiFacade facade) {
-        logger.error("程序进入断路器|添加风控人员失败,请求参数:{}", JSON.toJSONString(facade));
-        return new NewResponseUtil(NewResponseUtil.ERROR,null,"程序进入断路器");
+        return new NewResponseUtil(NewResponseUtil.ERROR,null,"添加风控人员失败|程序进入断路器...");
     }
 
     @Override
     public NewResponseUtil updateOrderUser(@RequestBody RiskUserUpdateApiFacade facade) {
-        logger.error("程序进入断路器|更新催收风控失败,请求参数:{}", JSON.toJSONString(facade));
-        return new NewResponseUtil(NewResponseUtil.ERROR,null,"程序进入断路器");
+        return new NewResponseUtil(NewResponseUtil.ERROR,null,"添加风控人员失败|程序进入断路器...");
     }
 }
