@@ -84,7 +84,7 @@ public class AccessZullFilter extends ZuulFilter {
             if (!res.getCode().equals(ResResult.SUCCESS)) {
                 //过滤该请求，不往下级服务去转发请求，到此结束
                 ctx.setSendZuulResponse(false);
-                ctx.setResponseStatusCode(401);
+                ctx.setResponseStatusCode(Integer.valueOf(res.getCode()));
                 ctx.setResponseBody(JSON.toJSONString(res));
                 ctx.getResponse().setContentType("application/json;charset=UTF-8");
                 return null;
