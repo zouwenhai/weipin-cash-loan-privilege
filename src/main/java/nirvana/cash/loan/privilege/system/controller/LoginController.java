@@ -80,7 +80,6 @@ public class LoginController extends BaseController {
             List<Menu> permissionList = menuService.findUserPermissions(username);
             String userPermissionsKey = RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername();
             redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*2L);
-            //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
 
             //更新登录时间
             this.userService.updateLoginTime(username);
