@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -307,6 +308,13 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		return this.userMapper.findUserRoldIds(userId);
 	}
 
+	@Override
+	public String findUserRoldCodes(String roleIds) {
+		List<Integer> roleIdList =new ArrayList<>();
+		Arrays.asList(roleIds.split(",")).forEach(t->{roleIdList.add(Integer.valueOf(t));});
+		List<String> roleCodeList =  roleMapper.findRoleCodeListByRoleIds(roleIdList);
+	   return String.join(",",roleCodeList);
+	}
 
 	public List<String> filterRoleCodeList(List<String> roleCodeList,String syncService){
 		List<String> collRoleCodeList = new ArrayList<>();

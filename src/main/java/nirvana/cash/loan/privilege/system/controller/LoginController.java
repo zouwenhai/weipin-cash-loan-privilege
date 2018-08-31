@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/privilige")
@@ -33,6 +34,7 @@ public class LoginController extends BaseController {
     public ResResult login(HttpServletRequest request, HttpServletResponse response, String username, String password, String code) {
         User user=null;
         String roleIds=null;
+        String roleCodes=null;
         try {
             if (StringUtils.isBlank(code)) {
                 return ResResult.error("验证码不能为空！");
@@ -66,8 +68,11 @@ public class LoginController extends BaseController {
 
             //查询登录用户角色
             roleIds=userService.findUserRoldIds(user.getUserId().intValue());
+            if(StringUtils.isNotBlank(roleIds) && roleIds.split(",").length > 0){
+                roleCodes=userService.findUserRoldCodes(roleIds);
+            }
 
-            //缓存2小时，登录信息
+            //缓存2小时，登录信息，"#"分割符在其他地方有使用到,不要替换为其他的。
             String jsessionid = user.getUserId()+"#"+GeneratorId.guuid();
             redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*2L);
 
@@ -89,7 +94,9 @@ public class LoginController extends BaseController {
         //密码不输出至前端
         user.setPassword(null);
         ResResult res = ResResult.success(user);
-        res.getOther().put("roleIds",roleIds);
+        Map<String,Object> otherMap = res.getOther();
+        otherMap.put("roleIds",roleIds);
+        otherMap.put("roleCodes",roleCodes);
         return res;
     }
 

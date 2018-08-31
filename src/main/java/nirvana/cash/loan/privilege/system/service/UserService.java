@@ -26,4 +26,6 @@ public interface UserService extends IService<User> {
 	void updatePassword(String password,Long userId);
 
 	String findUserRoldIds(Integer userId);
+
+    String findUserRoldCodes(String roleIds);
 }
