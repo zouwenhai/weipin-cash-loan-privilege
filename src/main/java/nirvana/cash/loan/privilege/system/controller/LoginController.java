@@ -110,4 +110,17 @@ public class LoginController extends BaseController {
         }
     }
 
+    //是否处于登录状态
+    @RequestMapping(value = "/notauth/isLogin")
+    public ResResult isLogin(HttpServletResponse response, HttpServletRequest request) {
+        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+        if (jsessionid == null || jsessionid.trim().length() == 0) {
+            return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
+        }
+        String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid, String.class);
+        if (StringUtils.isBlank(data)) {
+            return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
+        }
+        return ResResult.success(null,"登录中");
+    }
 }
