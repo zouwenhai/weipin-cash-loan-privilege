@@ -60,4 +60,10 @@
 	 where user_id = #{userId}
 	</select>
 
+	<update id="setDeptIdNull" parameterType="java.lang.Long">
+		update tb_yofishdk_auth_user
+		set dept_id = NULL
+		where dept_id = #{deptId}
+	</update>
+
 </mapper>

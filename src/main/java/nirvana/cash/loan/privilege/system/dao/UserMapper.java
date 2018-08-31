@@ -14,4 +14,6 @@ public interface UserMapper extends MyMapper<User> {
 	List<UserWithRole> findUserWithRole(Long userId);
 
     String findUserRoldIds(@Param("userId") Integer userId);
+
+    void setDeptIdNull(Long deptId);
 }

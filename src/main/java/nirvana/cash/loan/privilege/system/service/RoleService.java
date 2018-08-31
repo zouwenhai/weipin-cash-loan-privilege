@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.system.service;
 
 import nirvana.cash.loan.privilege.common.service.IService;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
 
@@ -16,7 +17,7 @@ public interface RoleService extends IService<Role> {
 	
 	void updateRole(Role role, Long[] menuIds,Long loginUserId);
 
-	void deleteRoles(Long roleId,Long loginUserId);
+	ResResult deleteRoles(Long roleId, Long loginUserId);
 
 	Role findByCode(String roleCode);
 

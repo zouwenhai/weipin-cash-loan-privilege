@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.system.service.impl;
 import nirvana.cash.loan.privilege.common.domain.SplitMenu;
 import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.dao.RoleMapper;
 import nirvana.cash.loan.privilege.system.dao.RoleMenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,18 +92,17 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	@Transactional
-	public void deleteRoles(Long roleId,Long loginUserId) {
+	public ResResult deleteRoles(Long roleId, Long loginUserId) {
 		List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
 		if(userIdList!=null && userIdList.size()>0){
-			List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
-			logoutUserService.batchLogoutUser(newUserIdList);
+			return ResResult.error("角色已关联用户,无法删除");
 		}
-
 		List<String> list = new ArrayList<>();
 		list.add(roleId.toString());
 		this.batchDelete(list, "roleId", Role.class);
 		this.roleMenuService.deleteRoleMenusByRoleId(roleId.toString());
 		this.userRoleService.deleteUserRolesByRoleId(roleId.toString());
+		return ResResult.success();
 	}
 
 

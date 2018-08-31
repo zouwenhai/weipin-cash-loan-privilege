@@ -79,8 +79,7 @@ public class RoleController extends BaseController {
 	public ResResult deleteRoles(Long ids,HttpServletRequest request) {
 		try {
 			Long loginUserId=this.getLoginUser(request).getUserId();
-			this.roleService.deleteRoles(ids,loginUserId);
-			return ResResult.success();
+			return this.roleService.deleteRoles(ids,loginUserId);
 		} catch (Exception e) {
 			logger.error("角色管理|删除角色|执行异常:{}",e);
 			return ResResult.error("删除角色失败！");

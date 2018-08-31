@@ -82,7 +82,7 @@ public class DeptController extends BaseController {
 
 	//删除部门
 	@RequestMapping("dept/delete")
-	public ResResult deleteDept(String id) {
+	public ResResult deleteDept(Long id) {
 		try {
 			this.deptService.deleteDepts(id);
 			return ResResult.success();
