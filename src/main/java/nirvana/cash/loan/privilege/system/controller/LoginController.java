@@ -121,6 +121,6 @@ public class LoginController extends BaseController {
         if (StringUtils.isBlank(data)) {
             return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
         }
-        return ResResult.success(null,"登录中");
+        return ResResult.success("登录中", ResResult.SUCCESS);
     }
 }
