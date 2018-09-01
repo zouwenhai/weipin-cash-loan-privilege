@@ -1,6 +1,10 @@
 package nirvana.cash.loan.privilege.system.controller;
 
 import com.alibaba.fastjson.JSON;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
@@ -15,11 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/privilige")
@@ -115,11 +114,11 @@ public class LoginController extends BaseController {
     public ResResult isLogin(HttpServletResponse response, HttpServletRequest request) {
         String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
         if (jsessionid == null || jsessionid.trim().length() == 0) {
-            return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
+            return ResResult.error("未登录", ResResult.LOGIN_WHETHER);
         }
         String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid, String.class);
         if (StringUtils.isBlank(data)) {
-            return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
+            return ResResult.error("未登录", ResResult.LOGIN_WHETHER);
         }
         return ResResult.success("登录中", ResResult.SUCCESS);
     }

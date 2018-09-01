@@ -14,6 +14,8 @@ public class ResResult {
     public static final String LOGIN_SESSION_TIMEOUT = "-1";
     //账户被锁定
     public static final String ACCOUNT_LOCKED = "-2";
+    //是否登录
+    public static final String LOGIN_WHETHER = "-3";
 
     //默认成功
     private String code = SUCCESS;
