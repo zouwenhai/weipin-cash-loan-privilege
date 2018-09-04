@@ -17,6 +17,7 @@ public enum RoleEnum {
     //风控角色
     RISK_ADMIN("risk_admin", "风控审核主管", "risk"),
     RISK_USER("risk_user", "风控审核专员", "risk"),
+    RISK_DEVELOPER("risk_developer", "风控开发人员"),
 
     //财务角色
     FINANCIAL_ADMIN("financial_admin", "财务主管"),
