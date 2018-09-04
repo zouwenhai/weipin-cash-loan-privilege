@@ -1,9 +1,11 @@
 package nirvana.cash.loan.privilege.fegin.facade;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2018/8/22.
  */
-public class RiskUserUpdateApiFacade {
+public class RiskUserUpdateApiFacade implements Serializable {
     private String loginName;
     private String userName;
     private String mobile;
