@@ -23,7 +23,7 @@ public enum RoleEnum {
     //放款审核专员
     LOAN_USER("loan_user", "放款审核专员"),
     //催收系统管理员
-    COLL_MANAGER("coll_supervisor", "催收系统管理员"),
+    COLL_ADMINISTRATOR("coll_administrator", "催收系统管理员"),
     //催收主管(外部机构)
     COLL_ADMIN("coll_admin", "催收主管", "coll"),
     //催收专员(外部机构)
