@@ -31,7 +31,7 @@ public enum RoleEnum {
     //财务专员
     FINANCIAL_USER("financial_user", "财务专员"),
     //客服角色
-    CUSTOMER_USER("customer_user", "产品人员"),
+    CUSTOMER_USER("customer_user", "客服人员"),
     //运营角色
     OPERATION_USER("operation_user", "运营人员");
 
