@@ -13,7 +13,7 @@
                 </customFields>
             </encoder>
         </appender>
-        <logger level="INFO" name="com.caiyi.financial.nirvana">
+        <logger level="INFO" name="nirvana.cash.loan.privilege">
             <appender-ref ref="LOGSTASH_SOCKET"/>
         </logger>
     </springProfile>
@@ -27,7 +27,7 @@
                 </customFields>
             </encoder>
         </appender>
-        <logger level="INFO" name="com.caiyi.financial.nirvana">
+        <logger level="INFO" name="nirvana.cash.loan.privilege">
             <appender-ref ref="LOGSTASH_SOCKET"/>
         </logger>
     </springProfile>
@@ -41,7 +41,7 @@
                 </customFields>
             </encoder>
         </appender>
-        <logger level="INFO" name="com.caiyi.financial.nirvana">
+        <logger level="INFO" name="nirvana.cash.loan.privilege">
             <appender-ref ref="LOGSTASH_SOCKET"/>
         </logger>
     </springProfile>
