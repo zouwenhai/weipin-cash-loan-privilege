@@ -32,7 +32,7 @@ ribbon:
 zuul:
   host:
     socket-timeout-millis: 30000
-    connect-timeout-millis: 6000
+    connect-timeout-millis: 15000
 eureka:
   client:
     serviceUrl.defaultZone: http://10.0.12.25:13115/eureka/,http://10.0.12.25:13116/eureka/,http://10.0.12.25:13117/eureka/
