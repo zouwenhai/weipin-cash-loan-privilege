@@ -11,6 +11,7 @@ public class UserUpdateApiFacade {
     private String mobile;
     private List<String> roleCodeList;
     private Integer status; // 1-修改；2-删除
+    private String updateUser;
 
     public String getLoginName() {
         return loginName;
@@ -50,5 +51,13 @@ public class UserUpdateApiFacade {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
     }
 }

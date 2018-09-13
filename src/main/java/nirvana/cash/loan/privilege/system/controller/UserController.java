@@ -58,7 +58,7 @@ public class UserController extends BaseController {
 
     //新增用户
     @RequestMapping("user/add")
-    public ResResult addUser(User user, Long[] roles) {
+    public ResResult addUser(User user, Long[] roles, HttpServletRequest request) {
         try {
             user.setUsername(user.getUsername().trim());
             User oldUser = this.userService.findByName(user.getUsername());
@@ -68,7 +68,8 @@ public class UserController extends BaseController {
             if(roles.length == 0){
                 return ResResult.error("请选择用户角色！");
             }
-            return this.userService.addUser(user, roles);
+            User loginUser = getLoginUser(request);
+            return this.userService.addUser(user, roles, loginUser);
         }
         catch (BizException e) {
             logger.error("用户管理|新增用户|执行异常:{}", e);
@@ -84,8 +85,10 @@ public class UserController extends BaseController {
     @RequestMapping("user/update")
     public ResResult updateUser(User user, Long[] rolesSelect,HttpServletRequest request) {
         try {
-            Long loginUserId=this.getLoginUser(request).getUserId();
-            this.userService.updateUser(user, rolesSelect,loginUserId);
+            User loginUser = this.getLoginUser(request);
+            Long loginUserId= loginUser.getUserId();
+            String username = loginUser.getUsername();
+            this.userService.updateUser(user, rolesSelect,loginUserId, username);
             return ResResult.success();
         }
         catch (BizException e) {

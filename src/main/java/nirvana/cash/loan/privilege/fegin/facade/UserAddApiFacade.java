@@ -11,6 +11,8 @@ public class UserAddApiFacade implements Serializable {
     private String userName;
     private String mobile;
     private List<String> roleCodeList;
+    private String createUser;
+    private String updateUser;
 
     public String getLoginName() {
         return loginName;
@@ -42,5 +44,21 @@ public class UserAddApiFacade implements Serializable {
 
     public void setRoleCodeList(List<String> roleCodeList) {
         this.roleCodeList = roleCodeList;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
     }
 }
