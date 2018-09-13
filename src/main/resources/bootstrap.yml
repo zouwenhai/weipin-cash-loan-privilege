@@ -4,12 +4,12 @@ server:
 spring:
   application:
     name: yofishdk-cash-loan-privilege
-  profiles:
-    active: dev
   http:
     encoding:
       charset: UTF-8
       force: true
+  profiles:
+    active: dev
   cloud:
     config:
       profile: ${spring.profiles.active}
@@ -22,14 +22,13 @@ feign:
 hystrix:
   command.default.execution.isolation:
     strategy: SEMAPHORE
-    thread.timeoutInMilliseconds: 10000
+    thread.timeoutInMilliseconds: 6000
 ribbon:
   NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
   MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 5000
   ReadTimeout: 6000
-  ConnectTimeout: 4000
-
+  ConnectTimeout: 6000
 eureka:
   client:
     serviceUrl.defaultZone: http://10.0.12.25:13115/eureka/,http://10.0.12.25:13116/eureka/,http://10.0.12.25:13117/eureka/
@@ -77,4 +76,3 @@ eureka:
     registry-fetch-interval-seconds: 5
 spring:
   profiles: pre
-
