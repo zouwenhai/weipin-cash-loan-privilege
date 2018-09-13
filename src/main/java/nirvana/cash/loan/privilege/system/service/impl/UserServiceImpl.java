@@ -79,7 +79,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public ResResult addUser(User user, Long[] roles) {
+	public ResResult addUser(User user, Long[] roles, User loginUser) {
 		user.setUserId(this.getSequence(User.SEQ));
 		user.setCrateTime(new Date());
 		user.setTheme(User.DEFAULT_THEME);
@@ -103,6 +103,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
 			facade.setRoleCodeList(collRoleCodeList);
+			facade.setCreateUser(loginUser.getUsername());
+			facade.setUpdateUser(loginUser.getUsername());
 			try{
 				NewResponseUtil apiRes = feginCollectionApi.addUser(facade);
 				logger.info("添加催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
@@ -143,7 +145,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public void updateUser(User user, Long[] roles,Long loginUserId) {
+	public void updateUser(User user, Long[] roles, Long loginUserId, String username) {
 		List<String> oldRoleCodeList = userRoleService.findRoleCodeListByUserId(user.getUserId().intValue());
 		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(this.transRoleIds(roles));
 		User oldUser=this.userMapper.selectByPrimaryKey(user.getUserId());
@@ -175,6 +177,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
+			facade.setUpdateUser(username);
             if(newCollRoleCodeList.size() == 0){
                 facade.setStatus(2);//删除
                 facade.setRoleCodeList(oldCollRoleCodeList);
