@@ -38,6 +38,7 @@ public class BaseController {
             String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
             String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,String.class);
             user = JSON.parseObject(data, User.class);
+            logger.info("登录用户：{}", JSON.toJSONString(user));
         } catch (Exception ex) {
             logger.error(ex.getMessage());
         }
