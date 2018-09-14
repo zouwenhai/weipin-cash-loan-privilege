@@ -22,13 +22,13 @@ feign:
 hystrix:
   command.default.execution.isolation:
     strategy: SEMAPHORE
-    thread.timeoutInMilliseconds: 8000
+    thread.timeoutInMilliseconds: 60000
 ribbon:
   NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
   MaxAutoRetriesNextServer: 0
   ServerListRefreshInterval: 5000
-  ReadTimeout: 6000
-  ConnectTimeout: 6000
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 zuul:
   host:
     socket-timeout-millis: 6000
