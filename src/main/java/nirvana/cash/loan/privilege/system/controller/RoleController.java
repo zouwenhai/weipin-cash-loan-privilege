@@ -4,14 +4,17 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.controller.BaseController;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
-import nirvana.cash.loan.privilege.common.domain.ResponseBo;
+import nirvana.cash.loan.privilege.common.enums.RoleEnum;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.service.RoleService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,86 +25,77 @@ public class RoleController extends BaseController {
 	@Autowired
 	private RoleService roleService;
 
+	//角色列表
 	@RequestMapping("role/list")
-	public Map<String, Object> roleList(QueryRequest request, Role role) {
+	public ResResult roleList(QueryRequest request, Role role) {
 		PageHelper.startPage(request.getPageNum(), request.getPageSize());
 		List<Role> list = this.roleService.findAllRole(role);
 		PageInfo<Role> pageInfo = new PageInfo<>(list);
-		return getDataTable(pageInfo);
-	}
-	
-	@RequestMapping("role/excel")
-	public ResponseBo roleExcel(Role role) {
-		try {
-			List<Role> list = this.roleService.findAllRole(role);
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseBo.error("导出Excel失败，请联系网站管理员！");
-		}
+		return ResResult.success(getDataTable(pageInfo));
 	}
 
-	@RequestMapping("role/csv")
-	public ResponseBo roleCsv(Role role){
-		try {
-			List<Role> list = this.roleService.findAllRole(role);
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseBo.error("导出Csv失败，请联系网站管理员！");
-		}
-	}
-	
-	@RequestMapping("role/getRole")
-	public ResponseBo getRole(Long roleId) {
+	//根据角色ID，查找指定角色信息
+	@RequestMapping("notauth/role/getRole")
+	public ResResult getRole(Long roleId) {
 		try {
 			Role role = this.roleService.findRoleWithMenus(roleId);
-			return ResponseBo.ok(role);
+			return ResResult.success(role);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseBo.error("获取角色信息失败，请联系网站管理员！");
+			return ResResult.error("获取角色信息失败！");
 		}
 	}
 
-	@RequestMapping("role/checkRoleName")
-	public boolean checkRoleName(String roleName, String oldRoleName) {
-		if (StringUtils.isNotBlank(oldRoleName) && roleName.equalsIgnoreCase(oldRoleName)) {
-			return true;
-		}
-		Role result = this.roleService.findByName(roleName);
-		return result == null;
-	}
-
+	//新增角色
 	@RequestMapping("role/add")
-	public ResponseBo addRole(Role role, Long[] menuId) {
+	public ResResult addRole(Role role, Long[] menuId) {
 		try {
+			Role oldRole = this.roleService.findByCode(role.getRoleCode());
+			if(oldRole != null){
+				return ResResult.error("您选择的角色已存在！");
+			}
 			this.roleService.addRole(role, menuId);
-			return ResponseBo.ok("新增角色成功！");
+			return ResResult.success();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseBo.error("新增角色失败，请联系网站管理员！");
+			logger.error("角色管理|新增角色|执行异常:{}",e);
+			return ResResult.error("新增角色失败！");
 		}
 	}
 
-	@RequestMapping("role/delete")
-	public ResponseBo deleteRoles(String ids) {
-		try {
-			this.roleService.deleteRoles(ids);
-			return ResponseBo.ok("删除角色成功！");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseBo.error("删除角色失败，请联系网站管理员！");
-		}
-	}
-
+	//修改角色
 	@RequestMapping("role/update")
-	public ResponseBo updateRole(Role role, Long[] menuId) {
+	public ResResult updateRole(Role role, Long[] menuId,HttpServletRequest request) {
 		try {
-			this.roleService.updateRole(role, menuId);
-			return ResponseBo.ok("修改角色成功！");
+			Long loginUserId=this.getLoginUser(request).getUserId();
+			this.roleService.updateRole(role, menuId,loginUserId);
+			return ResResult.success();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseBo.error("修改角色失败，请联系网站管理员！");
+			logger.error("角色管理|修改角色|执行异常:{}",e);
+			return ResResult.error("修改角色失败！");
 		}
+	}
+
+	//删除角色
+	@RequestMapping("role/delete")
+	public ResResult deleteRoles(Long ids,HttpServletRequest request) {
+		try {
+			Long loginUserId=this.getLoginUser(request).getUserId();
+			return this.roleService.deleteRoles(ids,loginUserId);
+		} catch (Exception e) {
+			logger.error("角色管理|删除角色|执行异常:{}",e);
+			return ResResult.error("删除角色失败！");
+		}
+	}
+
+	//角色配置下拉列表
+	@RequestMapping("notauth/role/selectList")
+	public ResResult roleList() {
+		List<Map<String, String>> list = new ArrayList<>();
+		for (RoleEnum roleEnum : RoleEnum.values()) {
+			Map itemMap = new HashMap<>();
+			itemMap.put("roleName", roleEnum.getName());
+			itemMap.put("roleCode", roleEnum.getCode());
+			list.add(itemMap);
+		}
+		return ResResult.success(list);
 	}
 }

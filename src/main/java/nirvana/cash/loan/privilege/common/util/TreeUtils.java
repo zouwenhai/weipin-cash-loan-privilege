@@ -9,6 +9,8 @@ import nirvana.cash.loan.privilege.common.domain.Tree;
 
 public class TreeUtils {
 
+	private TreeUtils() {}
+
 	public static <T> Tree<T> build(List<Tree<T>> nodes) {
 		if (nodes == null) {
 			return null;
@@ -44,29 +46,5 @@ public class TreeUtils {
 		state.put("opened", true);
 		root.setState(state);
 		return root;
-	}
-
-	public static <T> List<Tree<T>> buildList(List<Tree<T>> nodes, String idParam) {
-		if (nodes == null) {
-			return null;
-		}
-		List<Tree<T>> topNodes = new ArrayList<>();
-		for (Tree<T> children : nodes) {
-			String pid = children.getParentId();
-			if (pid == null || idParam.equals(pid)) {
-				topNodes.add(children);
-				continue;
-			}
-			for (Tree<T> parent : nodes) {
-				String id = parent.getId();
-				if (id != null && id.equals(pid)) {
-					parent.getChildren().add(children);
-					children.setHasParent(true);
-					parent.setChildren(true);
-					continue;
-				}
-			}
-		}
-		return topNodes;
 	}
 }

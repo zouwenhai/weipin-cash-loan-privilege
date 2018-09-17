@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
-@Table(name = "TB_CL_PRIVILEGE_ROLE")
+@Table(name = "tb_yofishdk_auth_role")
 public class Role implements Serializable {
 
 	private static final long serialVersionUID = -1714476694755654924L;
@@ -17,7 +17,7 @@ public class Role implements Serializable {
 	/**
 	 * Role表序列
 	 */
-	public static final String SEQ = "SEQ_TB_CL_PRIVILEGE_ROLE";
+	public static final String SEQ = "seq_tb_yofishdk_auth_role";
 
 	@Id
 	@Column(name = "ROLE_ID")
@@ -37,6 +37,10 @@ public class Role implements Serializable {
 
 	@Column(name = "MODIFY_TIME")
 	private Date modifyTime;
+
+	@ExportConfig(value = "角色编码")
+	@Column(name = "role_code")
+	private String roleCode;
 
 	/**
 	 * @return ROLE_ID
@@ -106,5 +110,13 @@ public class Role implements Serializable {
 	 */
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public String getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
 	}
 }

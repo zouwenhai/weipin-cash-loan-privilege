@@ -1,27 +1,29 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.system.dao.MenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
+import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
+import nirvana.cash.loan.privilege.system.service.LogoutUserService;
+import nirvana.cash.loan.privilege.system.service.MenuService;
 import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import nirvana.cash.loan.privilege.system.service.MenuService;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
-@Service("menuService")
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
@@ -31,14 +33,12 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	@Autowired
 	private RoleMenuServie roleMenuService;
 
+	@Autowired
+	private LogoutUserService logoutUserService;
+
 	@Override
 	public List<Menu> findUserPermissions(String userName) {
 		return this.menuMapper.findUserPermissions(userName);
-	}
-
-	@Override
-	public List<Menu> findUserMenus(String userName) {
-		return this.menuMapper.findUserMenus(userName);
 	}
 
 	@Override
@@ -55,7 +55,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			example.setOrderByClause("menu_id");
 			return this.selectByExample(example);
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
@@ -85,36 +84,8 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			tree.setId(menu.getMenuId().toString());
 			tree.setParentId(menu.getParentId().toString());
 			tree.setText(menu.getMenuName());
+			tree.setMenuType(menu.getType());
 			trees.add(tree);
-		}
-	}
-
-	@Override
-	public Tree<Menu> getUserMenu(String userName) {
-		List<Tree<Menu>> trees = new ArrayList<>();
-		List<Menu> menus = this.findUserMenus(userName);
-		for (Menu menu : menus) {
-			Tree<Menu> tree = new Tree<>();
-			tree.setId(menu.getMenuId().toString());
-			tree.setParentId(menu.getParentId().toString());
-			tree.setText(menu.getMenuName());
-			tree.setIcon(menu.getIcon());
-			tree.setUrl(menu.getUrl());
-			trees.add(tree);
-		}
-		return TreeUtils.build(trees);
-	}
-
-	@Override
-	public Menu findByNameAndType(String menuName, String type) {
-		Example example = new Example(Menu.class);
-		example.createCriteria().andCondition("lower(menu_name)=", menuName.toLowerCase()).andEqualTo("type",
-				Long.valueOf(type));
-		List<Menu> list = this.selectByExample(example);
-		if (list.size() == 0) {
-			return null;
-		} else {
-			return list.get(0);
 		}
 	}
 
@@ -130,11 +101,30 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
 	@Override
 	@Transactional
-	public void deleteMeuns(String menuIds) {
-		List<String> list = Arrays.asList(menuIds.split(","));
-		this.batchDelete(list, "menuId", Menu.class);
-		this.roleMenuService.deleteRoleMenusByMenuId(menuIds);
-		this.menuMapper.changeToTop(list);
+	public void deleteMeuns(Long menuId,Long loginUserId) {
+		List<Menu> menus = this.findAllMenus(new Menu());
+		if (menus != null && menus.size() > 0) {
+			List<Long> userIdList = roleMenuService.findUserIdListByMenuId(menuId);
+			if(userIdList!=null && userIdList.size()>0){
+				List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
+				logoutUserService.batchLogoutUser(newUserIdList);
+			}
+
+			//转换列表
+			List<FilterId> allList = new ArrayList<>();
+			menus.forEach(t -> {
+				FilterId filterId = new FilterId(t.getMenuId(), t.getParentId(), t.getMenuName());
+				allList.add(filterId);
+			});
+			//开始处理...
+			List<FilterId> filterIdList = FilterId.filterRemoveList(allList, menuId);
+			List<String> list =new ArrayList<>();
+			for(FilterId item:filterIdList){
+				list.add(item.getId()+"");
+			}
+			this.batchDelete(list, "menuId", Menu.class);
+			this.roleMenuService.deleteRoleMenusByMenuId(list);
+		}
 	}
 
 	@Override
@@ -144,11 +134,26 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
 	@Override
 	@Transactional
-	public void updateMenu(Menu menu) {
+	public void updateMenu(Menu menu,Long loginUserId) {
+		List<Long> userIdList = roleMenuService.findUserIdListByMenuId(menu.getMenuId());
+		if(userIdList!=null && userIdList.size()>0){
+			List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
+			logoutUserService.batchLogoutUser(newUserIdList);
+		}
+
+        Menu oldMenu = this.findById(menu.getMenuId());
+        menu.setCreateTime(oldMenu.getCreateTime());
 		menu.setModifyTime(new Date());
-		if (menu.getParentId() == null)
+		if (menu.getParentId() == null){
 			menu.setParentId(0L);
-		this.updateNotNull(menu);
+		}
+        this.updateAll(menu);
 	}
+
+	@Override
+	public List<LeftMenuVo> findUserMenus() {
+		return this.menuMapper.findLeftMenuList();
+	}
+
 
 }

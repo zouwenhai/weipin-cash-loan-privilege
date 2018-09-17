@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-@Table(name = "TB_CL_PRIVILEGE_USER_ROLE")
+@Table(name = "tb_yofishdk_auth_user_role")
 public class UserRole implements Serializable{
     
 	private static final long serialVersionUID = -3166012934498268403L;

@@ -8,4 +8,13 @@
     <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId" />
     <result column="MENU_ID" jdbcType="DECIMAL" property="menuId" />
   </resultMap>
+
+  <select id="findUserIdListByMenuId" resultType="java.lang.Long">
+    SELECT
+          user_id
+    FROM tb_yofishdk_auth_user_role
+    WHERE role_id IN (
+       SELECT role_id FROM tb_yofishdk_auth_role_menu WHERE menu_id = #{menuId}
+    )
+  </select>
 </mapper>

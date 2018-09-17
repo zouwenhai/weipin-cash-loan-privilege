@@ -10,10 +10,13 @@ import javax.persistence.Transient;
 
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
-@Table(name = "TB_CL_PRIVILEGE_USER")
+@Table(name = "tb_yofishdk_auth_user")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = -4852732617765810959L;
+
+	public static final String SEQ = "seq_tb_yofishdk_auth_user";
+
 	/**
 	 * 账户状态
 	 */
@@ -34,15 +37,18 @@ public class User implements Serializable {
 
 	public static final String SEX_UNKNOW = "2";
 
-	public static final String SEQ = "SEQ_TB_CL_PRIVILEGE_USER";
 
 	@Id
 	@Column(name = "USER_ID")
 	private Long userId;
 
 	@Column(name = "USERNAME")
-	@ExportConfig(value = "用户名")
+	@ExportConfig(value = "登录名")
 	private String username;
+
+	@Column(name = "NAME")
+	@ExportConfig(value = "姓名")
+	private String name;
 
 	@Column(name = "PASSWORD")
 	private String password;
@@ -64,7 +70,7 @@ public class User implements Serializable {
 
 	@Column(name = "STATUS")
 	@ExportConfig(value = "状态", convert = "s:0=锁定,1=有效")
-	private String status = STATUS_VALID;
+	private String status;
 
 	@Column(name = "CRATE_TIME")
 	@ExportConfig(value = "创建时间", convert = "c:TimeConvert")
@@ -88,6 +94,9 @@ public class User implements Serializable {
 
 	@Column(name = "DESCRIPTION")
 	private String description;
+
+	@Column(name = "is_delete")
+	private Integer isDelete;
 	
 	@Transient
 	private String roleName;
@@ -118,6 +127,14 @@ public class User implements Serializable {
 	 */
 	public void setUsername(String username) {
 		this.username = username == null ? null : username.trim();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -286,4 +303,11 @@ public class User implements Serializable {
 		this.roleName = roleName;
 	}
 
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
 }

@@ -7,6 +7,8 @@ import java.util.UUID;
  */
 public class GeneratorId {
 
+    private GeneratorId() {}
+
     public static String guuid(){
         return  UUID.randomUUID().toString().replace("-","");
     }

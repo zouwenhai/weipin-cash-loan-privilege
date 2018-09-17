@@ -10,20 +10,26 @@
     <result column="REMARK" jdbcType="VARCHAR" property="remark" />
     <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
     <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
   </resultMap>
-  
-  <select id="findUserRole" resultMap="roleMap">
-  	select r.* from tb_cl_privilege_role r
-  	left join tb_cl_privilege_user_role ur on(r.role_id = ur.role_id)
-	left join tb_cl_privilege_user u on(u.user_id = ur.user_id)
-	where u.username = #{userName}
-  </select>
-  
+
   <select id="findById" resultType="roleWithMenu">
-  	select r.role_id roleId,r.role_name roleName,r.remark,
-  	rm.menu_id menuId from tb_cl_privilege_role r
-	left join tb_cl_privilege_role_menu rm on(r.role_id = RM.role_id)
-	where r.role_id = #{roleId}
+      select r.role_id roleId,r.role_name roleName,r.remark,
+      rm.menu_id menuId,m.type as menuType from tb_yofishdk_auth_role r
+      left join tb_yofishdk_auth_role_menu rm on(r.role_id = RM.role_id)
+      left join tb_yofishdk_auth_menu m on (rm.menu_id = m.menu_id)
+      where r.role_id = #{roleId}
+  </select>
+
+  <select id="findRoleCodeListByRoleIds" resultType="java.lang.String">
+    select
+       role_code
+    from tb_yofishdk_auth_role
+    where
+       role_id in
+          <foreach item="roleId" collection="roleIds"  open="(" separator="," close=")">
+            #{roleId}
+          </foreach>
   </select>
   
 </mapper>

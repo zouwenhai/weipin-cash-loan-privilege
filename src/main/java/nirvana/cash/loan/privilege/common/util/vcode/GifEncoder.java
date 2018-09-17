@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.common.util.vcode;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.BufferedOutputStream;
@@ -176,8 +177,9 @@ public class GifEncoder {
 	 * OutputStream, the stream is not closed.
 	 */
 	public boolean finish() {
-		if (!started)
+		if (!started) {
 			return false;
+		}
 		boolean ok = true;
 		started = false;
 		try {
@@ -245,14 +247,17 @@ public class GifEncoder {
 	 *            int frame width.
 	 */
 	public void setSize(int w, int h) {
-		if (started && !firstFrame)
+		if (started && !firstFrame) {
 			return;
+		}
 		width = w;
 		height = h;
-		if (width < 1)
+		if (width < 1) {
 			width = 320;
-		if (height < 1)
+		}
+		if (height < 1) {
 			height = 240;
+		}
 		sizeSet = true;
 	}
 
@@ -265,8 +270,9 @@ public class GifEncoder {
 	 * @return false if initial write failed.
 	 */
 	public boolean start(OutputStream os) {
-		if (os == null)
+		if (os == null) {
 			return false;
+		}
 		boolean ok = true;
 		closeStream = false;
 		out = os;

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.caiyi.financial.cash.loan.system</groupId>
-	<artifactId>yofiskdk-cash-loan-privilege</artifactId>
+	<artifactId>yofishdk-cash-loan-privilege</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>yofiskdk-cash-loan-privilege</name>
+	<name>yofishdk-cash-loan-privilege</name>
 	<description>权限管理路由转发系统</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.8.RELEASE</version>
+		<version>1.5.4.RELEASE</version>
 		<relativePath/>
 	</parent>
 
@@ -70,18 +70,6 @@
 			<version>1.2.5</version>
 		</dependency>
 
-		<!-- spring cache -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-cache</artifactId>
-		</dependency>
-
-		<!-- redis -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
-
 		<!-- fastjson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -130,9 +118,8 @@
 		<!-- oracle驱动 -->
 		<dependency>
 			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<!--<version>6.0</version>-->
-			<version>11.2.0.3</version>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.2.0.1</version>
 		</dependency>
 
 		<!-- druid数据源驱动 -->
@@ -200,8 +187,33 @@
 			<version>4.11</version>
 		</dependency>
 
-	</dependencies>
+		<!--引入序列化工具-->
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-core</artifactId>
+			<version>1.0.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-runtime</artifactId>
+			<version>1.0.8</version>
+		</dependency>
 
+		<!-- 引入彩亿封装的jedis,同时排除其他jedis-->
+		<dependency>
+			<groupId>com.caiyi.financial</groupId>
+			<artifactId>spring-boot-starter-data-cachecloud</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- 彩亿加密工具-->
+		<dependency>
+			<groupId>com.caiyi</groupId>
+			<artifactId>CaiyiEncrypt</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>
@@ -216,7 +228,6 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>yofiskdk-cash-loan-privilege</finalName>
 		<resources>
 			<resource>
 				<directory>docker</directory>
@@ -262,47 +273,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>test</id>
-			<properties>
-				<docker.image.url>registry.gs.youyuwo.com</docker.image.url>
-			</properties>
-		</profile>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.spotify</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<configuration>
-							<serverId>docker-hub</serverId>
-							<registryUrl>https://${docker.image.url}/v2/</registryUrl>
-							<imageName>${docker.image.url}/youyu/${project.artifactId}</imageName>
-							<imageTags>
-								<imageTag>latest</imageTag>
-							</imageTags>
-							<forceTags>true</forceTags>
-							<dockerDirectory>target/docker</dockerDirectory>
-							<resources>
-								<resource>
-									<targetPath>/</targetPath>
-									<directory>${project.build.directory}</directory>
-									<include>${project.build.finalName}.jar</include>
-								</resource>
-							</resources>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.httpcomponents</groupId>
-								<artifactId>httpclient</artifactId>
-								<version>4.5.3</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

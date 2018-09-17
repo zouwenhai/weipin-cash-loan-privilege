@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.service.RedisService;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
 import nirvana.cash.loan.privilege.system.domain.Menu;
@@ -42,7 +43,6 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 			example.setOrderByClause("create_time");
 			return this.selectByExample(example);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
@@ -54,12 +54,12 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 	}
 
 	@Override
-	public void addLog(String username,String url,long execTime,String params,String ip) {
+	public void addLog(String username,String url,long execTime,String params) {
 		try{
 			//获取"权限方法"
 			String method="";
 			List<Menu> permissionList=new ArrayList<>();
-			String userPermissions = redisService.get("userPermissions-" + username);
+			String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + username,String.class);
 			if(StringUtils.isNotBlank(userPermissions)){
 				permissionList = JSONObject.parseArray(userPermissions, Menu.class);
 			}
@@ -79,12 +79,9 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
 			log.setTime(execTime);//毫秒
 			log.setMethod(method);
 			log.setParams(params);
-			log.setIp(ip);
 			log.setCreateTime(new Date());
-			log.setLocation(ip);
 			this.save(log);
 		}catch (Exception ex){
-			ex.printStackTrace();
 		}
 	}
 

@@ -11,13 +11,5 @@
     <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum" />
     <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
-  
-  <update id="changeToTop" parameterType="java.util.List">
-  	update TB_CL_PRIVILEGE_DEPT set parent_id = 0 where dept_id in
-  	(select dept_id from TB_CL_PRIVILEGE_DEPT where parent_id in
-  	<foreach collection="list" item="deptId" index="index" open="(" close=")" separator=",">
-  		#{deptId}
-  	</foreach>
-  	)
-  </update>
+
 </mapper>

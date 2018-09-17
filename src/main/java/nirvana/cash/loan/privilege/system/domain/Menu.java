@@ -6,10 +6,11 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
-@Table(name = "TB_CL_PRIVILEGE_MENU")
+@Table(name = "tb_yofishdk_auth_menu")
 public class Menu implements Serializable {
 
 	private static final long serialVersionUID = 7187628714679791771L;
@@ -18,7 +19,7 @@ public class Menu implements Serializable {
 
 	public static final String TYPE_BUTTON = "1";
 
-	public static final String SEQ = "SEQ_TB_CL_PRIVILEGE_MENU";
+	public static final String SEQ = "seq_tb_yofishdk_auth_menu";
 
 	@Id
 	@Column(name = "MENU_ID")
@@ -57,6 +58,9 @@ public class Menu implements Serializable {
 
 	@Column(name = "MODIFY_TIME")
 	private Date modifyTime;
+
+	@Transient
+	private String role_ids;
 
 	/**
 	 * @return MENU_ID
@@ -196,5 +200,9 @@ public class Menu implements Serializable {
 	 */
 	public void setModifyTime(Date modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
 	}
 }

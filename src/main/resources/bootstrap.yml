@@ -1,27 +1,48 @@
 server:
     port: 8080
+    session.cookie.http-only: true
 spring:
   application:
-    name: yofiskdk-cash-loan-privilege
-  profiles:
-    active: dev
+    name: yofishdk-cash-loan-privilege
   http:
     encoding:
       charset: UTF-8
       force: true
+  profiles:
+    active: dev
   cloud:
     config:
       profile: ${spring.profiles.active}
       discovery:
         enabled: true
-        serviceId: nirvana-credit-cloud-config-service
-
+        serviceId: yofishdk-cloud-config
+feign:
+  hystrix:
+    enabled: true
+hystrix:
+  command.default.execution.isolation:
+    strategy: SEMAPHORE
+    thread.timeoutInMilliseconds: 60000
+ribbon:
+  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+  MaxAutoRetriesNextServer: 0
+  ServerListRefreshInterval: 5000
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+zuul:
+  host:
+    socket-timeout-millis: 6000
+    connect-timeout-millis: 6000
 eureka:
   client:
-    serviceUrl.defaultZone: http://192.168.1.51:10115/eureka/
+    serviceUrl.defaultZone: http://10.0.12.25:13115/eureka/,http://10.0.12.25:13116/eureka/,http://10.0.12.25:13117/eureka/
     register-with-eureka: false
+    registry-fetch-interval-seconds: 5
   instance:
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
 
 ---
 eureka:
@@ -33,9 +54,30 @@ eureka:
     home-page-url: http://${HOST}:${PORT0:${PORT:${server.port:8080}}}
     statusPageUrl: ${eureka.instance.home-page-url}/info
     healthCheckUrl: ${eureka.instance.home-page-url}/health
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
   client:
-    serviceUrl.defaultZone: http://credit-card-eureka-server1.marathon.l4lb.thisdcos.directory:8080/eureka/,http://credit-card-eureka-server2.marathon.l4lb.thisdcos.directory:8080/eureka/,http://credit-card-eureka-server3.marathon.l4lb.thisdcos.directory:8080/eureka/
+    serviceUrl.defaultZone: http://10.0.12.25:13115/eureka/,http://10.0.12.25:13116/eureka/,http://10.0.12.25:13117/eureka/
     register-with-eureka: true
+    registry-fetch-interval-seconds: 5
 spring:
-  profiles: test,prod
+  profiles: test
 
+---
+eureka:
+  instance:
+    hostname: ${HOST}
+    instance-id: ${HOST}:${PORT0:${PORT}}
+    ip-address: ${HOST}
+    non-secure-port: ${PORT0:${PORT:${server.port:8080}}}
+    home-page-url: http://${HOST}:${PORT0:${PORT:${server.port:8080}}}
+    statusPageUrl: ${eureka.instance.home-page-url}/info
+    healthCheckUrl: ${eureka.instance.home-page-url}/health
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+  client:
+    serviceUrl.defaultZone: http://10.0.40.14:13115/eureka/,http://10.0.40.14:13116/eureka/,http://10.0.40.14:13117/eureka/
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 5
+spring:
+  profiles: pre

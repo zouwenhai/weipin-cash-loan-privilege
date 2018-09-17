@@ -18,32 +18,35 @@
   </resultMap>
   
   <select id="findUserPermissions" resultMap="menu">
-  	select m.perms from tb_cl_privilege_role r
-        left join tb_cl_privilege_user_role ur on(r.role_id = ur.role_id)
-        left join tb_cl_privilege_user u on(u.user_id = ur.user_id)
-        left join tb_cl_privilege_role_menu rm on(rm.role_id = r.role_id)
-        left join tb_cl_privilege_menu m on(m.menu_id = rm.menu_id )
+  	select m.perms from tb_yofishdk_auth_role r
+        left join tb_yofishdk_auth_user_role ur on(r.role_id = ur.role_id)
+        left join tb_yofishdk_auth_user u on(u.user_id = ur.user_id)
+        left join tb_yofishdk_auth_role_menu rm on(rm.role_id = r.role_id)
+        left join tb_yofishdk_auth_menu m on(m.menu_id = rm.menu_id and m.type = 1 )
         where u.username = #{userName} and m.perms is not null
   </select>
-  
-  <select id="findUserMenus" resultMap="menu">
-  	select m.* from tb_cl_privilege_menu m
-    where m.type &lt;&gt; 1 and m.MENU_ID in 
-        (select distinct rm.menu_id from tb_cl_privilege_role_menu rm
-		left join tb_cl_privilege_role r on(rm.role_id = r.role_id)
-        left join tb_cl_privilege_user_role ur on(ur.role_id = r.role_id)
-        left join tb_cl_privilege_user u on (u.user_id = ur.user_id)
-        where u.username = #{userName})
-    start with m.PARENT_ID = 0 connect by m.PARENT_ID = prior m.MENU_ID 
-    order siblings by m.order_num
-  </select>
-  
-   <update id="changeToTop" parameterType="java.util.List">
-  	update tb_cl_privilege_menu set parent_id = 0 where menu_id in
-  	(select menu_id from tb_cl_privilege_menu where parent_id in
-  	<foreach collection="list" item="menuId" index="index" open="(" close=")" separator=",">
-  		#{menuId}
-  	</foreach>
-  	)
-  </update>
+
+    <select id="findLeftMenuList" resultType="nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo">
+         select
+               t1.menu_id as  menuId,
+               t1.parent_id as parentId,
+               t1.menu_name as menuName,
+               t1.url as url,
+               t1.perms as perms ,
+               t1.icon as icon ,
+               t1.order_num as orderNum,
+               t2.role_ids as roleIds
+         from tb_yofishdk_auth_menu t1
+         left join
+          (
+             select
+                  menu_id,
+                  listagg(role_id,',') within group (order by role_id)  as  role_ids
+             from tb_yofishdk_auth_role_menu
+             group by menu_id
+           )t2
+           on  t1.menu_id = t2.menu_id
+           where t1.type = 0
+    </select>
+
 </mapper>

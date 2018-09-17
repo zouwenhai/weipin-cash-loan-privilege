@@ -11,5 +11,5 @@ public interface LogService extends IService<SysLog> {
 	
 	void deleteLogs(String logIds);
 
-	void addLog(String username,String url,long execTime,String params,String ip);
+	void addLog(String username,String url,long execTime,String params);
 }

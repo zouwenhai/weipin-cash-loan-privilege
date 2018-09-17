@@ -1,31 +1,31 @@
 package nirvana.cash.loan.privilege.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import nirvana.cash.loan.privilege.common.domain.SplitMenu;
+import nirvana.cash.loan.privilege.common.enums.RoleEnum;
+import nirvana.cash.loan.privilege.common.service.impl.BaseService;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.dao.RoleMapper;
 import nirvana.cash.loan.privilege.system.dao.RoleMenuMapper;
+import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.Role;
 import nirvana.cash.loan.privilege.system.domain.RoleMenu;
-import nirvana.cash.loan.privilege.system.service.RoleMenuServie;
-import nirvana.cash.loan.privilege.system.service.RoleService;
-import nirvana.cash.loan.privilege.system.service.UserRoleService;
+import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
+import nirvana.cash.loan.privilege.system.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import nirvana.cash.loan.privilege.common.service.impl.BaseService;
-import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
 import tk.mybatis.mapper.entity.Example;
 
-@Service("roleService")
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class RoleServiceImpl extends BaseService<Role> implements RoleService {
-
 	@Autowired
 	private RoleMapper roleMapper;
 
@@ -38,10 +38,11 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 	@Autowired
 	private RoleMenuServie roleMenuService;
 
-	@Override
-	public List<Role> findUserRole(String userName) {
-		return this.roleMapper.findUserRole(userName);
-	}
+	@Autowired
+	private MenuService menuService;
+
+	@Autowired
+	private LogoutUserService logoutUserService;
 
 	@Override
 	public List<Role> findAllRole(Role role) {
@@ -53,15 +54,14 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 			example.setOrderByClause("create_time");
 			return this.selectByExample(example);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
 
 	@Override
-	public Role findByName(String roleName) {
+	public Role findByCode(String roleCode) {
 		Example example = new Example(Role.class);
-		example.createCriteria().andCondition("lower(role_name)=", roleName.toLowerCase());
+		example.createCriteria().andCondition("lower(role_code)=", roleCode);
 		List<Role> list = this.selectByExample(example);
 		if (list.size() == 0) {
 			return null;
@@ -75,6 +75,8 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 	public void addRole(Role role, Long[] menuIds) {
 		role.setRoleId(this.getSequence(Role.SEQ));
 		role.setCreateTime(new Date());
+        role.setModifyTime(new Date());
+		role.setRoleName(RoleEnum.getPaymentStatusEnumByValue(role.getRoleCode()).getName());
 		this.save(role);
 		setRoleMenus(role, menuIds);
 	}
@@ -90,35 +92,55 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	@Transactional
-	public void deleteRoles(String roleIds) {
-		List<String> list = Arrays.asList(roleIds.split(","));
+	public ResResult deleteRoles(Long roleId, Long loginUserId) {
+		List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
+		if(userIdList!=null && userIdList.size()>0){
+			return ResResult.error("角色已关联用户,无法删除");
+		}
+		List<String> list = new ArrayList<>();
+		list.add(roleId.toString());
 		this.batchDelete(list, "roleId", Role.class);
-
-		this.roleMenuService.deleteRoleMenusByRoleId(roleIds);
-		this.userRoleService.deleteUserRolesByRoleId(roleIds);
-
+		this.roleMenuService.deleteRoleMenusByRoleId(roleId.toString());
+		this.userRoleService.deleteUserRolesByRoleId(roleId.toString());
+		return ResResult.success();
 	}
+
 
 	@Override
 	public RoleWithMenu findRoleWithMenus(Long roleId) {
-		List<RoleWithMenu> list = this.roleMapper.findById(roleId);
-		List<Long> menuList = new ArrayList<>();
-		for (RoleWithMenu rwm : list) {
-			menuList.add(rwm.getMenuId());
-		}
-		if (list.size() == 0) {
-			return null;
-		}
-		RoleWithMenu roleWithMenu = list.get(0);
-		roleWithMenu.setMenuIds(menuList);
+		Role role= this.selectByKey(roleId);
+		List<Menu> allList = menuService.findAllMenus(new Menu());
+		List<RoleWithMenu> roleWithMenuList = this.roleMapper.findById(roleId);
+
+		SplitMenu splitMenu = new SplitMenu();
+		splitMenu.splitMenuList(allList,roleWithMenuList);
+		List<Long> parentIds=splitMenu.getParentList().stream().map(t->t.getMenuId()).collect(Collectors.toList());
+		List<Long> leafIds=splitMenu.getLeafList().stream().map(t->t.getMenuId()).collect(Collectors.toList());
+
+		//其他角色信息
+		RoleWithMenu roleWithMenu = new RoleWithMenu();
+        roleWithMenu.setRoleCode(role.getRoleCode());
+		roleWithMenu.setRoleId(role.getRoleId());
+		roleWithMenu.setRoleName(role.getRoleName());
+		roleWithMenu.setRemark(role.getRemark());
+		roleWithMenu.setMenuIds(parentIds);
+		roleWithMenu.setButtonIds(leafIds);
 		return roleWithMenu;
 	}
 
 	@Override
 	@Transactional
-	public void updateRole(Role role, Long[] menuIds) {
+	public void updateRole(Role role, Long[] menuIds,Long loginUserId) {
 		role.setModifyTime(new Date());
+		role.setRoleName(RoleEnum.getPaymentStatusEnumByValue(role.getRoleCode()).getName());
 		this.updateNotNull(role);
+
+		List<Long> userIdList = userRoleService.findUserIdListByRoleId(role.getRoleId());
+		if(userIdList!=null && userIdList.size()>0){
+			List<Long> newUserIdList =userIdList.stream().filter(t->t.longValue() != loginUserId).collect(Collectors.toList());
+			logoutUserService.batchLogoutUser(newUserIdList);
+		}
+
 		Example example = new Example(RoleMenu.class);
 		example.createCriteria().andCondition("role_id=", role.getRoleId());
 		this.roleMenuMapper.deleteByExample(example);

@@ -240,7 +240,6 @@ public class DateUtil {
 	 * @param dateFormatType
 	 *            日期格式
 	 * @return String 指定月份第一天的字符串日期
-	 * @throws CSException
 	 *             CSExceptionCode.EC_2000,CSExceptionCode.MSG_2000
 	 */
 	public static String getTheFirstDayOfSpecifiedMonth(int specifiedMonth, String dateFormatType) throws Exception {
@@ -555,7 +554,6 @@ public class DateUtil {
 	/**
 	 * 判断是否是日期
 	 *
-	 * @param String
 	 *            dateStr 日期字符串
 	 * @return
 	 */

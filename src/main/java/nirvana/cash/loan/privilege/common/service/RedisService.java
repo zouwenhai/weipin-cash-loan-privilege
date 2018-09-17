@@ -1,88 +1,36 @@
 package nirvana.cash.loan.privilege.common.service;
 
-import nirvana.cash.loan.privilege.common.domain.RedisInfo;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+/**
+ * Created by Administrator on 2018/7/27.
+ */
 public interface RedisService {
 
-    /**
-     * 获取 redis 的详细信息
-     *
-     * @return List
-     */
-    List<RedisInfo> getRedisInfo();
+    <T> boolean put(String key, T obj);
 
-    /**
-     * 获取 redis key 数量
-     *
-     * @return Map
-     */
-    Map<String, Object> getKeysSize();
+    //缓存时间单位：秒
+    <T> void putWithExpireTime(String key, T obj, final long expireTime);
 
-    /**
-     * 获取 redis 内存信息
-     *
-     * @return Map
-     */
-    Map<String, Object> getMemoryInfo();
+    <T> boolean putList(String key, List<T> objList);
 
-    /**
-     * 获取 key
-     * @param pattern 正则
-     * @return Set
-     */
-    Set<String> getKeys(String pattern);
+    //缓存时间单位：秒
+    <T> boolean putListWithExpireTime(String key, List<T> objList, final long expireTime);
 
-    /**
-     * get命令
-     *
-     * @param key key
-     * @return String
-     */
-    String get(String key);
+    <T> T get(final String key, Class<T> targetClass);
 
-    /**
-     * set命令
-     *
-     * @param key   key
-     * @param value value
-     * @return String
-     */
-    String set(String key, String value);
+    <T> List<T> getList(final String key, Class<T> targetClass);
 
-    /**
-     * del命令
-     *
-     * @param key key
-     * @return Long
-     */
-    Long del(String... key);
+    void delete(String key);
 
-    /**
-     * exists命令
-     *
-     * @param key key
-     * @return Boolean
-     */
-    Boolean exists(String key);
+    void deleteWithPattern(String pattern);
 
-    /**
-     * pttl命令
-     *
-     * @param key key
-     * @return Long
-     */
-    Long pttl(String key);
+    void clear();
 
-    /**
-     * pexpire命令
-     *
-     * @param key         key
-     * @param milliscends 毫秒
-     * @return Long
-     */
-    Long pexpire(String key, Long milliscends);
+    Long getOrderId(String key);
+
+    Set<String> getKeysWithPattern(String pattern);
+
+    void deleteWithKeys(Set<String> keys);
 }

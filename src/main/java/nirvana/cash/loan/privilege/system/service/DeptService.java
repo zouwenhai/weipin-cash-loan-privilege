@@ -20,5 +20,5 @@ public interface DeptService extends IService<Dept> {
 	
 	void updateDept(Dept dept);
 
-	void deleteDepts(String deptIds);
+	void deleteDepts(Long deptId);
 }
