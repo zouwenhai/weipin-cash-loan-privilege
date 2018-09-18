@@ -85,13 +85,7 @@ spring:
 ---
 eureka:
   instance:
-    hostname: ${HOST}
-    instance-id: ${HOST}:${PORT0:${PORT}}
-    ip-address: ${HOST}
-    non-secure-port: ${PORT0:${PORT:${server.port:8080}}}
-    home-page-url: http://${HOST}:${PORT0:${PORT:${server.port:8080}}}
-    statusPageUrl: ${eureka.instance.home-page-url}/info
-    healthCheckUrl: ${eureka.instance.home-page-url}/health
+    prefer-ip-address: true
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
   client:
