@@ -26,17 +26,17 @@ hystrix:
         timeout.enabled: true
         isolation:
           strategy: SEMAPHORE
-          thread.timeoutInMilliseconds: 60000
+          thread.timeoutInMilliseconds: 180000
 ribbon:
   MaxAutoRetries: 0
   MaxAutoRetriesNextServer: 2
   ServerListRefreshInterval: 5000
-  ReadTimeout: 20000
-  ConnectTimeout: 20000
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 zuul:
   host:
-    socket-timeout-millis: 60000
-    connect-timeout-millis: 60000
+    socket-timeout-millis: 180000
+    connect-timeout-millis: 180000
 eureka:
   client:
     serviceUrl.defaultZone: http://10.0.12.25:13115/eureka/,http://10.0.12.25:13116/eureka/,http://10.0.12.25:13117/eureka/
