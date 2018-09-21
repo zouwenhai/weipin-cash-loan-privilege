@@ -20,19 +20,23 @@ feign:
   hystrix:
     enabled: true
 hystrix:
-  command.default.execution.isolation:
-    strategy: SEMAPHORE
-    thread.timeoutInMilliseconds: 60000
+  command:
+    default:
+      execution:
+        timeout.enabled: true
+        isolation:
+          strategy: SEMAPHORE
+          thread.timeoutInMilliseconds: 60000
 ribbon:
-  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
-  MaxAutoRetriesNextServer: 0
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 2
   ServerListRefreshInterval: 5000
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
+  ReadTimeout: 20000
+  ConnectTimeout: 20000
 zuul:
   host:
-    socket-timeout-millis: 6000
-    connect-timeout-millis: 6000
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
 eureka:
   client:
     serviceUrl.defaultZone: http://10.0.12.25:13115/eureka/,http://10.0.12.25:13116/eureka/,http://10.0.12.25:13117/eureka/
