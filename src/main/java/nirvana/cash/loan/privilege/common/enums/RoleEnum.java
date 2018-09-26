@@ -33,8 +33,21 @@ public enum RoleEnum {
     //客服角色
     CUSTOMER_USER("customer_user", "客服人员"),
     //运营角色
-    OPERATION_USER("operation_user", "运营人员");
-
+    OPERATION_USER("operation_user", "运营人员"),
+    //风控机审开发管理
+    RISK_MODULE_DEVELOPMENT("risk_module_development", "风控机审开发管理"),
+    //产品模块开发管理
+    PRODUCT_MODULE_DEVELOPMENT("product_module_development", "产品模块开发管理"),
+    //订单模块开发管理
+    ORDER_MODULE_DEVELOPMENT("order_module_development", "订单模块开发管理"),
+    //催收模块开发管理
+    COLLECTION_MODULE_DEVELOPMENT("collection_module_development", "催收模块开发管理"),
+    //贷后模块开发管理
+    LOAN_MODULE_DEVELOPMENT("loan_module_development", "贷后模块开发管理"),
+    //财务模块开发管理
+    FINANCE_MODULE_DEVELOPMENT("finance_module_development", "财务模块开发管理"),
+    //运营统计模块开发管理
+    OPERATION_MODULE_DEVELOPMENT("operation_module_development", "运营统计模块开发管理");
 
     private String code;
 
