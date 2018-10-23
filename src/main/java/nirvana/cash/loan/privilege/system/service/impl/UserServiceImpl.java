@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.system.service.impl;
 import com.alibaba.fastjson.JSON;
 import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
+import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.fegin.FeginCollectionApi;
@@ -267,6 +268,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 				logger.error("删除风控用户失败|程序异常:{}", ex);
 			}
 		}
+
+//		//更新被删除用户的登录名称为UUID，让新用户以后可用使用该登录名
+//		user.setDescription(user.getUsername());
+//		user.setUsername(GeneratorId.guuid());
+//		this.updateNotNull(user);
 	}
 
 	@Override

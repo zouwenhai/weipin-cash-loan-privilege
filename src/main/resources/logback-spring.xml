@@ -7,7 +7,7 @@
     <springProfile name="test">
         <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender"
           name="LOGSTASH_SOCKET">
-            <destination>test-logstash.gs.9188.com:50005</destination>
+            <destination>test.lb.gs.youyuwo.com:50005</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"yofishdk-cash-loan-privilege","type":"logback"}
                 </customFields>
