@@ -269,10 +269,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			}
 		}
 
-		//更新被删除用户的登录名称为UUID，让新用户以后可用使用该登录名
-		user.setDescription(user.getUsername());
-		user.setUsername(GeneratorId.guuid());
-		this.updateNotNull(user);
+//		//更新被删除用户的登录名称为UUID，让新用户以后可用使用该登录名
+//		user.setDescription(user.getUsername());
+//		user.setUsername(GeneratorId.guuid());
+//		this.updateNotNull(user);
 	}
 
 	@Override
