@@ -46,16 +46,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     @Override
     public List<Menu> findAllMenus(Menu menu) {
         try {
-//            Example example = new Example(Menu.class);
-//            Criteria criteria = example.createCriteria();
-//            if (StringUtils.isNotBlank(menu.getMenuName())) {
-//                criteria.andCondition("menu_name=", menu.getMenuName());
-//            }
-//            if (StringUtils.isNotBlank(menu.getType())) {
-//                criteria.andCondition("type=", menu.getType());
-//            }
-//            example.setOrderByClause("menu_id");
-//            return  this.selectByExample(example);
             return  menuMapper.findAllMenus(menu);
         } catch (NumberFormatException e) {
             return new ArrayList<>();
