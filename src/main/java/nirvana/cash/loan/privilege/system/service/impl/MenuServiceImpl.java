@@ -52,10 +52,10 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
                 criteria.andCondition("menu_name=", menu.getMenuName());
             }
             if (StringUtils.isNotBlank(menu.getType())) {
-                criteria.andCondition("type=", Long.valueOf(menu.getType()));
+                criteria.andCondition("type=", menu.getType());
             }
             example.setOrderByClause("menu_id");
-            return this.selectByExample(example);
+            return  this.selectByExample(example);
         } catch (NumberFormatException e) {
             return new ArrayList<>();
         }
@@ -103,10 +103,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             menu.setOrderNum(1L);
         }
         this.save(menu);
-
-        //process orderNum
-        Long parentId = menu.getParentId();
-        this.resetOrderNum(parentId);
     }
 
     @Override
@@ -163,10 +159,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             menu.setParentId(0L);
         }
         this.updateAll(menu);
-
-        //process orderNum
-        Long parentId = menu.getParentId();
-        this.resetOrderNum(parentId);
     }
 
     @Override
