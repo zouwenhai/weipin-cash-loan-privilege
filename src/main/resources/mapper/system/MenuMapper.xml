@@ -51,4 +51,17 @@
            order siblings by t1.order_num asc
     </select>
 
+    <select id="findAllMenus" resultType="nirvana.cash.loan.privilege.system.domain.Menu"
+        parameterType="nirvana.cash.loan.privilege.system.domain.Menu">
+        select * from tb_yofishdk_auth_menu t1
+        where 1 = 1
+            <if test="menuName != null ">
+                and menu_name = #{menuName}
+            </if>
+            <if test="type != null ">
+                and type = #{type}
+            </if>
+            start with t1.PARENT_ID = 0 connect by t1.PARENT_ID = prior t1.MENU_ID
+            order siblings by t1.order_num asc
+    </select>
 </mapper>

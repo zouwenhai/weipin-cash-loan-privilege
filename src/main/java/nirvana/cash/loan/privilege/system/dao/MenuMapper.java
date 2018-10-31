@@ -14,4 +14,6 @@ public interface MenuMapper extends MyMapper<Menu> {
 
 	//左侧菜单列表
 	List<LeftMenuVo> findLeftMenuList();
+
+    List<Menu> findAllMenus(Menu menu);
 }
