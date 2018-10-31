@@ -207,8 +207,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         menu.setOrderNum(orderNum);
         menu.setModifyTime(new Date());
         this.updateAll(menu);
-        Long parentId = menu.getParentId();
-        this.resetOrderNum(parentId);
         return ResResult.success();
     }
 
