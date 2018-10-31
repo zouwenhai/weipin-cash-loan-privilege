@@ -26,4 +26,11 @@ public interface MenuService extends IService<Menu> {
 	void deleteMeuns(Long menuIds,Long loginUserId);
 
 	List<LeftMenuVo> findUserMenus();
+
+	//按orderNum字段升序排序
+	List<Menu> findByParentId(Long parentId);
+
+	void batchUpdateByIds(List<Menu> menuList);
+
+	void resetOrderNum(Long parentId);
 }

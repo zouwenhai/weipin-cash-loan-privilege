@@ -49,8 +49,8 @@ public class RoleController extends BaseController {
 	@RequestMapping("role/add")
 	public ResResult addRole(Role role, Long[] menuId) {
 		try {
-			Role oldRole = this.roleService.findByCode(role.getRoleCode());
-			if(oldRole != null){
+			Role oldRoleName2 = this.roleService.findByRoleName2(role.getRoleName2());
+			if(oldRoleName2 != null){
 				return ResResult.error("您选择的角色已存在！");
 			}
 			this.roleService.addRole(role, menuId);

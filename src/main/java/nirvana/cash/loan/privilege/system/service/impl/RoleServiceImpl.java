@@ -71,6 +71,18 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 	}
 
 	@Override
+	public Role findByRoleName2(String roleName2) {
+		Example example = new Example(Role.class);
+		example.createCriteria().andCondition("lower(role_name2)=", roleName2);
+		List<Role> list = this.selectByExample(example);
+		if (list.size() == 0) {
+			return null;
+		} else {
+			return list.get(0);
+		}
+	}
+
+	@Override
 	@Transactional
 	public void addRole(Role role, Long[] menuIds) {
 		role.setRoleId(this.getSequence(Role.SEQ));

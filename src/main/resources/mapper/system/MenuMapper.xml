@@ -47,6 +47,8 @@
            )t2
            on  t1.menu_id = t2.menu_id
            where t1.type = 0
+           start with t1.PARENT_ID = 0 connect by t1.PARENT_ID = prior t1.MENU_ID
+           order siblings by t1.order_num asc
     </select>
 
 </mapper>

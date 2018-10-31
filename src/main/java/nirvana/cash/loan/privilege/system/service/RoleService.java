@@ -21,4 +21,6 @@ public interface RoleService extends IService<Role> {
 
 	Role findByCode(String roleCode);
 
+	Role findByRoleName2(String roleName2);
+
 }

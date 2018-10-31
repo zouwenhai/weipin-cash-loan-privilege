@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.system.service.impl;
 import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.impl.BaseService;
+import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.system.dao.MenuMapper;
 import nirvana.cash.loan.privilege.system.domain.Menu;
@@ -94,9 +95,17 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 	public void addMenu(Menu menu) {
 		menu.setMenuId(this.getSequence(Menu.SEQ));
 		menu.setCreateTime(new Date());
-		if (menu.getParentId() == null)
+		if (menu.getParentId() == null){
 			menu.setParentId(0L);
+		}
+		if(menu.getOrderNum() == null){
+			menu.setOrderNum(1L);
+		}
 		this.save(menu);
+
+		//process orderNum
+		Long parentId  = menu.getParentId();
+		this.resetOrderNum(parentId);
 	}
 
 	@Override
@@ -125,6 +134,11 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			this.batchDelete(list, "menuId", Menu.class);
 			this.roleMenuService.deleteRoleMenusByMenuId(list);
 		}
+
+		//process orderNum
+		Menu menu = this.findById(menuId);
+		Long parentId  = menu.getParentId();
+		this.resetOrderNum(parentId);
 	}
 
 	@Override
@@ -148,11 +162,47 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 			menu.setParentId(0L);
 		}
         this.updateAll(menu);
+
+		//process orderNum
+		Long parentId  = menu.getParentId();
+		this.resetOrderNum(parentId);
 	}
 
 	@Override
 	public List<LeftMenuVo> findUserMenus() {
 		return this.menuMapper.findLeftMenuList();
+	}
+
+	//按orderNum字段升序排序
+	@Override
+	public List<Menu> findByParentId(Long parentId) {
+		//按orderNum字段升序排序
+		Example example = new Example(Menu.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andCondition("parent_id=", parentId);
+		example.setOrderByClause("order_num asc ");
+		return this.selectByExample(example);
+	}
+
+	@Override
+	public void batchUpdateByIds(List<Menu> menuList) {
+		for (Menu menu : menuList) {
+			this.updateAll(menu);
+		}
+	}
+
+	@Override
+	public void resetOrderNum(Long parentId) {
+		Date dt = new Date();
+		List<Menu> parentMenuList =  this.findByParentId(parentId);
+		if(ListUtil.isNotEmpty(parentMenuList)){
+			for (int i=0;i<parentMenuList.size();i++) {
+				Menu itemMenu = parentMenuList.get(i);
+				itemMenu.setOrderNum((long)i+1);
+				itemMenu.setModifyTime(dt);
+			}
+			this.batchUpdateByIds(parentMenuList);
+		}
 	}
 
 
