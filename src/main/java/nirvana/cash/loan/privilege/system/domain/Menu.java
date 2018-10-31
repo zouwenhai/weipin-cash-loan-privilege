@@ -10,6 +10,7 @@ import javax.persistence.Transient;
 
 import lombok.Data;
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
+import org.apache.commons.lang.StringUtils;
 
 @Data
 @Table(name = "tb_yofishdk_auth_menu")
@@ -61,4 +62,8 @@ public class Menu implements Serializable {
 
 	@Transient
 	private String role_ids;
+
+	public String getType(){
+		return StringUtils.isBlank(this.type)?null:this.type.trim();
+	}
 }
