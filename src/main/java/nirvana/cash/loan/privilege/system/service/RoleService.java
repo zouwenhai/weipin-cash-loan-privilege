@@ -19,8 +19,6 @@ public interface RoleService extends IService<Role> {
 
 	ResResult deleteRoles(Long roleId, Long loginUserId);
 
-	Role findByCode(String roleCode);
-
 	Role findByRoleName2(String roleName2);
 
 }
