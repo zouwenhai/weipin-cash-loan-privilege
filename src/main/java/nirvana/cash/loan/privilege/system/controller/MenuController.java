@@ -93,7 +93,7 @@ public class MenuController extends BaseController {
         }
     }
 
-    //菜单排序
+    //修改菜单排序值
     @RequestMapping("menu/menuSort")
     public ResResult menuSort(Long menuId,Long orderNum) {
         return menuService.menuSort(menuId,orderNum);
