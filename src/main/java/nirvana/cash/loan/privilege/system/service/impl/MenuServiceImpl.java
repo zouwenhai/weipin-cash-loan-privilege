@@ -124,7 +124,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         }
 
         //process orderNum
-        Menu menu = this.findById(menuId);
+        Menu menu =  menus.stream()
+                .filter(t->t.getMenuId().longValue() == menuId)
+                .findAny().orElse(null);
         Long parentId = menu.getParentId();
         this.resetOrderNum(parentId);
     }
