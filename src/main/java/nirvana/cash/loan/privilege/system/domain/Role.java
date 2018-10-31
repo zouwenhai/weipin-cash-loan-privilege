@@ -1,18 +1,17 @@
 package nirvana.cash.loan.privilege.system.domain;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Data;
+import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Date;
 
-import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
-
+@Data
 @Table(name = "tb_yofishdk_auth_role")
 public class Role implements Serializable {
-
-	private static final long serialVersionUID = -1714476694755654924L;
 
 	/**
 	 * Role表序列
@@ -42,81 +41,8 @@ public class Role implements Serializable {
 	@Column(name = "role_code")
 	private String roleCode;
 
-	/**
-	 * @return ROLE_ID
-	 */
-	public Long getRoleId() {
-		return roleId;
-	}
+	@Column(name = "ROLE_NAME2")
+	@ExportConfig(value = "角色2")
+	private String roleName2;
 
-	/**
-	 * @param roleId
-	 */
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
-	}
-
-	/**
-	 * @return ROLE_NAME
-	 */
-	public String getRoleName() {
-		return roleName;
-	}
-
-	/**
-	 * @param roleName
-	 */
-	public void setRoleName(String roleName) {
-		this.roleName = roleName == null ? null : roleName.trim();
-	}
-
-	/**
-	 * @return REMARK
-	 */
-	public String getRemark() {
-		return remark;
-	}
-
-	/**
-	 * @param remark
-	 */
-	public void setRemark(String remark) {
-		this.remark = remark == null ? null : remark.trim();
-	}
-
-	/**
-	 * @return CREATE_TIME
-	 */
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	/**
-	 * @param createTime
-	 */
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	/**
-	 * @return MODIFY_TIME
-	 */
-	public Date getModifyTime() {
-		return modifyTime;
-	}
-
-	/**
-	 * @param modifyTime
-	 */
-	public void setModifyTime(Date modifyTime) {
-		this.modifyTime = modifyTime;
-	}
-
-	public String getRoleCode() {
-		return roleCode;
-	}
-
-	public void setRoleCode(String roleCode) {
-		this.roleCode = roleCode;
-	}
 }

@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Data;
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
+@Data
 @Table(name = "tb_yofishdk_auth_menu")
 public class Menu implements Serializable {
-
-	private static final long serialVersionUID = 7187628714679791771L;
 
 	public static final String TYPE_MENU = "0";
 
@@ -61,148 +61,4 @@ public class Menu implements Serializable {
 
 	@Transient
 	private String role_ids;
-
-	/**
-	 * @return MENU_ID
-	 */
-	public Long getMenuId() {
-		return menuId;
-	}
-
-	/**
-	 * @param menuId
-	 */
-	public void setMenuId(Long menuId) {
-		this.menuId = menuId;
-	}
-
-	/**
-	 * @return PARENT_ID
-	 */
-	public Long getParentId() {
-		return parentId;
-	}
-
-	/**
-	 * @param parentId
-	 */
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	/**
-	 * @return MENU_NAME
-	 */
-	public String getMenuName() {
-		return menuName;
-	}
-
-	/**
-	 * @param menuName
-	 */
-	public void setMenuName(String menuName) {
-		this.menuName = menuName == null ? "" : menuName.trim();
-	}
-
-	/**
-	 * @return URL
-	 */
-	public String getUrl() {
-		return url;
-	}
-
-	/**
-	 * @param url
-	 */
-	public void setUrl(String url) {
-		this.url = url == null ? "" : url.trim();
-	}
-
-	/**
-	 * @return PERMS
-	 */
-	public String getPerms() {
-		return perms;
-	}
-
-	/**
-	 * @param perms
-	 */
-	public void setPerms(String perms) {
-		this.perms = perms == null ? "" : perms.trim();
-	}
-
-	/**
-	 * @return ICON
-	 */
-	public String getIcon() {
-		return icon;
-	}
-
-	/**
-	 * @param icon
-	 */
-	public void setIcon(String icon) {
-		this.icon = icon == null ? "" : icon.trim();
-	}
-
-	/**
-	 * @return TYPE
-	 */
-	public String getType() {
-		return type;
-	}
-
-	/**
-	 * @param type
-	 */
-	public void setType(String type) {
-		this.type = type == null ? "" : type.trim();
-	}
-
-	/**
-	 * @return ORDER_NUM
-	 */
-	public Long getOrderNum() {
-		return orderNum;
-	}
-
-	/**
-	 * @param orderNum
-	 */
-	public void setOrderNum(Long orderNum) {
-		this.orderNum = orderNum;
-	}
-
-	/**
-	 * @return CREATE_TIME
-	 */
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	/**
-	 * @param createTime
-	 */
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	/**
-	 * @return MODIFY_TIME
-	 */
-	public Date getModifyTime() {
-		return modifyTime;
-	}
-
-	/**
-	 * @param modifyTime
-	 */
-	public void setModifyTime(Date modifyTime) {
-		this.modifyTime = modifyTime;
-	}
-
-	public static long getSerialVersionUID() {
-		return serialVersionUID;
-	}
 }
