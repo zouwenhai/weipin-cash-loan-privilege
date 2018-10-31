@@ -128,6 +128,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 		roleWithMenu.setRemark(role.getRemark());
 		roleWithMenu.setMenuIds(parentIds);
 		roleWithMenu.setButtonIds(leafIds);
+		roleWithMenu.setRoleName2(role.getRoleName2());
 		return roleWithMenu;
 	}
 
