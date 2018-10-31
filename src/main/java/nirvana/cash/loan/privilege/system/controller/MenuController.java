@@ -93,6 +93,13 @@ public class MenuController extends BaseController {
         }
     }
 
+    //菜单排序
+    @RequestMapping("menu/menuSort")
+    public ResResult menuSort(Long menuId,Long orderNum) {
+        return menuService.menuSort(menuId,orderNum);
+    }
+
+
     //删除菜单
     @RequestMapping("menu/delete")
     public ResResult deleteMenus(Long menuIds,HttpServletRequest request) {

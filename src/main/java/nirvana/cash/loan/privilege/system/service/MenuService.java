@@ -2,6 +2,7 @@ package nirvana.cash.loan.privilege.system.service;
 
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.service.IService;
+import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.system.domain.Menu;
 import nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo;
 
@@ -33,4 +34,6 @@ public interface MenuService extends IService<Menu> {
 	void batchUpdateByIds(List<Menu> menuList);
 
 	void resetOrderNum(Long parentId);
+
+	ResResult menuSort(Long menuId, Long orderNum);
 }
