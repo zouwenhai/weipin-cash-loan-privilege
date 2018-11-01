@@ -24,8 +24,14 @@
   </resultMap>
   
   <select id="findUserWithDept" resultType="user" parameterType="user">
-  		select u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-  		u.ssex,d.dept_name deptName,u.name
+  		select
+			u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
+			u.ssex,d.dept_name deptName,u.name,
+		   ( select
+			  listagg(role_id,',') within group (order by role_id)  as  role_ids
+			  from tb_yofishdk_auth_user_role ur
+		 	 where ur.user_id = u.USER_ID
+		    )  roleIds2
 	    from tb_yofishdk_auth_user u
   		left join tb_yofishdk_auth_dept d on(u.dept_id = d.dept_id)
   		where is_delete = 0

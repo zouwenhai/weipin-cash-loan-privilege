@@ -101,6 +101,9 @@ public class User implements Serializable {
 	@Transient
 	private String roleName;
 
+	@Transient
+	private String roleIds2;
+
 	/**
 	 * @return USER_ID
 	 */
@@ -309,5 +312,13 @@ public class User implements Serializable {
 
 	public void setIsDelete(Integer isDelete) {
 		this.isDelete = isDelete;
+	}
+
+	public String getRoleIds2() {
+		return roleIds2;
+	}
+
+	public void setRoleIds2(String roleIds2) {
+		this.roleIds2 = roleIds2;
 	}
 }
