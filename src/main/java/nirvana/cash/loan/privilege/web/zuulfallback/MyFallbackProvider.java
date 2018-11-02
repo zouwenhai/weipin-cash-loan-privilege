@@ -32,7 +32,7 @@ public class MyFallbackProvider implements FallbackProvider {
 
     @Override
     public ClientHttpResponse fallbackResponse(Throwable cause) {
-        logger.error("权限管理路由转发系统|zull代理转发异常:message={},exception={} ", cause.getMessage(), cause);
+        logger.error("权限管理路由转发系统|zull代理转发响应异常:message={},exception={} ", cause.getMessage(), cause);
         if (cause instanceof HystrixTimeoutException) {
             return zullClientHttpResponse.response(HttpStatus.GATEWAY_TIMEOUT);
         } else {
