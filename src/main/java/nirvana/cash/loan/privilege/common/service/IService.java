@@ -25,4 +25,6 @@ public interface IService<T> {
 	int updateNotNull(T entity);
 
 	List<T> selectByExample(Object example);
+
+	T selectOneByExample(Object example);
 }

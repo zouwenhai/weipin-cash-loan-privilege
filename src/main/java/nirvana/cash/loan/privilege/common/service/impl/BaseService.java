@@ -75,4 +75,16 @@ public abstract class BaseService<T> implements IService<T> {
 	public List<T> selectByExample(Object example) {
 		return mapper.selectByExample(example);
 	}
+
+	@Override
+	public T selectOneByExample(Object example) {
+		List<T> list  = mapper.selectByExample(example);
+		if(list == null || list.size() == 0){
+			return null;
+		}
+		if(list.size() >1){
+			throw new RuntimeException("查询期待结果数量等于1,但是查询出多条记录！");
+		}
+		return list.get(0);
+	}
 }

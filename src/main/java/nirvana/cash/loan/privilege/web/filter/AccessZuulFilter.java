@@ -4,20 +4,20 @@ import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.system.domain.User;
-import nirvana.cash.loan.privilege.system.service.LogService;
 import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.Map;
 
 /**
  * 用zuulFilter打印请求日志
@@ -25,15 +25,13 @@ import java.util.Map;
  * (1)https://blog.csdn.net/kysmkj/article/details/79159421
  * (2)https://www.hhfate.cn/t/598
  */
-public class AccessZullFilter extends ZuulFilter {
+@Component
+public class AccessZuulFilter extends ZuulFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccessZullFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccessZuulFilter.class);
 
     @Autowired
     private RequestCheck requestCheck;
-    @Autowired
-    private LogService logService;
-
 
     @Override
     public String filterType() {
@@ -53,7 +51,6 @@ public class AccessZullFilter extends ZuulFilter {
     @Override
     public Object run() {
         try {
-            long startTime = System.currentTimeMillis();
             RequestContext ctx = RequestContext.getCurrentContext();
             HttpServletRequest request = ctx.getRequest();
             //请求方法
@@ -62,16 +59,8 @@ public class AccessZullFilter extends ZuulFilter {
             String url = request.getRequestURL().toString();
             logger.info("PreRequestLogFilter|run|请求方法和地址:method={},url={}", method, url);
             //请求url参数
-            Map<String, String[]> parameterMap = request.getParameterMap();
-            StringBuilder sb = new StringBuilder();
-            sb.append("urlParam=\t");
-            for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
-                //密码不能输出到日志
-                if(!entry.getKey().contains("password")){
-                    sb.append("[" + entry.getKey() + "=" + requestCheck.printArray(entry.getValue()) + "]");
-                }
-            }
-            logger.info("PreRequestLogFilter|run|请求url参数:{}", sb.toString());
+            String queryParam = request.getQueryString();
+            logger.info("PreRequestLogFilter|run|请求url参数:{}", queryParam);
             //请求json参数
             String jsonParam=null;
             if(request.getContentType()!=null && !request.getContentType().contains(MediaType.MULTIPART_FORM_DATA_VALUE)){
@@ -91,12 +80,7 @@ public class AccessZullFilter extends ZuulFilter {
             User user = (User) res.getData();
             //添加请求头参数
             ctx.addZuulRequestHeader("loginName",user.getUsername());
-            ctx.addZuulRequestHeader("userName",user.getName());
-            long endTime = System.currentTimeMillis();
-
-            //记录访问日志
-           logService.addLog(user.getUsername(),url,endTime-startTime,sb.toString()+"|jsonParam="+jsonParam);
-
+            ctx.addZuulRequestHeader("userName", URLUtil.encode(user.getName(),"utf-8"));
         } catch (Exception ex) {
             logger.error("PreRequestLogFilter|run|执行异常:{}", ex);
         }

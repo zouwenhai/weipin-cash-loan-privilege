@@ -2,9 +2,6 @@ package nirvana.cash.loan.privilege.web;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.service.RedisService;
 import nirvana.cash.loan.privilege.common.util.CookieUtil;
@@ -16,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/7/24.
@@ -30,17 +30,11 @@ public class RequestCheck {
     //check登录和权限
     public ResResult check(HttpServletRequest request) {
         //1:check用户是否登录或登录失效
-        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
-        if (jsessionid == null || jsessionid.trim().length() == 0) {
-            return ResResult.error("登录失效",ResResult.LOGIN_SESSION_TIMEOUT);
-        }
-        String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,String.class);
-        if (StringUtils.isBlank(data)) {
-            return ResResult.error("登录失效",ResResult.LOGIN_SESSION_TIMEOUT);
-        }
-
         String url = request.getRequestURL().toString();
-        User user = JSON.parseObject(data, User.class);
+        User user = this.getLoginUser(request);
+        if(user == null){
+            return ResResult.error("登录失效",ResResult.LOGIN_SESSION_TIMEOUT);
+        }
 
         //2:check用户权限
         if(url.contains("notauth")){
@@ -70,15 +64,16 @@ public class RequestCheck {
         return ResResult.success(user);
     }
 
-    public String printArray(String[] arr) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < arr.length; i++) {
-            sb.append(arr[i]);
-            if (i < arr.length - 1) {
-                sb.append(",");
-            }
+    public User getLoginUser(HttpServletRequest request){
+        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+        if (StringUtils.isBlank(jsessionid)) {
+            return null;
         }
-        return sb.toString();
+        String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,String.class);
+        if (StringUtils.isBlank(data)) {
+            return null;
+        }
+        return JSON.parseObject(data, User.class);
     }
 
 }
