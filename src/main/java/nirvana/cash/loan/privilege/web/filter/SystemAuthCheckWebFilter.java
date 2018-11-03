@@ -44,6 +44,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         ServerHttpResponse response = exchange.getResponse();
         URI uri = request.getURI();
         String url = uri.getPath();
+        log.info("privilege|request url:{}",url);
         //无需登录接口
         if(URLUtil.isEndsWith(noLoginUrls,url)){
             return webFilterChain.filter(exchange);
