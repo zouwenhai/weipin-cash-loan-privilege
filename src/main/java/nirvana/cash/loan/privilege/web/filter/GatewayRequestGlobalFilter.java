@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @Slf4j
 @Component
-public class GatewayGlobalFilter implements GlobalFilter, Ordered {
+public class GatewayRequestGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
