@@ -79,7 +79,7 @@ public class GatewayRequestGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -200;
+        return 200;
     }
 
     protected DataBuffer stringBuffer(String value) {
