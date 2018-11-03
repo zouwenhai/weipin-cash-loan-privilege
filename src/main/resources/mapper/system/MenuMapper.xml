@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="nirvana.cash.loan.privilege.system.dao.MenuMapper">
-  <resultMap id="menu" type="nirvana.cash.loan.privilege.system.domain.Menu">
+<mapper namespace="nirvana.cash.loan.privilege.dao.MenuMapper">
+  <resultMap id="menu" type="nirvana.cash.loan.privilege.domain.Menu">
     <!--
       WARNING - @mbg.generated
     -->
@@ -26,7 +26,7 @@
         where u.username = #{userName} and m.perms is not null
   </select>
 
-    <select id="findLeftMenuList" resultType="nirvana.cash.loan.privilege.system.domain.vo.LeftMenuVo">
+    <select id="findLeftMenuList" resultType="nirvana.cash.loan.privilege.domain.vo.LeftMenuVo">
          select
                t1.menu_id as  menuId,
                t1.parent_id as parentId,
@@ -52,7 +52,7 @@
     </select>
 
     <select id="findAllMenus" resultMap="menu"
-        parameterType="nirvana.cash.loan.privilege.system.domain.Menu">
+        parameterType="nirvana.cash.loan.privilege.domain.Menu">
         select *
         from tb_yofishdk_auth_menu t1
         where 1 = 1

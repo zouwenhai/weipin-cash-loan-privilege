@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="nirvana.cash.loan.privilege.system.dao.UserRoleMapper">
-  <resultMap id="BaseResultMap" type="nirvana.cash.loan.privilege.system.domain.UserRole">
+<mapper namespace="nirvana.cash.loan.privilege.dao.UserRoleMapper">
+  <resultMap id="BaseResultMap" type="nirvana.cash.loan.privilege.domain.UserRole">
     <!--
       WARNING - @mbg.generated
     -->

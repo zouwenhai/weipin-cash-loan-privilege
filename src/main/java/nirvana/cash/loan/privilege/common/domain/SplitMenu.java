@@ -1,7 +1,7 @@
 package nirvana.cash.loan.privilege.common.domain;
 
-import nirvana.cash.loan.privilege.system.domain.Menu;
-import nirvana.cash.loan.privilege.system.domain.RoleWithMenu;
+import nirvana.cash.loan.privilege.domain.Menu;
+import nirvana.cash.loan.privilege.domain.RoleWithMenu;
 
 import java.util.ArrayList;
 import java.util.List;

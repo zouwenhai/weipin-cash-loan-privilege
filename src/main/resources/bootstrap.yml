@@ -1,6 +1,6 @@
 server:
     port: 8080
-    session.cookie.http-only: true
+
 spring:
   application:
     name: yofishdk-cash-loan-privilege
@@ -10,7 +10,17 @@ spring:
       force: true
   profiles:
     active: dev
+  redis:
+    cache-cloud:
+      domainUrl:  http://test-cachecloud.gs.9188.com:8585
+      appId: 10016
+      type: cluster
+    jedis:
+      pool:
+        maxActive: 200
   cloud:
+    refresh:
+      refreshable: none
     config:
       profile: ${spring.profiles.active}
       discovery:
@@ -33,17 +43,14 @@ ribbon:
   ServerListRefreshInterval: 5000
   ReadTimeout: 120000
   ConnectTimeout: 120000
-zuul:
-  host:
-    socket-timeout-millis: 120000
-    connect-timeout-millis: 120000
+
 eureka:
   client:
     serviceUrl.defaultZone: http://test.lb.gs.youyuwo.com:13115/eureka/,http://test.lb.gs.youyuwo.com:13116/eureka/,http://test.lb.gs.youyuwo.com:13117/eureka/
-    register-with-eureka: false
+    register-with-eureka: true
     registry-fetch-interval-seconds: 5
   instance:
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+#    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
 
