@@ -47,7 +47,7 @@ ribbon:
 eureka:
   client:
     serviceUrl.defaultZone: http://test.lb.gs.youyuwo.com:13115/eureka/,http://test.lb.gs.youyuwo.com:13116/eureka/,http://test.lb.gs.youyuwo.com:13117/eureka/
-    register-with-eureka: true
+    register-with-eureka: false
     registry-fetch-interval-seconds: 5
   instance:
 #    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
