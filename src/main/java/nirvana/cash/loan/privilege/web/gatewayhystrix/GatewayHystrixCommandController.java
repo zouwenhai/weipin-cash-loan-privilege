@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@RequestMapping("/privilige")
 public class GatewayHystrixCommandController {
 
     @RequestMapping("/notauth/gateway/hystrixTimeout")
