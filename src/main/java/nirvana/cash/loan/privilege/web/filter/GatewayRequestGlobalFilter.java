@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * 网关代理,全局过滤器
  */
 @Slf4j
-@Order(200)
+@Order(-1)
 @Component
 public class GatewayRequestGlobalFilter implements GlobalFilter{
 
