@@ -21,7 +21,7 @@ public class MsgList {
 
     //消息唯一ID
     @Column(name = "UUID")
-    private Long uuid;
+    private String  uuid;
 
     //通知模块
     @Column(name = "MSG_MODULE")
