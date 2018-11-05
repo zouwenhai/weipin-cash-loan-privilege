@@ -13,7 +13,7 @@ import java.util.Date;
 @Table(name = "TB_YOFISHDK_AUTH_MSG_LIST")
 public class MsgList {
 
-    public static final String SEQ = "SET_TB_YOFISHDK_AUTH_MSG_LIST";
+    public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_MSG_LIST";
 
     //主键ID
     @Column(name = "ID")

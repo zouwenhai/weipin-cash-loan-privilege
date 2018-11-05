@@ -1,6 +1,8 @@
 package nirvana.cash.loan.privilege.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MsgListMapper;
 import nirvana.cash.loan.privilege.domain.MsgList;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/11/5.
@@ -23,8 +26,8 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
     private MsgListMapper msgListMapper;
 
     @Override
-    public ResResult findPageList(MsgList msgList) {
-        return null;
+    public List<MsgList> findPageList(MsgList msgList) {
+        return msgListMapper.findPageList(msgList);
     }
 
     @Override
