@@ -11,13 +11,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
  * 列表隐藏列配置
  * Created by Administrator on 2018/11/2.
  */
-@Controller
+@RestController
 @RequestMapping("/privilige")
 public class ListCtrlController extends BaseController {
 
