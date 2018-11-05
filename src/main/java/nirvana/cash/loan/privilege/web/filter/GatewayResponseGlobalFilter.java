@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
  * 网关代理,全局过滤器
  */
 @Slf4j
-@Order(-200)  //注意order要小于-1.通过上面的类，就能查看服务端响应的值了
+@Order(-2)  //注意order要小于-1.通过上面的类，就能查看服务端响应的值了
 @Component
 public class GatewayResponseGlobalFilter implements GlobalFilter {
 
@@ -73,7 +73,7 @@ public class GatewayResponseGlobalFilter implements GlobalFilter {
                         JSONObject resjson = JSONObject.parseObject(res);
                         resjson.put("hiddenColumn",hiddenColumn);
                         //更新返回数据
-                        byte[] uppedContent = ByteUtil.json2Bytes(resjson,"utf-8");
+                        byte[] uppedContent = ByteUtil.json2Bytes(resjson);
                         return bufferFactory.wrap(uppedContent);
                     }));
                 }
