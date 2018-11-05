@@ -2,7 +2,7 @@ package nirvana.cash.loan.privilege.fegin;
 
 import nirvana.cash.loan.privilege.fegin.facade.RiskUserAddApiFacade;
 import nirvana.cash.loan.privilege.fegin.facade.RiskUserUpdateApiFacade;
-import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
