@@ -38,7 +38,7 @@ public class GatewayRequestGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
 
         URI uri = request.getURI();
-        log.info("gateway request uri = {}", URLUtil.decode(uri.toString(), "utf-8"));
+        log.info("gateway request uri = {}", uri.toString());
 
         MultiValueMap<String, String> queryParams = request.getQueryParams();
         log.info("gateway queryParams = {}", JSONArray.toJSONString(queryParams));
