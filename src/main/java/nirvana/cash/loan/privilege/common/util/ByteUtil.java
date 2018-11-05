@@ -3,6 +3,8 @@ package nirvana.cash.loan.privilege.common.util;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -20,9 +22,15 @@ public class ByteUtil {
         return null;
     }
 
-    public  static  byte[] json2Bytes(JSONObject data, String charSet){
+    public  static  byte[] json2Bytes(JSONObject data){
         try {
-            return data.getBytes(charSet);
+            ByteArrayOutputStream bos=new ByteArrayOutputStream();
+            ObjectOutputStream oos=new ObjectOutputStream(bos);
+            oos.writeObject(data);
+            byte[] resbytes = bos.toByteArray();
+            oos.close();
+            bos.close();
+            return resbytes;
         } catch (Exception ex) {
             log.error("字符串转字节数组异常:str={},exception={}",data.toJSONString(),ex);
         }
