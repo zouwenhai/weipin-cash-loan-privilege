@@ -3,11 +3,10 @@ package nirvana.cash.loan.privilege.web.filter;
 import com.alibaba.fastjson.JSONArray;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.extern.slf4j.Slf4j;
-import nirvana.cash.loan.privilege.common.util.URLUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
@@ -30,15 +29,16 @@ import java.util.concurrent.atomic.AtomicReference;
  * 网关代理,全局过滤器
  */
 @Slf4j
+@Order(-1)
 @Component
-public class GatewayRequestGlobalFilter implements GlobalFilter, Ordered {
+public class GatewayRequestGlobalFilter implements GlobalFilter{
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
         URI uri = request.getURI();
-        log.info("gateway request uri = {}", URLUtil.decode(uri.toString(), "utf-8"));
+        log.info("gateway request uri = {}", uri.toString());
 
         MultiValueMap<String, String> queryParams = request.getQueryParams();
         log.info("gateway queryParams = {}", JSONArray.toJSONString(queryParams));
@@ -75,11 +75,6 @@ public class GatewayRequestGlobalFilter implements GlobalFilter, Ordered {
             };
         }
         return chain.filter(exchange.mutate().request(request).build());
-    }
-
-    @Override
-    public int getOrder() {
-        return 200;
     }
 
     protected DataBuffer stringBuffer(String value) {

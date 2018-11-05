@@ -104,7 +104,7 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/notauth/logout")
     public void logout(ServerHttpResponse response, ServerHttpRequest request) {
         try {
-            // TODO CookieUtil.deleteCookie(request,response,RedisKeyContant.JSESSIONID);
+            response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,"",0));
         } catch (Exception e) {
             logger.error("注销失败:{}",e);
         }

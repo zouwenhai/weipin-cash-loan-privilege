@@ -35,6 +35,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         noLoginUrls.add("/privilige/notauth/gifCode");
         noLoginUrls.add("/privilige/notauth/login");
         noLoginUrls.add("/privilige/notauth/isLogin");
+        noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
     }
 

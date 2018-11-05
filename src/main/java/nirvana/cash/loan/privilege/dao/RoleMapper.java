@@ -11,5 +11,5 @@ public interface RoleMapper extends MyMapper<Role> {
 
 	List<RoleWithMenu> findById(Long roleId);
 
-	List<String>  findRoleCodeListByRoleIds(@Param("roleIds") List<Integer> roleIds);
+	List<String>  findRoleCodeListByRoleIds(@Param("roleIds") List<Long> roleIds);
 }

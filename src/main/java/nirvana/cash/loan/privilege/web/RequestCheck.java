@@ -82,7 +82,7 @@ public class RequestCheck {
     }
 
     public Mono<Void> failResBody(ServerHttpResponse response, ResResult resResult) {
-        log.error("failResBody:{}", JSON.toJSONString(resResult));
+        log.info("failResBody:{}", JSON.toJSONString(resResult));
         //设置headers
         HttpHeaders httpHeaders = response.getHeaders();
         httpHeaders.add("Content-Type", "application/json; charset=UTF-8");

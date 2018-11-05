@@ -13,9 +13,9 @@ public interface RoleService extends IService<Role> {
 	
 	RoleWithMenu findRoleWithMenus(Long roleId);
 
-	void addRole(Role role, Long[] menuIds);
+	void addRole(Role role, List<Long> menuIds);
 	
-	void updateRole(Role role, Long[] menuIds,Long loginUserId);
+	void updateRole(Role role, List<Long> menuIds,Long loginUserId);
 
 	ResResult deleteRoles(Long roleId, Long loginUserId);
 

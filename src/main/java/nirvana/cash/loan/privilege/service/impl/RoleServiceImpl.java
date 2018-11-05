@@ -75,7 +75,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	@Transactional
-	public void addRole(Role role, Long[] menuIds) {
+	public void addRole(Role role, List<Long> menuIds) {
 		role.setRoleId(this.getSequence(Role.SEQ));
 		role.setCreateTime(new Date());
         role.setModifyTime(new Date());
@@ -84,7 +84,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 		setRoleMenus(role, menuIds);
 	}
 
-	private void setRoleMenus(Role role, Long[] menuIds) {
+	private void setRoleMenus(Role role, List<Long> menuIds) {
 		for (Long menuId : menuIds) {
 			RoleMenu rm = new RoleMenu();
 			rm.setMenuId(menuId);
@@ -134,7 +134,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 	@Override
 	@Transactional
-	public void updateRole(Role role, Long[] menuIds,Long loginUserId) {
+	public void updateRole(Role role, List<Long> menuIds,Long loginUserId) {
 		role.setModifyTime(new Date());
 		role.setRoleName(RoleEnum.getPaymentStatusEnumByValue(role.getRoleCode()).getName());
 		this.updateNotNull(role);

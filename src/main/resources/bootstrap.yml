@@ -10,14 +10,6 @@ spring:
       force: true
   profiles:
     active: dev
-  redis:
-    cache-cloud:
-      domainUrl:  http://test-cachecloud.gs.9188.com:8585
-      appId: 10016
-      type: cluster
-    jedis:
-      pool:
-        maxActive: 200
   cloud:
     refresh:
       refreshable: none
@@ -36,6 +28,7 @@ hystrix:
         timeout.enabled: true
         isolation:
           strategy: SEMAPHORE
+          semaphore.maxConcurrentRequests: 20
           thread.timeoutInMilliseconds: 120000
 ribbon:
   MaxAutoRetries: 0
@@ -50,7 +43,7 @@ eureka:
     register-with-eureka: false
     registry-fetch-interval-seconds: 5
   instance:
-#    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    instance-id: ${PORT0:${PORT:${server.port:8080}}}
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
 
@@ -96,6 +89,7 @@ spring:
 ---
 eureka:
   instance:
+    instance-id: ${spring.cloud.client.ip-address}:${server.port:8080}
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10

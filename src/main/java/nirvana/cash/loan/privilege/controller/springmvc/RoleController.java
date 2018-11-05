@@ -8,15 +8,14 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.service.RoleService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/privilige")
@@ -47,13 +46,18 @@ public class RoleController extends BaseController {
 
 	//新增角色
 	@RequestMapping("role/add")
-	public ResResult addRole(Role role, Long[] menuId) {
+	public ResResult addRole(Role role) {
 		try {
+			if(StringUtils.isBlank(role.getMenuIds2())){
+				return ResResult.error("请选择菜单权限！");
+			}
+			List<Long> menuIds = Arrays.asList(role.getMenuIds2().split(",")).stream().map(t->Long.valueOf(t))
+					.collect(Collectors.toList());
 			Role oldRoleName2 = this.roleService.findByRoleName2(role.getRoleName2());
 			if(oldRoleName2 != null){
 				return ResResult.error("您选择的角色已存在！");
 			}
-			this.roleService.addRole(role, menuId);
+			this.roleService.addRole(role, menuIds);
 			return ResResult.success();
 		} catch (Exception e) {
 			logger.error("角色管理|新增角色|执行异常:{}",e);
@@ -63,10 +67,15 @@ public class RoleController extends BaseController {
 
 	//修改角色
 	@RequestMapping("role/update")
-	public ResResult updateRole(Role role, Long[] menuId,ServerHttpRequest request) {
+	public ResResult updateRole(Role role,ServerHttpRequest request) {
 		try {
+			if(StringUtils.isBlank(role.getMenuIds2())){
+				return ResResult.error("请选择菜单权限！");
+			}
+			List<Long> menuIds = Arrays.asList(role.getMenuIds2().split(",")).stream().map(t->Long.valueOf(t))
+					.collect(Collectors.toList());
 			Long loginUserId=this.getLoginUser(request).getUserId();
-			this.roleService.updateRole(role, menuId,loginUserId);
+			this.roleService.updateRole(role,menuIds,loginUserId);
 			return ResResult.success();
 		} catch (Exception e) {
 			logger.error("角色管理|修改角色|执行异常:{}",e);

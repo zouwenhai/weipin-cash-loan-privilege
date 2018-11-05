@@ -15,9 +15,9 @@ public interface UserService extends IService<User> {
 
 	List<User> findUserWithDept(User user);
 
-	ResResult addUser(User user, Long[] roles, User loginUser);
+	ResResult addUser(User user, List<Long> roles, User loginUser);
 
-	void updateUser(User user, Long[] roles, Long loginUserId, String username);
+	void updateUser(User user, List<Long> roles, Long loginUserId, String username);
 	
 	void deleteUser(Integer userId);
 

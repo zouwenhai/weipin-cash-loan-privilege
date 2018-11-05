@@ -6,6 +6,7 @@ import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -44,5 +45,8 @@ public class Role implements Serializable {
 	@Column(name = "ROLE_NAME2")
 	@ExportConfig(value = "角色2")
 	private String roleName2;
+
+	@Transient
+	String menuIds2;
 
 }
