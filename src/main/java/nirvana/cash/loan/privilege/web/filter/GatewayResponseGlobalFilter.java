@@ -13,7 +13,7 @@ import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -32,8 +32,9 @@ import java.nio.charset.Charset;
  * 网关代理,全局过滤器
  */
 @Slf4j
+@Order(-200)  //注意order要小于-1.通过上面的类，就能查看服务端响应的值了
 @Component
-public class GatewayResponseGlobalFilter implements GlobalFilter, Ordered {
+public class GatewayResponseGlobalFilter implements GlobalFilter {
 
     @Autowired
     private RequestCheck requestCheck;
@@ -51,8 +52,6 @@ public class GatewayResponseGlobalFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         String hiddenColumn = listCtrl.getHiddenColumn();
-        Long userId = listCtrl.getUserId();
-        Long menuId = listCtrl.getMenuId();
         //修改返回参数|返回参数添加:用户配置的列表隐藏列字段
         ServerHttpResponse originalResponse = exchange.getResponse();
         DataBufferFactory bufferFactory = originalResponse.bufferFactory();
@@ -74,11 +73,7 @@ public class GatewayResponseGlobalFilter implements GlobalFilter, Ordered {
                         JSONObject resjson = JSONObject.parseObject(res);
                         resjson.put("hiddenColumn",hiddenColumn);
                         //更新返回数据
-                        byte[] uppedContent = ByteUtil.str2Bytes(resjson.toJSONString(),"utf-8");
-                        if(uppedContent == null){
-                            //原始响应报文
-                            uppedContent =  ByteUtil.str2Bytes(res,"utf-8");
-                        }
+                        byte[] uppedContent = ByteUtil.json2Bytes(resjson,"utf-8");
                         return bufferFactory.wrap(uppedContent);
                     }));
                 }
@@ -88,12 +83,6 @@ public class GatewayResponseGlobalFilter implements GlobalFilter, Ordered {
         };
         // replace response with decorator
         return chain.filter(exchange.mutate().response(decoratedResponse).build());
-    }
-
-    @Override
-    public int getOrder() {
-        //注意order要小于-1.通过上面的类，就能查看服务端响应的值了
-        return -200;
     }
 
     protected ListCtrl getListCtrl(ServerHttpRequest request){
