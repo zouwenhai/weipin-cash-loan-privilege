@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nirvana.cash.loan.privilege.dao.MessageConfigMapper">
+
+    <insert id="insertMessageConfig" parameterType="nirvana.cash.loan.privilege.domain.MessageConfig">
+      insert into TB_YOFISHDK_AUTH_MSG_CONFIG(id,MSG_MODULE,MSG_CHANNEL,MSG_TARGET,START_TIME,END_TIME, is_run,CREATE_USER,UPDATE_USER)
+      values (SEQ_TB_YOFISHDK_AUTH_MSG_CONFIG.nextval,#{msgModule, jdbcType=INTEGER},#{msgChannel, jdbcType=INTEGER},
+          #{msgTarget,jdbcType=VARCHAR},#{startTime,jdbcType=VARCHAR},#{endTime, jdbcType=VARCHAR},#{isRun, jdbcType=INTEGER},#{createUser, jdbcType=VARCHAR},#{updateUser,jdbcType=VARCHAR})
+    </insert>
+</mapper>
