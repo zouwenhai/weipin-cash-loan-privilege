@@ -7,10 +7,7 @@ import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.ListCtrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -31,4 +28,18 @@ public class ListCtrlController extends BaseController {
         listCtrl.setUserId(user.getUserId());
         return listCtrlService.saveOrUpdate(listCtrl);
     }
+
+    //查询列表隐藏字段
+    @GetMapping("/listCtrl/findHiddenColumn")
+    public ResResult saveOrUpdate(ServerHttpRequest request, @RequestParam Long menuId) {
+        User user = this.getLoginUser(request);
+        ListCtrl listCtrl =  listCtrlService.findListCtrl(user.getUserId(),menuId);
+        String hiddenColumn =  "";
+        if(listCtrl != null){
+            hiddenColumn = listCtrl.getHiddenColumn();
+        }
+        return ResResult.success(hiddenColumn,"查询成功",ResResult.SUCCESS);
+    }
+
+
 }
