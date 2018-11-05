@@ -3,13 +3,17 @@ package nirvana.cash.loan.privilege.domain;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
  * Created by Administrator on 2018/11/5.
  */
 @Data
+@Table(name = "TB_YOFISHDK_AUTH_MSG_LIST")
 public class MsgList {
+
+    public static final String SEQ = "SET_TB_YOFISHDK_AUTH_MSG_LIST";
 
     //主键ID
     @Column(name = "ID")
@@ -21,7 +25,7 @@ public class MsgList {
 
     //消息唯一ID
     @Column(name = "UUID")
-    private Long uuid;
+    private String uuid;
 
     //通知模块
     @Column(name = "MSG_MODULE")
