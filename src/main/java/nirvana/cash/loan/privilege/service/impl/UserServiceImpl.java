@@ -79,7 +79,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public ResResult addUser(User user, Long[] roles, User loginUser) {
+	public ResResult addUser(User user, List<Long> roles, User loginUser) {
 		user.setUserId(this.getSequence(User.SEQ));
 		user.setCrateTime(new Date());
 		user.setTheme(User.DEFAULT_THEME);
@@ -90,7 +90,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		setUserRoles(user, roles);
 
 		//子系统用户同步
-		List<Integer> roleIds = this.transRoleIds(roles);
+		List<Long> roleIds = roles;
 		List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
 		//催收用户
 		List<String> collRoleCodeList = filterRoleCodeList(roleCodeList,"coll");
@@ -134,7 +134,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		return ResResult.success();
 	}
 
-	private void setUserRoles(User user, Long[] roles) {
+	private void setUserRoles(User user, List<Long> roles) {
 		for (Long roleId : roles) {
 			UserRole ur = new UserRole();
 			ur.setUserId(user.getUserId());
@@ -145,9 +145,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	@Transactional
-	public void updateUser(User user, Long[] roles, Long loginUserId, String username) {
+	public void updateUser(User user, List<Long> roles, Long loginUserId, String username) {
 		List<String> oldRoleCodeList = userRoleService.findRoleCodeListByUserId(user.getUserId().intValue());
-		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(this.transRoleIds(roles));
+		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(roles);
 		User oldUser=this.userMapper.selectByPrimaryKey(user.getUserId());
 
 		user.setCrateTime(oldUser.getCrateTime());
@@ -318,8 +318,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	public String findUserRoldCodes(String roleIds) {
-		List<Integer> roleIdList =new ArrayList<>();
-		Arrays.asList(roleIds.split(",")).forEach(t->{roleIdList.add(Integer.valueOf(t));});
+		List<Long> roleIdList =new ArrayList<>();
+		Arrays.asList(roleIds.split(",")).forEach(t->{roleIdList.add(Long.valueOf(t));});
 		List<String> roleCodeList =  roleMapper.findRoleCodeListByRoleIds(roleIdList);
 	   return String.join(",",roleCodeList);
 	}
@@ -338,12 +338,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		return  collRoleCodeList;
 	}
 
-	public List<Integer> transRoleIds(Long[] roles){
-		List<Integer> roleIds=new ArrayList<>();
-		for(Long item:roles){
-			roleIds.add(item.intValue());
-		}
-		return roleIds;
-	}
+//	public List<Integer> transRoleIds(Long[] roles){
+//		List<Integer> roleIds=new ArrayList<>();
+//		for(Long item:roles){
+//			roleIds.add(item.intValue());
+//		}
+//		return roleIds;
+//	}
 
 }
