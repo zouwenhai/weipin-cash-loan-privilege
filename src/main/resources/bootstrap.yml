@@ -10,14 +10,6 @@ spring:
       force: true
   profiles:
     active: dev
-  redis:
-    cache-cloud:
-      domainUrl:  http://test-cachecloud.gs.9188.com:8585
-      appId: 10016
-      type: cluster
-    jedis:
-      pool:
-        maxActive: 200
   cloud:
     refresh:
       refreshable: none
