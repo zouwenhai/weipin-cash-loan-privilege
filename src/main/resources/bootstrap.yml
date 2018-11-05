@@ -26,6 +26,7 @@ hystrix:
         timeout.enabled: true
         isolation:
           strategy: SEMAPHORE
+          semaphore.maxConcurrentRequests: 20
           thread.timeoutInMilliseconds: 120000
 ribbon:
   MaxAutoRetries: 0
