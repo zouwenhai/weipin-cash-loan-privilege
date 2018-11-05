@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.web.filter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.util.ByteUtil;
 import nirvana.cash.loan.privilege.domain.ListCtrl;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.ListCtrlService;
@@ -25,7 +26,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
@@ -70,14 +70,14 @@ public class GatewayResponseGlobalFilter implements GlobalFilter, Ordered {
                         //res就是response的值，想修改、查看就随意而为了
                         String res = new String(content, Charset.forName("UTF-8"));
                         log.info("gateway response body:{}",res);
+                        //返回值|添加隐藏列字段
                         JSONObject resjson = JSONObject.parseObject(res);
                         resjson.put("hiddenColumn",hiddenColumn);
                         //更新返回数据
-                        byte[] uppedContent = new byte[0];
-                        try {
-                            uppedContent = new String(resjson.toJSONString().getBytes("UTF-8"), Charset.forName("UTF-8")).getBytes();
-                        } catch (UnsupportedEncodingException ex) {
-                            log.info("列表隐藏列修改设置失败:userId={},menuId={},exception={}", userId, menuId, ex);
+                        byte[] uppedContent = ByteUtil.str2Bytes(resjson.toJSONString(),"utf-8");
+                        if(uppedContent == null){
+                            //原始响应报文
+                            uppedContent =  ByteUtil.str2Bytes(res,"utf-8");
                         }
                         return bufferFactory.wrap(uppedContent);
                     }));
