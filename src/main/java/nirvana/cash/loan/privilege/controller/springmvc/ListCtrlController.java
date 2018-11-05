@@ -7,7 +7,6 @@ import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.ListCtrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
