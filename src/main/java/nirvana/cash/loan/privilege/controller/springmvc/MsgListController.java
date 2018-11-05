@@ -8,6 +8,7 @@ import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.MsgList;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,7 @@ public class MsgListController extends BaseController {
 
     //消息列表
     @RequestMapping("msg/list")
-    public ResResult userList(QueryRequest queryRequest, MsgList msgList) {
+    public ResResult userList(@RequestBody QueryRequest queryRequest, @RequestBody MsgList msgList) {
         PageHelper.startPage(queryRequest.getPageNum(), queryRequest.getPageSize());
         List<MsgList> list = msgListService.findPageList(msgList);
         PageInfo<MsgList> pageInfo = new PageInfo<>(list);
