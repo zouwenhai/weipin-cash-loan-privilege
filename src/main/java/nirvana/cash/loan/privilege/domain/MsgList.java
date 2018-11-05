@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.domain;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
