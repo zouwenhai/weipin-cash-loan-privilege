@@ -8,6 +8,7 @@ import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MessageConfigMapper;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.MessageConfigVo;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
@@ -51,7 +52,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
      * @return
      */
     @Override
-    public ResResult insertMessageConfig(MessageConfigVo messageConfigVo) {
+    public ResResult insertMessageConfig(MessageConfigVo messageConfigVo, User loginUser) {
         try {
             String msgJson = messageConfigVo.getMsgJson();
             JSONArray jsonArray = JSONArray.parseArray(msgJson);
@@ -65,8 +66,8 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
                     messageConfig.setMsgTarget(jsonObject.getString("msgTarget"));
                     messageConfig.setStartTime(jsonObject.getString("startTime"));
                     messageConfig.setEndTime(jsonObject.getString("endTime"));
-                    messageConfig.setCreateUser(messageConfigVo.getCreateUser());
-                    messageConfig.setUpdateUser(messageConfigVo.getCreateUser());
+                    messageConfig.setCreateUser(loginUser.getUsername());
+                    messageConfig.setUpdateUser(loginUser.getUsername());
                     list.add(messageConfig);
                 });
             }
@@ -90,7 +91,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
      * @return
      */
     @Override
-    public ResResult updateMessageConfig(MessageConfigVo messageConfigVo) {
+    public ResResult updateMessageConfig(MessageConfigVo messageConfigVo, User loginUser) {
         try {
             String msgJson = messageConfigVo.getMsgJson();
             JSONArray jsonArray = JSONArray.parseArray(msgJson);
@@ -106,7 +107,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
                     messageConfig.setStartTime(jsonObject.getString("startTime"));
                     messageConfig.setEndTime(jsonObject.getString("endTime"));
                     messageConfig.setUpdateTime(new Date());
-                    messageConfig.setUpdateUser(messageConfigVo.getUpdateUser());
+                    messageConfig.setUpdateUser(loginUser.getUsername());
                     list.add(messageConfig);
                 });
             }
