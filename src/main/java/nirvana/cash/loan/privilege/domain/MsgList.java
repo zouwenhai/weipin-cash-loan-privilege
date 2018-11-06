@@ -55,6 +55,8 @@ public class MsgList {
     @Column(name = "UPDATE_USER")
     private String updateUser;
 
-
+    //是否删除
+    @Column(name = "IS_DELETE")
+    private Integer isDelete;
 
 }

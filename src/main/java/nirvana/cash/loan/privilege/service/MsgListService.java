@@ -17,4 +17,7 @@ public interface MsgListService extends IService<MsgList> {
 
     //保存消息
     ResResult saveMsg(MsgList msgList);
+
+    //消息删除
+    void msgDelete(List<Long> idList);
 }
