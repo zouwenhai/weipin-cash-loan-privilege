@@ -8,12 +8,14 @@ import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.MsgList;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.MsgListDeleteVo;
+import nirvana.cash.loan.privilege.domain.vo.MsgListReadVo;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +39,7 @@ public class MsgListController extends BaseController {
         return ResResult.success(getDataTable(pageInfo));
     }
 
-    //消息删除
+    //批量消息删除
     @PostMapping("msg/delete")
     public ResResult msgDelete(ServerHttpRequest request, @RequestBody MsgListDeleteVo vo) {
         String ids = vo.getIds();
@@ -56,8 +58,28 @@ public class MsgListController extends BaseController {
     public ResResult msgRead(ServerHttpRequest request, @RequestParam Long id) {
         User user = this.getLoginUser(request);
         MsgList msgList = msgListService.msgRead(id);
+        if (msgList == null) {
+            return ResResult.error("消息ID不正确");
+        }
+        List<Long> idList = new ArrayList<>();
+        idList.add(msgList.getId());
+        msgListService.updateStatus(idList, 1, user);
         return ResResult.success(msgList);
     }
 
+
+    //批量消息已读
+    @PostMapping("msg/msgBatchRead")
+    public ResResult msgBatchRead(ServerHttpRequest request, @RequestBody MsgListReadVo vo) {
+        String ids = vo.getIds();
+        if (StringUtils.isBlank(ids)) {
+            return ResResult.error("消息ID不存在");
+        }
+        User user = this.getLoginUser(request);
+        List<Long> idList = Arrays.asList(ids.split(",")).stream().map(t -> Long.valueOf(t))
+                .collect(Collectors.toList());
+        msgListService.updateStatus(idList, 1, user);
+        return ResResult.success();
+    }
 
 }

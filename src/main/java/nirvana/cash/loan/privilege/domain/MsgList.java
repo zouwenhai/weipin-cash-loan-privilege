@@ -35,7 +35,7 @@ public class MsgList {
     @Column(name = "CONTENT")
     private String content;
 
-    //状态
+    //状态：0未读；1已读
     @Column(name = "STATUS")
     private Integer status;
 
