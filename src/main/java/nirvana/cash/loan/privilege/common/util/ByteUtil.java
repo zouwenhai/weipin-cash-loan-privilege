@@ -1,11 +1,10 @@
 package nirvana.cash.loan.privilege.common.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 /**
  * Created by Administrator on 2018/11/5.
@@ -32,8 +31,23 @@ public class ByteUtil {
             bos.close();
             return resbytes;
         } catch (Exception ex) {
-            log.error("字符串转字节数组异常:str={},exception={}",data.toJSONString(),ex);
+            log.error("JSONObject转字节数组异常:str={},exception={}",data.toJSONString(),ex);
         }
         return null;
+    }
+
+    public static JSONObject bytes2json(byte[] bytes){
+        try {
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            ObjectInputStream sIn = new ObjectInputStream(in);
+            Object obj =  sIn.readObject();
+            sIn.close();
+            in.close();
+            return JSONObject.parseObject(JSON.toJSONString(obj));
+        } catch (Exception ex) {
+            log.error("字节数组转JSONObject对象异常:exception={}",ex);
+        }
+        return JSONObject.parseObject(JSON.toJSONString(ResResult.error("系统异常")));
+
     }
 }
