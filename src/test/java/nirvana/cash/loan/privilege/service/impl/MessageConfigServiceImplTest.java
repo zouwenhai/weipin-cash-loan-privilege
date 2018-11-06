@@ -2,7 +2,9 @@ package nirvana.cash.loan.privilege.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.Application;
+import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.domain.vo.MessageConfigVo;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import org.junit.Test;
@@ -10,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 /**
  * Created by sunyong on 2018-11-05.
@@ -23,8 +27,8 @@ public class MessageConfigServiceImplTest {
 
     @Test
     public void queryMessageConfigs() {
-        ResResult resResult = messageConfigService.queryMessageConfigs();
-        System.out.println(JSONObject.toJSONString(resResult));
+        List<MessageConfig> messageConfigs = messageConfigService.queryMessageConfigs();
+        System.out.println(JSONObject.toJSONString(messageConfigs));
     }
 
     @Test
