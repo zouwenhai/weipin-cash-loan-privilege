@@ -2,7 +2,9 @@ package nirvana.cash.loan.privilege.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MessageConfigMapper;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
@@ -32,13 +34,13 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
      * @return
      */
     @Override
-    public ResResult queryMessageConfigs() {
+    public List<MessageConfig> queryMessageConfigs() {
         try {
             List<MessageConfig> messageConfigs = messageConfigMapper.selectAll();
-            return ResResult.success(messageConfigs);
+            return messageConfigs;
         } catch (Exception e) {
             log.error("消息列表查询失败:{}", e, e.getMessage());
-            return ResResult.error();
+            return new ArrayList<>();
         }
     }
 
