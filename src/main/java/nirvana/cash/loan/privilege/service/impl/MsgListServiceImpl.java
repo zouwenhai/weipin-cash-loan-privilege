@@ -1,8 +1,6 @@
 package nirvana.cash.loan.privilege.service.impl;
 
-import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
-import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MsgListMapper;
 import nirvana.cash.loan.privilege.domain.MsgList;
@@ -40,10 +38,18 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
             log.info("重复消息:msg uuid={}",uuid);
             return ResResult.error("重复消息");
         }
+        msgList.setIsDelete(0);
         msgList.setId(this.getSequence(MsgList.SEQ));
         msgList.setCreateTime(new Date());
         msgList.setUpdateTime(new Date());
         this.save(msgList);
         return ResResult.success();
+    }
+
+    @Override
+    public void msgDelete(List<Long> idList) {
+        Example example = new Example(MsgList.class);
+        example.createCriteria().andIn("id",idList);
+        msgListMapper.deleteByExample(example);
     }
 }

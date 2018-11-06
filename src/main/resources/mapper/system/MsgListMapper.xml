@@ -12,10 +12,12 @@
     <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser"/>
     <result column="UPDATE_USER" jdbcType="VARCHAR" property="updateUser"/>
+    <result column="IS_DELETE" jdbcType="DECIMAL" property="isDelete"/>
   </resultMap>
 
   <select id="findPageList" resultMap="resultMap" parameterType="nirvana.cash.loan.privilege.domain.MsgList">
     select * from TB_YOFISHDK_AUTH_MSG_LIST
+    where IS_DELETE = 0
   </select>
 
 </mapper>
