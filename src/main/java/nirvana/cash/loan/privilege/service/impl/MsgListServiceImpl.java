@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MsgListMapper;
 import nirvana.cash.loan.privilege.domain.MsgList;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,31 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
     }
 
     @Override
-    public void msgDelete(List<Long> idList) {
+    public void msgDelete(List<Long> idList,User user) {
+        MsgList msgList = new MsgList();
+        msgList.setUpdateUser(user.getUsername());
+        msgList.setUpdateTime(new Date());
+
         Example example = new Example(MsgList.class);
         example.createCriteria().andIn("id",idList);
-        msgListMapper.deleteByExample(example);
+        msgListMapper.updateByExampleSelective(msgList,example);
+    }
+
+    @Override
+    public MsgList msgRead(Long id) {
+        return  this.selectByKey(id);
+    }
+
+    @Override
+    public void updateStatus(List<Long> idList, Integer status,User user) {
+        MsgList msgList = new MsgList();
+        msgList.setUpdateUser(user.getUsername());
+        msgList.setUpdateTime(new Date());
+        msgList.setStatus(status);
+
+        Example example = new Example(MsgList.class);
+        example.createCriteria().andIn("id",idList);
+        msgListMapper.updateByExampleSelective(msgList,example);
+
     }
 }
