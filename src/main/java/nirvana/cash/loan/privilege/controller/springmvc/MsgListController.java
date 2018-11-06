@@ -6,13 +6,13 @@ import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.MsgList;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.MsgListDeleteVo;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,16 +38,26 @@ public class MsgListController extends BaseController {
     }
 
     //消息删除
-    @RequestMapping("msg/delete")
-    public ResResult msgDelete(@RequestBody MsgListDeleteVo vo) {
+    @PostMapping("msg/delete")
+    public ResResult msgDelete(ServerHttpRequest request, @RequestBody MsgListDeleteVo vo) {
         String ids = vo.getIds();
         if (StringUtils.isBlank(ids)) {
             return ResResult.error("消息ID不存在");
         }
+        User user = this.getLoginUser(request);
         List<Long> idList = Arrays.asList(ids.split(",")).stream().map(t -> Long.valueOf(t))
                 .collect(Collectors.toList());
-        msgListService.msgDelete(idList);
+        msgListService.msgDelete(idList, user);
         return ResResult.success();
     }
+
+    //消息查看
+    @RequestMapping("msg/read")
+    public ResResult msgRead(ServerHttpRequest request, @RequestParam Long id) {
+        User user = this.getLoginUser(request);
+        MsgList msgList = msgListService.msgRead(id);
+        return ResResult.success(msgList);
+    }
+
 
 }
