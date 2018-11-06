@@ -6,10 +6,12 @@ import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.MessageConfigVo;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,7 @@ import java.util.List;
  * 消息通知列表
  */
 @RestController
+@RequestMapping("/privilige")
 public class MessageConfigController extends BaseController {
 
     @Autowired
@@ -46,9 +49,9 @@ public class MessageConfigController extends BaseController {
      * @return
      */
     @RequestMapping("/insertMessageConfig")
-    public ResResult insertMessageConfig(MessageConfigVo messageConfigVo) {
-
-        return messageConfigService.insertMessageConfig(messageConfigVo);
+    public ResResult insertMessageConfig(ServerHttpRequest request, MessageConfigVo messageConfigVo) {
+        User loginUser = getLoginUser(request);
+        return messageConfigService.insertMessageConfig(messageConfigVo, loginUser);
     }
 
     /**
@@ -70,7 +73,8 @@ public class MessageConfigController extends BaseController {
      * @return
      */
     @RequestMapping("/updateMessageConfig")
-    public ResResult updateMessageConfig(MessageConfigVo messageConfigVo) {
-        return messageConfigService.updateMessageConfig(messageConfigVo);
+    public ResResult updateMessageConfig(ServerHttpRequest request, MessageConfigVo messageConfigVo) {
+        User loginUser = getLoginUser(request);
+        return messageConfigService.updateMessageConfig(messageConfigVo, loginUser);
     }
 }

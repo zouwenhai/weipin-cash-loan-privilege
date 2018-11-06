@@ -13,7 +13,4 @@ public class MessageConfigVo {
 
     private String msgJson;
 
-    private String createUser;
-
-    private String updateUser;
 }
