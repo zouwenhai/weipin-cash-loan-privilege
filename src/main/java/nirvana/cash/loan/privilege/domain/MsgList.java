@@ -13,7 +13,7 @@ import java.util.Date;
 @Table(name = "TB_YOFISHDK_AUTH_MSG_LIST")
 public class MsgList {
 
-    public static final String SEQ = "SET_TB_YOFISHDK_AUTH_MSG_LIST";
+    public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_MSG_LIST";
 
     //主键ID
     @Column(name = "ID")
@@ -35,7 +35,7 @@ public class MsgList {
     @Column(name = "CONTENT")
     private String content;
 
-    //状态
+    //状态：0未读；1已读
     @Column(name = "STATUS")
     private Integer status;
 
@@ -55,6 +55,8 @@ public class MsgList {
     @Column(name = "UPDATE_USER")
     private String updateUser;
 
-
+    //是否删除
+    @Column(name = "IS_DELETE")
+    private Integer isDelete;
 
 }

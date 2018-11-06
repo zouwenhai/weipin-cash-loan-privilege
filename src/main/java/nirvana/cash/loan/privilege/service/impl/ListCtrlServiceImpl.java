@@ -6,6 +6,7 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.service.ListCtrlService;
 import nirvana.cash.loan.privilege.dao.ListCtrlMapper;
 import nirvana.cash.loan.privilege.domain.ListCtrl;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,6 +39,7 @@ public class ListCtrlServiceImpl extends BaseService<ListCtrl> implements ListCt
     public ResResult saveOrUpdate(ListCtrl listCtrl) {
         Long userId = listCtrl.getUserId();
         Long menuId = listCtrl.getMenuId();
+        String newHiddenColumn =  listCtrl.getHiddenColumn();
         ListCtrl oldListCtrl = this.findListCtrl(userId,menuId);
         if (oldListCtrl == null) {
             listCtrl.setId(this.getSequence(ListCtrl.SEQ));
@@ -47,10 +49,12 @@ public class ListCtrlServiceImpl extends BaseService<ListCtrl> implements ListCt
             return ResResult.success();
         }
 
+        BeanUtils.copyProperties(oldListCtrl,listCtrl);
         listCtrl.setUpdateTime(new Date());
+        listCtrl.setHiddenColumn(newHiddenColumn);
         Example example = new Example(ListCtrl.class);
         example.createCriteria().andEqualTo("id",oldListCtrl.getId());
-        listCtrlMapper.updateByExampleSelective(listCtrl,example);
+        listCtrlMapper.updateByExample(listCtrl,example);
         return ResResult.success();
     }
 }
