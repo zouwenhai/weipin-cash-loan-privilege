@@ -124,6 +124,23 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
     }
 
     /**
+     * 回显
+     *
+     * @param configId
+     * @return
+     */
+    @Override
+    public ResResult getMessageConfig(Long configId) {
+        try {
+            MessageConfig messageConfig = messageConfigMapper.selectByPrimaryKey(configId);
+            return ResResult.success(messageConfig);
+        } catch (Exception e) {
+            log.error("通知管理列表回显失败：{}", e);
+            return ResResult.error();
+        }
+    }
+
+    /**
      * 删除消息列表
      *
      * @param configId

@@ -20,4 +20,6 @@ public interface MessageConfigService extends IService<MessageConfig> {
     ResResult delMessageConfig(Long configId);
 
     ResResult updateMessageConfig(MessageConfigVo messageConfigVo, User loginUser);
+
+    ResResult getMessageConfig(Long configId);
 }
