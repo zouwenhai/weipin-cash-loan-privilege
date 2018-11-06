@@ -2,6 +2,7 @@ package nirvana.cash.loan.privilege.dao;
 
 import nirvana.cash.loan.privilege.common.config.MyMapper;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -12,4 +13,5 @@ public interface MessageConfigMapper extends MyMapper<MessageConfig> {
 
 
     void insertMessageConfig(MessageConfig messageConfig);
+
 }

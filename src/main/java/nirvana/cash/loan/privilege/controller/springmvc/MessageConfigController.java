@@ -77,4 +77,14 @@ public class MessageConfigController extends BaseController {
         User loginUser = getLoginUser(request);
         return messageConfigService.updateMessageConfig(messageConfigVo, loginUser);
     }
+
+    /**
+     * 回显
+     * @param configId
+     * @return
+     */
+    @RequestMapping("/getMessageConfig")
+    public ResResult getMessageConfig(@RequestParam("configId") Long configId){
+        return messageConfigService.getMessageConfig(configId);
+    }
 }

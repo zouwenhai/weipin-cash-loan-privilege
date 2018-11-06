@@ -59,4 +59,12 @@ public class MessageConfigServiceImplTest {
         ResResult resResult = messageConfigService.delMessageConfig(1L);
         System.out.println(JSONObject.toJSONString(resResult));
     }
+
+    @Test
+    public void getMessageConfig() {
+        ResResult resResult = messageConfigService.getMessageConfig(2L);
+        System.out.println(JSONObject.toJSONString(resResult));
+    }
+
+
 }
