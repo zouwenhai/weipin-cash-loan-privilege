@@ -69,8 +69,8 @@ public class MsgListController extends BaseController {
 
 
     //批量消息已读
-    @PostMapping("msg/msgBatchRead")
-    public ResResult msgBatchRead(ServerHttpRequest request, @RequestBody MsgListReadVo vo) {
+    @PostMapping("msg/batchRead")
+    public ResResult batchRead(ServerHttpRequest request, @RequestBody MsgListReadVo vo) {
         String ids = vo.getIds();
         if (StringUtils.isBlank(ids)) {
             return ResResult.error("消息ID不存在");
