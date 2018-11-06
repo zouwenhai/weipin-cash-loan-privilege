@@ -30,7 +30,7 @@ public class ListCtrlController extends BaseController {
     }
 
     //查询列表隐藏字段
-    @GetMapping("/listCtrl/findHiddenColumn")
+    @GetMapping("/notauth/listCtrl/findHiddenColumn")
     public ResResult findHiddenColumn(ServerHttpRequest request, @RequestParam Long menuId) {
         User user = this.getLoginUser(request);
         ListCtrl listCtrl =  listCtrlService.findListCtrl(user.getUserId(),menuId);
