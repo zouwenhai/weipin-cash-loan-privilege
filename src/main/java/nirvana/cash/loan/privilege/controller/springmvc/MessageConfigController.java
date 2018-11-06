@@ -31,7 +31,7 @@ public class MessageConfigController extends BaseController {
      *
      * @return
      */
-    @RequestMapping("/notauth/queryMessageConfigs")
+    @RequestMapping("/queryMessageConfigs")
     public ResResult queryMessageConfigs(QueryRequest request) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
         List<MessageConfig> messageConfigList = messageConfigService.queryMessageConfigs();
