@@ -72,17 +72,17 @@ public class LoginController extends BaseController {
                 roleCodes=userService.findUserRoldCodes(roleIds);
             }
 
-            //缓存2小时，登录信息，"#"分割符在其他地方有使用到,不要替换为其他的。
+            //缓存6小时，登录信息，"#"分割符在其他地方有使用到,不要替换为其他的。
             String jsessionid = user.getUserId()+"#"+GeneratorId.guuid();
-            redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*2L);
+            redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*6L);
 
             //设置登录sessionId,存入cookies
             response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,jsessionid));
 
-            // 缓存2小时，用户权限集,主要作用:“按钮显示”
+            // 缓存6小时，用户权限集,主要作用:“按钮显示”
             List<Menu> permissionList = menuService.findUserPermissions(username);
             String userPermissionsKey = RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername();
-            redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*2L);
+            redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*6L);
 
             //更新登录时间
             this.userService.updateLoginTime(username);
