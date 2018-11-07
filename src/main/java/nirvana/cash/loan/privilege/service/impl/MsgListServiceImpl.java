@@ -75,4 +75,11 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
         msgListMapper.updateByExampleSelective(msgList,example);
 
     }
+
+    @Override
+    public Integer countUnReadMsg(Long userId) {
+        Example example = new Example(MsgList.class);
+        example.createCriteria().andEqualTo("userId",userId);
+        return msgListMapper.selectCountByExample(example);
+    }
 }

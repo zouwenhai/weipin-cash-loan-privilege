@@ -27,4 +27,7 @@ public interface MsgListService extends IService<MsgList> {
 
     //更新阅读状态
     void updateStatus(List<Long> idList,Integer status,User user);
+
+    //查询用户未读消息数量
+    Integer countUnReadMsg(Long userId);
 }
