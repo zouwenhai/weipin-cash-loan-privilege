@@ -648,7 +648,7 @@ public class DateUtil {
 	 * @param endPoint   结束时间点时分秒字符串 eg: 18:05
 	 * @return
 	 */
-	private boolean isTimeSpecifiedInTimeBucket(LocalTime time, String startPoint, String endPoint) {
+	public static boolean isTimeSpecifiedInTimeBucket(LocalTime time, String startPoint, String endPoint) {
 		startPoint = StringUtils.isBlank(startPoint) ? "00:00" : startPoint;
 		endPoint = StringUtils.isBlank(endPoint) ? "23:59" : endPoint;
 		try {

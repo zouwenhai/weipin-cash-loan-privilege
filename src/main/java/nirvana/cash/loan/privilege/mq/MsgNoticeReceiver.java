@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
+import nirvana.cash.loan.privilege.common.util.DateUtil;
 import nirvana.cash.loan.privilege.common.util.EmaiUtil;
 import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -125,28 +125,29 @@ public class MsgNoticeReceiver {
         });
 
 
-        //3:获取邮件通知目标对象|并发送邮件
+        //3:获取邮件通知目标对象|并发送邮件 TODO
         MsgConfigDetailVo emailVo = configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
-        if (emailVo != null
-                && StringUtils.isNotBlank(emailVo.getMsgTarget())
-                && emailVo.getMsgTarget().trim().split(",").length > 0) {
-            Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
-            userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+        if (emailVo != null) {
+            if (DateUtil.isTimeSpecifiedInTimeBucket(now, emailVo.getStartTime(), emailVo.getEndTime())) {
+                if (StringUtils.isNotBlank(emailVo.getMsgTarget()) && emailVo.getMsgTarget().trim().split(",").length > 0) {
+                    Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
+                    userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+                }
+                if (userIdSet != null && userIdSet.size() > 0) {
+                    List<User> userList = userService.findByIds(userIdSet);
+                    List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
+                            .map(t -> t.getEmail())
+                            .collect(Collectors.toList());
+                    String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
+                    emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
+                }
+            }
         }
-        //TODO
-        if (userIdSet != null && userIdSet.size() > 0) {
-            List<User> userList = userService.findByIds(userIdSet);
-            List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
-                    .map(t -> t.getEmail())
-                    .collect(Collectors.toList());
-            String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
-            emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
-        }
+
+
     }
-
-
 
 
 }
