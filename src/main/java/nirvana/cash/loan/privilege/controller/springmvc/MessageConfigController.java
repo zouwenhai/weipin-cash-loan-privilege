@@ -10,9 +10,7 @@ import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,8 +44,8 @@ public class MessageConfigController extends BaseController {
      * @param messageConfig
      * @return
      */
-    @RequestMapping("/insertMessageConfig")
-    public ResResult insertMessageConfig(ServerHttpRequest request, MessageConfig messageConfig) {
+    @PostMapping("/insertMessageConfig")
+    public ResResult insertMessageConfig(ServerHttpRequest request, @RequestBody MessageConfig messageConfig) {
         User loginUser = getLoginUser(request);
         String username = loginUser.getUsername();
         return messageConfigService.insertMessageConfig(messageConfig, username);
@@ -71,8 +69,8 @@ public class MessageConfigController extends BaseController {
      * @param messageConfig
      * @return
      */
-    @RequestMapping("/updateMessageConfig")
-    public ResResult updateMessageConfig(ServerHttpRequest request, MessageConfig messageConfig) {
+    @PostMapping("/updateMessageConfig")
+    public ResResult updateMessageConfig(ServerHttpRequest request, @RequestBody MessageConfig messageConfig) {
         User loginUser = getLoginUser(request);
         String username = loginUser.getUsername();
         return messageConfigService.updateMessageConfig(messageConfig, username);
