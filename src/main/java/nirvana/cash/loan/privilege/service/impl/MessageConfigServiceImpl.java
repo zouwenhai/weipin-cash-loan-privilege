@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MessageConfigMapper;
@@ -53,6 +54,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             messageConfig.setCreateTime(new Date());
             messageConfig.setUpdateTime(new Date());
             messageConfig.setId(this.getSequence(MessageConfig.SEQ));
+            log.info("========="+JSON.toJSONString(messageConfig));
             int i = messageConfigMapper.insertSelective(messageConfig);
             if (i > 0) {
                 return ResResult.success();

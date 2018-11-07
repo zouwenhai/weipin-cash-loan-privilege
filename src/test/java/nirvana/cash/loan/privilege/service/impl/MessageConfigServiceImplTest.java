@@ -33,9 +33,7 @@ public class MessageConfigServiceImplTest {
     public void insertMessageConfig() {
         MessageConfig messageConfig = new MessageConfig();
         messageConfig.setMsgModule(1);
-        String msgJson = "[{\"msgChannel\":\"1\",\"msgTarget\":\"213\",\"startTime\":\"03:00\"," +
-                "\"endTime\":\"15:30\"},{\"msgChannel\":\"2\",\"msgTarget\":\"456\",\"startTime\":\"08:00\"," +
-                "\"endTime\":\"19:30\"}]";
+        String msgJson = "[{\"msgChannel\":\"1\",\"msgTarget\":\"213\",\"startTime\":\"03:00\",\"endTime\":\"15:30\"},{\"msgChannel\":\"2\",\"msgTarget\":\"456\",\"startTime\":\"08:00\",\"endTime\":\"19:30\"}]";
         messageConfig.setMsgContent(msgJson);
         messageConfigService.insertMessageConfig(messageConfig,"213");
     }
