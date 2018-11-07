@@ -161,6 +161,7 @@ public class RedisServiceImpl implements RedisService {
     /**
      * 添加Set
      */
+    @Override
     public long putSet(String key, String[] data) {
         return redisTemplate.opsForSet().add(key, data);
     }
@@ -168,6 +169,7 @@ public class RedisServiceImpl implements RedisService {
     /**
      * 返回集中所有元素
      */
+    @Override
     public Set<String> getSet(String key) {
         return redisTemplate.opsForSet().members(key);
     }
@@ -175,6 +177,7 @@ public class RedisServiceImpl implements RedisService {
     /**
      * 移除Set指定元素
      */
+    @Override
     public long remove(String key,String[] data) {
         return redisTemplate.opsForSet().remove(key,data);
     }
