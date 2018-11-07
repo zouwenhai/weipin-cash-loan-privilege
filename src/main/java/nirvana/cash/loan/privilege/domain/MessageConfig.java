@@ -53,4 +53,7 @@ public class MessageConfig implements Serializable {
 
     @Column(name = "UPDATE_USER")
     private String updateUser;
+
+    @Column(name = "MSG_CONTENT")
+    private String msgContent;
 }

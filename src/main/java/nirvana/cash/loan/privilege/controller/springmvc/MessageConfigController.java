@@ -7,10 +7,8 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.domain.User;
-import nirvana.cash.loan.privilege.domain.vo.MessageConfigVo;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,13 +43,14 @@ public class MessageConfigController extends BaseController {
     /**
      * 新增消息列表
      *
-     * @param messageConfigVo
+     * @param messageConfig
      * @return
      */
     @RequestMapping("/insertMessageConfig")
-    public ResResult insertMessageConfig(ServerHttpRequest request, MessageConfigVo messageConfigVo) {
+    public ResResult insertMessageConfig(ServerHttpRequest request, MessageConfig messageConfig) {
         User loginUser = getLoginUser(request);
-        return messageConfigService.insertMessageConfig(messageConfigVo, loginUser);
+        String username = loginUser.getUsername();
+        return messageConfigService.insertMessageConfig(messageConfig, username);
     }
 
     /**
@@ -69,13 +68,14 @@ public class MessageConfigController extends BaseController {
     /**
      * 编辑消息列表
      *
-     * @param messageConfigVo
+     * @param messageConfig
      * @return
      */
     @RequestMapping("/updateMessageConfig")
-    public ResResult updateMessageConfig(ServerHttpRequest request, MessageConfigVo messageConfigVo) {
+    public ResResult updateMessageConfig(ServerHttpRequest request, MessageConfig messageConfig) {
         User loginUser = getLoginUser(request);
-        return messageConfigService.updateMessageConfig(messageConfigVo, loginUser);
+        String username = loginUser.getUsername();
+        return messageConfigService.updateMessageConfig(messageConfig, username);
     }
 
     /**
@@ -87,4 +87,13 @@ public class MessageConfigController extends BaseController {
     public ResResult getMessageConfig(@RequestParam("configId") Long configId){
         return messageConfigService.getMessageConfig(configId);
     }
+
+    @RequestMapping("/updateRun")
+    public ResResult updateRun(ServerHttpRequest request, MessageConfig messageConfig){
+        User loginUser = getLoginUser(request);
+        String username = loginUser.getUsername();
+        return messageConfigService.updateRun(messageConfig, username);
+    }
+
+
 }
