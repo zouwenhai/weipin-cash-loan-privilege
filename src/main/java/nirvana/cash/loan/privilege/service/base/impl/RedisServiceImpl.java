@@ -182,4 +182,14 @@ public class RedisServiceImpl implements RedisService {
         return redisTemplate.opsForSet().remove(key,data);
     }
 
+    /**
+     * 从Set中弹出一个元素
+     * @param key
+     * @return
+     */
+    @Override
+    public String pop(String key){
+        return redisTemplate.opsForSet().pop(key);
+    }
+
 }

@@ -1,5 +1,6 @@
-package nirvana.cash.loan.privilege.websocket;
+package nirvana.cash.loan.privilege.websocket.config;
 
+import nirvana.cash.loan.privilege.websocket.WebSocketMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,10 +8,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
-import org.springframework.web.reactive.socket.server.WebSocketService;
-import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
-import org.springframework.web.reactive.socket.server.upgrade.TomcatRequestUpgradeStrategy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +26,7 @@ public class WebSocketConfiguration {
          * 使用 map 指定 WebSocket 协议的路由
          */
         final Map<String, WebSocketHandler> map = new HashMap<>();
-        map.put("/webSocket/*", handler);
+        map.put("/privilige/notauth/webSocket/*", handler);
 
         /**
          * SimpleUrlHandlerMapping 指定了 WebSocket 的路由配置
@@ -40,19 +38,13 @@ public class WebSocketConfiguration {
     }
 
     /**
-     * WebSocketHandlerAdapter 负责将 EchoHandler 处理类适配到 WebFlux 容器中
+     * WebSocketHandlerAdapter 负责将 WebSocketHandler 处理类适配到 WebFlux 容器中
      *
      * @return
      */
     @Bean
     public WebSocketHandlerAdapter handlerAdapter() {
-        return new WebSocketHandlerAdapter(webSocketService());
+        return new WebSocketHandlerAdapter();
     }
 
-    @Bean
-    public WebSocketService webSocketService() {
-        TomcatRequestUpgradeStrategy strategy = new TomcatRequestUpgradeStrategy();
-        strategy.setMaxSessionIdleTimeout(0L);
-        return new HandshakeWebSocketService(strategy);
-    }
 }

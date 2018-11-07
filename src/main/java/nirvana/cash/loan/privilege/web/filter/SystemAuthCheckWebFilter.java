@@ -1,16 +1,15 @@
 package nirvana.cash.loan.privilege.web.filter;
 
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -30,6 +29,9 @@ public class SystemAuthCheckWebFilter implements WebFilter {
     @Autowired
     private RequestCheck requestCheck;
 
+    private PathMatcher pathMatcher = new AntPathMatcher();
+    //白名单的url,无需登录
+    private static final List<String> whiteListUrls = new ArrayList<>();
     private static final List<String> noLoginUrls = new ArrayList<>();
     static {
         noLoginUrls.add("/privilige/notauth/gifCode");
@@ -37,6 +39,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         noLoginUrls.add("/privilige/notauth/isLogin");
         noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
+        whiteListUrls.add("/privilige/notauth/webSocket/*");
     }
 
     @Override
@@ -45,6 +48,11 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         ServerHttpResponse response = exchange.getResponse();
         URI uri = request.getURI();
         String url = uri.getPath();
+        //无需登录接口
+        if (isInWhiteList(url)) {
+            return webFilterChain.filter(exchange);
+        }
+
         log.info("privilege|request url:{}",url);
         //无需登录接口
         if(URLUtil.isEndsWith(noLoginUrls,url)){
@@ -56,6 +64,10 @@ public class SystemAuthCheckWebFilter implements WebFilter {
             return requestCheck.failResBody(response,checkResResult);
         }
         return webFilterChain.filter(exchange);
+    }
+
+    private boolean isInWhiteList(String url) {
+        return whiteListUrls.stream().anyMatch(white -> pathMatcher.match(white, url));
     }
 
 }

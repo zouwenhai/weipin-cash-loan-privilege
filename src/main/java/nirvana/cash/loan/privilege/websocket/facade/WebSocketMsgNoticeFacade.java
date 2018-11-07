@@ -6,11 +6,11 @@ import lombok.Data;
  * Created by Administrator on 2018/11/7.
  */
 @Data
-public class WebSocketMsgNotice {
+public class WebSocketMsgNoticeFacade {
 
     private String uuid;
 
-    private String userId;
+    private Long userId;
 
     private String msg;
 }

@@ -12,9 +12,6 @@ public class MqMsgNoticFacade {
     //消息唯一ID
     private String uuid;
 
-    //登录名
-    private String loginName;
-
     //通知模块
     private Integer msgModule;
 

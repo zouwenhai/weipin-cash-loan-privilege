@@ -41,6 +41,8 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
         }
         msgList.setIsDelete(0);
         msgList.setId(this.getSequence(MsgList.SEQ));
+        msgList.setCreateUser("system");
+        msgList.setUpdateUser("system");
         msgList.setCreateTime(new Date());
         msgList.setUpdateTime(new Date());
         this.save(msgList);
