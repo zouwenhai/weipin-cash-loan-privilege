@@ -72,9 +72,11 @@ public class MsgNoticeReceiver {
         List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,MessageConfig.class);
         if(msgConfigs == null){
             msgConfigs = messageConfigService.queryMessageConfigs();
-            if(msgConfigs != null){
-                redisService.putList(RedisKeyContant.yofishdk_msg_notice_config,msgConfigs);
+            if(msgConfigs  == null){
+                log.info("未设置消息通知发送规则,不处理此消息.");
+                return;
             }
+            redisService.putList(RedisKeyContant.yofishdk_msg_notice_config,msgConfigs);
         }
         msgConfigs = msgConfigs.stream().filter(t -> t.getIsRun() == 0)
                 .filter(t -> t.getMsgModule() == msgModule.intValue())
