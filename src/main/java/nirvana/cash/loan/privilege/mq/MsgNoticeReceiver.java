@@ -72,7 +72,7 @@ public class MsgNoticeReceiver {
         List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,MessageConfig.class);
         if(msgConfigs == null){
             msgConfigs = messageConfigService.queryMessageConfigs();
-            if(msgConfigs  == null){
+            if(msgConfigs == null){
                 log.info("未设置消息通知发送规则,不处理此消息.");
                 return;
             }
