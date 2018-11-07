@@ -40,5 +40,5 @@ public interface RedisService {
 
     long remove(String key,String[] data);
 
-
+    String pop(String key);
 }
