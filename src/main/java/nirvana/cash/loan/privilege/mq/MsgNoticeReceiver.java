@@ -147,25 +147,6 @@ public class MsgNoticeReceiver {
     }
 
 
-    /**
-     * 判断时间是否在通知配置的生效时段内,用于确定是否发送消息
-     *
-     * @param time       指定时间点
-     * @param startPoint 开始时间点时分秒字符串 eg: 07:15
-     * @param endPoint   结束时间点时分秒字符串 eg: 18:05
-     * @return
-     */
-    private boolean isTimeSpecifiedInTimeBucket(LocalTime time, String startPoint, String endPoint) {
-        startPoint = StringUtils.isBlank(startPoint) ? "00:00" : startPoint;
-        endPoint = StringUtils.isBlank(endPoint) ? "23:59" : endPoint;
-        try {
-            LocalTime start = LocalTime.parse(startPoint);
-            LocalTime end = LocalTime.parse(endPoint);
-            return time.isAfter(start) && time.isBefore(end);
-        } catch (DateTimeParseException e) {
-            log.error("消息通知配置的生效时间不规范！" + e.getMessage(), e);
-        }
-        return false;
-    }
+
 
 }
