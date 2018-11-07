@@ -31,8 +31,9 @@ public class MsgListController extends BaseController {
     private MsgListService msgListService;
 
     //消息列表
-    @RequestMapping("msg/list")
-    public ResResult msgList(@RequestBody QueryRequest queryRequest, @RequestBody MsgList msgList) {
+    @PostMapping("msg/list")
+    public ResResult msgList(@RequestBody QueryRequest queryRequest) {
+        MsgList msgList = new MsgList();
         PageHelper.startPage(queryRequest.getPageNum(), queryRequest.getPageSize());
         List<MsgList> list = msgListService.findPageList(msgList);
         PageInfo<MsgList> pageInfo = new PageInfo<>(list);
