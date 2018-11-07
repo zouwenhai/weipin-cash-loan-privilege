@@ -69,7 +69,13 @@ public class MsgNoticeReceiver {
         //消息唯一ID
         String uuid = null;
         //查询消息模块对应配置
-        List<MessageConfig> msgConfigs = messageConfigService.queryMessageConfigs();
+        List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,MessageConfig.class);
+        if(msgConfigs == null){
+            msgConfigs = messageConfigService.queryMessageConfigs();
+            if(msgConfigs != null){
+                redisService.putList(RedisKeyContant.yofishdk_msg_notice_config,msgConfigs);
+            }
+        }
         msgConfigs = msgConfigs.stream().filter(t -> t.getIsRun() == 0)
                 .filter(t -> t.getMsgModule() == msgModule.intValue())
                 .collect(Collectors.toList());
