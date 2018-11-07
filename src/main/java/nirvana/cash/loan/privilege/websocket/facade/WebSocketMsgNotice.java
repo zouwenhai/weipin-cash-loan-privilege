@@ -10,7 +10,7 @@ public class WebSocketMsgNotice {
 
     private String uuid;
 
-    private String userId;
+    private Long userId;
 
     private String msg;
 }

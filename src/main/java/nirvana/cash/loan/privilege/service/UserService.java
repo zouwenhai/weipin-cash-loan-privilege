@@ -6,6 +6,7 @@ import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.UserWithRole;
 
 import java.util.List;
+import java.util.Set;
 
 public interface UserService extends IService<User> {
 
@@ -28,4 +29,6 @@ public interface UserService extends IService<User> {
 	String findUserRoldIds(Integer userId);
 
     String findUserRoldCodes(String roleIds);
+
+	List<User> findByIds(Set<Long> userIdSet);
 }
