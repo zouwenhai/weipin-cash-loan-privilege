@@ -15,18 +15,20 @@ import nirvana.cash.loan.privilege.service.MessageConfigService;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import nirvana.cash.loan.privilege.service.UserService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
-import nirvana.cash.loan.privilege.websocket.facade.WebSocketMsgNotice;
+import nirvana.cash.loan.privilege.websocket.facade.WebSocketMsgNoticeFacade;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
-import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -108,18 +110,18 @@ public class MsgNoticeReceiver {
         MsgConfigDetailVo wesocketVo = configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_web_socket.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
-        if(wesocketVo != null
+        if (wesocketVo != null
                 && StringUtils.isNotBlank(wesocketVo.getMsgTarget())
-                && wesocketVo.getMsgTarget().trim().split(",").length > 0){
+                && wesocketVo.getMsgTarget().trim().split(",").length > 0) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(wesocketVo.getMsgTarget().trim().split(",")));
             userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
         }
         userIdSet.forEach(t -> {
-            WebSocketMsgNotice websocketMsg  = new WebSocketMsgNotice();
+            WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
             websocketMsg.setUuid(uuid);
             websocketMsg.setUserId(t);
             websocketMsg.setMsg(content);
-            redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX+t,new String[]{JSON.toJSONString(websocketMsg)});
+            redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
         });
 
 
@@ -127,23 +129,22 @@ public class MsgNoticeReceiver {
         MsgConfigDetailVo emailVo = configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
-        if(emailVo != null
+        if (emailVo != null
                 && StringUtils.isNotBlank(emailVo.getMsgTarget())
-                && emailVo.getMsgTarget().trim().split(",").length > 0){
+                && emailVo.getMsgTarget().trim().split(",").length > 0) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
             userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
         }
         //TODO
-        if(userIdSet!=null && userIdSet.size()>0){
+        if (userIdSet != null && userIdSet.size() > 0) {
             List<User> userList = userService.findByIds(userIdSet);
-            List<String> toAddresList = userList.stream().filter(t->StringUtils.isNotBlank(t.getEmail()))
-                    .map(t->t.getEmail())
+            List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
+                    .map(t -> t.getEmail())
                     .collect(Collectors.toList());
             String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
-            emaiUtil.sendEmail(fromAddress,toAddresList,title,content);
+            emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
         }
     }
-
 
 
     /**

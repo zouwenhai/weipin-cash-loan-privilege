@@ -23,7 +23,7 @@ import java.util.Optional;
 public class WebSocketMessageHandler implements WebSocketHandler {
 
     @Autowired
-    private MessageContainer messageContainer;
+    private MessageBasket messageBasket;
     @Autowired
     private WebSocketProperties properties;
 
@@ -34,7 +34,7 @@ public class WebSocketMessageHandler implements WebSocketHandler {
             return webSocketSession.send(Mono.just(webSocketSession.textMessage("")));
         }
         return webSocketSession.send(Flux.<String>generate(sink -> {
-            String message = messageContainer.getMessageNeedToSendByUser(userId);
+            String message = messageBasket.fetchOneUserMessage(userId);
             if (StringUtils.hasText(message)) {
                 sink.next(message);
             } else {
