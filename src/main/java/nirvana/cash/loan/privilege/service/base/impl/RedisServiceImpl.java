@@ -1,7 +1,7 @@
 package nirvana.cash.loan.privilege.service.base.impl;
 
-import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.common.util.ProtoStuffSerializerUtil;
+import nirvana.cash.loan.privilege.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -157,4 +157,26 @@ public class RedisServiceImpl implements RedisService {
     public void deleteWithKeys(Set<String> keys) {
         redisTemplate.delete(keys);
     }
+
+    /**
+     * 添加Set
+     */
+    public long putSet(String key, String[] data) {
+        return redisTemplate.opsForSet().add(key, data);
+    }
+
+    /**
+     * 返回集中所有元素
+     */
+    public Set<String> getSet(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    /**
+     * 移除Set指定元素
+     */
+    public long remove(String key,String[] data) {
+        return redisTemplate.opsForSet().remove(key,data);
+    }
+
 }
