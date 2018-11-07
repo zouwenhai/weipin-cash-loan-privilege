@@ -33,4 +33,12 @@ public interface RedisService {
     Set<String> getKeysWithPattern(String pattern);
 
     void deleteWithKeys(Set<String> keys);
+
+    long putSet(String key, String[] data);
+
+    Set<String> getSet(String key);
+
+    long remove(String key,String[] data);
+
+
 }

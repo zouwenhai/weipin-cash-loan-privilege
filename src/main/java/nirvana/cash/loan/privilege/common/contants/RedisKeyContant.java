@@ -13,6 +13,8 @@ public class RedisKeyContant {
 
     public final static String YOFISHDK_LOGIN_VERIFY_CODE = "yofishdk_login_verify_code";
 
+    public final static String YOFISHDK_MSG_NOTICE_PREFIX = "yofishdk_msg_notice_prefix_";
+
 
 
 }

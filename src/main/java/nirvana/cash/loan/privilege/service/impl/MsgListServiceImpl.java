@@ -60,7 +60,7 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
 
     @Override
     public MsgList msgRead(Long id) {
-        return  this.selectByKey(id);
+        return msgListMapper.selectByPrimaryKey(id);
     }
 
     @Override

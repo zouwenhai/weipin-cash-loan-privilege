@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.domain;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -16,6 +17,7 @@ public class MsgList {
     public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_MSG_LIST";
 
     //主键ID
+    @Id
     @Column(name = "ID")
     private Long id;
 
