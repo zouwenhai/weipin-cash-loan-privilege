@@ -140,7 +140,7 @@ public class MsgNoticeReceiver {
                try{
                    User user = userList.stream().filter(x->x.getUserId().equals(x)).findAny().orElse(null);
                    msgmap.put("userName",user.getName());
-                   String title = msgModuleEnum.getName()+"模块有新订单需要您处理";
+                   String title = msgModuleEnum.getName()+"模块-有新订单需要您处理";
                    String content = freemarkerUtil.resolve(template_email_notice_msg,msgmap);
                    String toAddress = user.getEmail();
                    emaiUtil.sendEmailHtml(fromAddress,toAddress, title, content);
