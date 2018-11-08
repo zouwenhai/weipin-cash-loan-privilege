@@ -83,7 +83,7 @@ public class MsgNoticeReceiver {
         Set<Long> userIdSet = new HashSet<>();
         for (MsgConfigDetailVo item : configDetailVoList) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(item.getMsgTarget().trim().split(",")));
-            userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+            userIdSet.addAll(tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet()));
         }
         int i = 0;
         userIdSet.forEach(t -> {
