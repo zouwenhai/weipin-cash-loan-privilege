@@ -161,7 +161,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
     }
 
     @Override
-    public boolean isTargtUser(Long userId, MsgChannelEnum msgChannelEnum) {
+    public boolean isTargtUser(Long userId) {
         Example example = new Example(MessageConfig.class);
         example.createCriteria().andEqualTo("isRun", 0);
         List<MessageConfig> msgConfigs = messageConfigMapper.selectByExample(example);
