@@ -16,6 +16,6 @@ public class WebSocketProperties {
     /**
      * webSocket服务端每隔指定秒后查询message推送给客户端
      */
-    private long delay = 30L;
+    private long delay = 60L;
 
 }
