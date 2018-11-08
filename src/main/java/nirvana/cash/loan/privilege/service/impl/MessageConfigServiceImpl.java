@@ -139,6 +139,23 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
         return ResResult.error();
     }
 
+    /**
+     * 删除消息列表
+     *
+     * @param configId
+     * @return
+     */
+    @Override
+    public ResResult delMessageConfig(Long configId) {
+        try {
+            messageConfigMapper.deleteByPrimaryKey(configId);
+            return ResResult.success();
+        } catch (Exception e) {
+            log.error("消息列表删除失败:{}", e, e.getMessage());
+        }
+        return ResResult.error();
+    }
+
     @Override
     public MessageConfig findMessageConfigByMsgModule(Integer msgModule, long cacheTime) {
         List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,
@@ -179,22 +196,6 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
         return false;
     }
 
-    /**
-     * 删除消息列表
-     *
-     * @param configId
-     * @return
-     */
-    @Override
-    public ResResult delMessageConfig(Long configId) {
-        try {
-            messageConfigMapper.deleteByPrimaryKey(configId);
-            return ResResult.success();
-        } catch (Exception e) {
-            log.error("消息列表删除失败:{}", e, e.getMessage());
-        }
-        return ResResult.error();
-    }
 
 
 }
