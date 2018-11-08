@@ -108,7 +108,7 @@ public class MsgNoticeReceiver {
                 msgList.setContent(content);
                 msgListService.saveMsg(msgList);
             });
-            //站内信 - 缓存值redis
+            //站内信 - 缓存redis
             userIdSet.forEach(t -> {
                 WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
                 websocketMsg.setUuid(uuid);
