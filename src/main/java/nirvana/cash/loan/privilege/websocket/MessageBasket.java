@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,30 +22,6 @@ public class MessageBasket {
 
     @Autowired
     private RedisService redisService;
-
-    /**
-     * 取出
-     *
-     * @param userId
-     * @return
-     */
-    public Set<String> fetchUserMessages(String userId) {
-        String key = RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + userId;
-        Set<String> messagesFromCache = getMessagesFromCache(key), messageContents = new HashSet<>();
-        if (!CollectionUtils.isEmpty(messagesFromCache)) {
-            try {
-                redisService.delete(key);
-            } catch (Exception e) {
-                log.error("从redis中删除用户消息缓存失败！" + e.getMessage(), e);
-            }
-            messagesFromCache.forEach(m -> {
-                if (StringUtils.hasText(m)) {
-                    messageContents.add(JSONObject.parseObject(m, WebSocketMsgNoticeFacade.class).getMsg());
-                }
-            });
-        }
-        return messageContents;
-    }
 
     public String fetchOneUserMessage(String userId) {
         String key = RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + userId, messageContent = null;
