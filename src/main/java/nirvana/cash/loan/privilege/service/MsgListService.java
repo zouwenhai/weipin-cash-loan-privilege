@@ -22,9 +22,6 @@ public interface MsgListService extends IService<MsgList> {
     //消息删除
     void msgDelete(List<Long> idList,User user);
 
-    //消息查看
-    MsgList msgRead(Long id);
-
     //更新阅读状态
     void updateStatus(List<Long> idList,Integer status,User user);
 

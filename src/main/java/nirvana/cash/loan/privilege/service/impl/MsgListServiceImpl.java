@@ -61,11 +61,6 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
     }
 
     @Override
-    public MsgList msgRead(Long id) {
-        return msgListMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
     public void updateStatus(List<Long> idList, Integer status,User user) {
         MsgList msgList = new MsgList();
         msgList.setUpdateUser(user.getUsername());

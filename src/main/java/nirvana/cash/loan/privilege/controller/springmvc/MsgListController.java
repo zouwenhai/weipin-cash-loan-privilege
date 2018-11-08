@@ -54,21 +54,6 @@ public class MsgListController extends BaseController {
         return ResResult.success();
     }
 
-    //消息查看
-    @RequestMapping("msg/read")
-    public ResResult msgRead(ServerHttpRequest request, @RequestParam Long id) {
-        User user = this.getLoginUser(request);
-        MsgList msgList = msgListService.msgRead(id);
-        if (msgList == null) {
-            return ResResult.error("消息ID不正确");
-        }
-        List<Long> idList = new ArrayList<>();
-        idList.add(msgList.getId());
-        msgListService.updateStatus(idList, 1, user);
-        return ResResult.success(msgList);
-    }
-
-
     //批量消息已读
     @PostMapping("msg/batchRead")
     public ResResult batchRead(ServerHttpRequest request, @RequestBody MsgListReadVo vo) {
