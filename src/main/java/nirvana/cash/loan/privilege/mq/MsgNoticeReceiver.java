@@ -102,9 +102,7 @@ public class MsgNoticeReceiver {
         MsgConfigDetailVo wesocketVo = configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_web_socket.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
-        if (wesocketVo != null
-                && StringUtils.isNotBlank(wesocketVo.getMsgTarget())
-                && wesocketVo.getMsgTarget().trim().split(",").length > 0) {
+        if (wesocketVo != null) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(wesocketVo.getMsgTarget().trim().split(",")));
             userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
             userIdSet.forEach(t -> {
@@ -121,16 +119,14 @@ public class MsgNoticeReceiver {
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
         if (emailVo != null && DateUtil.isTimeSpecifiedInTimeBucket(now, emailVo.getStartTime(), emailVo.getEndTime())) {
-            if (StringUtils.isNotBlank(emailVo.getMsgTarget()) && emailVo.getMsgTarget().trim().split(",").length > 0) {
-                Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
-                userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
-                List<User> userList = userService.findByIds(userIdSet);
-                List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
-                        .map(t -> t.getEmail())
-                        .collect(Collectors.toList());
-                String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
-                emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
-            }
+            Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
+            userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+            List<User> userList = userService.findByIds(userIdSet);
+            List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
+                    .map(t -> t.getEmail())
+                    .collect(Collectors.toList());
+            String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
+            emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
         }
 
 
