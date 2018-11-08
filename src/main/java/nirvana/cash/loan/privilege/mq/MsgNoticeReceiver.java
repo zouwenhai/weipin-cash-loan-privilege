@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
 import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
-import nirvana.cash.loan.privilege.common.util.DateUtil;
-import nirvana.cash.loan.privilege.common.util.EmaiUtil;
-import nirvana.cash.loan.privilege.common.util.ListUtil;
-import nirvana.cash.loan.privilege.common.util.MsgModuleUtil;
+import nirvana.cash.loan.privilege.common.enums.OrderStatusEnum;
+import nirvana.cash.loan.privilege.common.util.*;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.domain.MsgList;
 import nirvana.cash.loan.privilege.domain.User;
@@ -22,15 +20,13 @@ import nirvana.cash.loan.privilege.websocket.facade.WebSocketMsgNoticeFacade;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +49,10 @@ public class MsgNoticeReceiver {
     public RedisService redisService;
     @Autowired
     public UserService userService;
+    @Autowired
+    FreemarkerUtil freemarkerUtil;
+
+    final static String template_email_notice_msg = "email_notice_msg.ftl";
 
     @RabbitListener(containerFactory = "myContainerFactory",
             bindings = @QueueBinding(
@@ -63,20 +63,19 @@ public class MsgNoticeReceiver {
     )
     @RabbitHandler
     public void receive(String msg) {
-        log.info("消息中心|接收消息推送:msg={}", msg);
+        log.info("接收消息推送:msg={}", msg);
         LocalTime now = LocalTime.now();
         MqMsgNoticFacade facade = JSON.parseObject(msg, MqMsgNoticFacade.class);
         //消息唯一ID
         String uuid = facade.getUuid();
         //消息通知模块
-        MsgModuleEnum msgModuleEnum = MsgModuleUtil.transOrderStatus2MsgModule(Integer.valueOf(facade.getOrderStatus()));
+        OrderStatusEnum orderStatusEnum = OrderStatusEnum.getEnum(facade.getOrderStatus());
+        MsgModuleEnum msgModuleEnum = MsgModuleUtil.transOrderStatus2MsgModule(orderStatusEnum);
         if (msgModuleEnum == null) {
             log.info("未设置该消息通知模块,不处理此消息:uuid={}", uuid);
             return;
         }
         Integer msgModule = msgModuleEnum.getCode();
-        //消息内容
-        String content = msg;
         //查询消息模块对应配置
         MessageConfig msgConfig = messageConfigService.findMessageConfigByMsgModule(msgModule, 60 * 5L);
         if (msgConfig == null || StringUtils.isBlank(msgConfig.getMsgContent())) {
@@ -89,7 +88,11 @@ public class MsgNoticeReceiver {
             return;
         }
 
-        Set<Long> userIdSet = null;
+        Map<String,String> msgmap=new HashMap();
+        msgmap.put("msgModule",msgModuleEnum.getName());
+        msgmap.put("orderId",facade.getOrderId());
+        msgmap.put("orderStatus", orderStatusEnum.getDesc());
+        msgmap.put("time",DateUtil.getDateTime());
 
         //1:站内信通知
         MsgConfigDetailVo wesocketVo = configDetailVoList.stream()
@@ -97,24 +100,30 @@ public class MsgNoticeReceiver {
                 .findAny().orElse(null);
         if (wesocketVo != null) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(wesocketVo.getMsgTarget().trim().split(",")));
-            userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
-            //站内信 - 插入数据表
+            Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+            List<User> userList = userService.findByIds(userIdSet);
             int i = 0;
             userIdSet.forEach(t -> {
-                MsgList msgList = new MsgList();
-                msgList.setUserId(t);
-                msgList.setUuid(uuid + "-" + (i + 1));
-                msgList.setMsgModule(msgModule);
-                msgList.setContent(content);
-                msgListService.saveMsg(msgList);
-            });
-            //站内信 - 缓存redis
-            userIdSet.forEach(t -> {
-                WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
-                websocketMsg.setUuid(uuid);
-                websocketMsg.setUserId(t);
-                websocketMsg.setMsg(content);
-                redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
+               try{
+                   User user = userList.stream().filter(x->x.getUserId().equals(x)).findAny().orElse(null);
+                   msgmap.put("userName",user.getName());
+                   String content = JSON.toJSONString(msgmap);
+                   //插入数据表
+                   MsgList msgList = new MsgList();
+                   msgList.setUserId(t);
+                   msgList.setUuid(uuid + "-" + (i + 1));
+                   msgList.setMsgModule(msgModule);
+                   msgList.setContent(content);
+                   msgListService.saveMsg(msgList);
+                   //缓存redis
+                   WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
+                   websocketMsg.setUuid(uuid);
+                   websocketMsg.setUserId(t);
+                   websocketMsg.setMsg(content);
+                   redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
+               }catch (Exception ex){
+                   log.error("站内信|接收处理出来失败:uuid={},userId={}",facade.getUuid(),t);
+               }
             });
 
         }
@@ -125,13 +134,23 @@ public class MsgNoticeReceiver {
                 .findAny().orElse(null);
         if (emailVo != null && DateUtil.isTimeSpecifiedInTimeBucket(now, emailVo.getStartTime(), emailVo.getEndTime())) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
-            userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+            Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
             List<User> userList = userService.findByIds(userIdSet);
             List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
                     .map(t -> t.getEmail())
                     .collect(Collectors.toList());
-            String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
-            emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
+            userIdSet.forEach(t -> {
+               try{
+                   User user = userList.stream().filter(x->x.getUserId().equals(x)).findAny().orElse(null);
+                   msgmap.put("userName",user.getName());
+                   String title = msgModuleEnum.getName()+"模块有新增订单请您及时处理";
+                   String content = freemarkerUtil.resolve(template_email_notice_msg,msgmap);
+                   String toAddress = user.getEmail();
+                   emaiUtil.sendEmailHtml(fromAddress,toAddress, title, content);
+               }catch (Exception ex){
+                   log.error("邮件消息|接收处理出来失败:uuid={},userId={}",facade.getUuid(),t);
+               }
+            });
         }
 
 

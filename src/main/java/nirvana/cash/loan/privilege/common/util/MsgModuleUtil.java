@@ -8,9 +8,8 @@ import nirvana.cash.loan.privilege.common.enums.OrderStatusEnum;
  */
 public class MsgModuleUtil {
 
-    public static MsgModuleEnum transOrderStatus2MsgModule(Integer orderStatus) {
+    public static MsgModuleEnum transOrderStatus2MsgModule(OrderStatusEnum orderStatusEnum) {
         MsgModuleEnum msgModuleEnum = null;
-        OrderStatusEnum orderStatusEnum = OrderStatusEnum.getEnum(orderStatus);
         if(orderStatusEnum == null){
             return msgModuleEnum;
         }
