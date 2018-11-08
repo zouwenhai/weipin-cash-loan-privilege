@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
+import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
 import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MessageConfigMapper;
@@ -56,12 +57,18 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
     @Override
     public ResResult insertMessageConfig(MessageConfig messageConfig, String username) {
         try {
+            Example example = new Example(MessageConfig.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("msgModule", messageConfig.getMsgModule());
+            List<MessageConfig> messageConfigs = messageConfigMapper.selectByExample(example);
+            if (messageConfigs != null && messageConfigs.size() > 0) {
+                return ResResult.error("通知模块 " + MsgModuleEnum.getMsgModuleEnum(messageConfig.getMsgModule()).getName() + " 不能重复添加");
+            }
             messageConfig.setCreateUser(username);
             messageConfig.setUpdateUser(username);
             messageConfig.setCreateTime(new Date());
             messageConfig.setUpdateTime(new Date());
             messageConfig.setId(this.getSequence(MessageConfig.SEQ));
-            log.info("========="+JSON.toJSONString(messageConfig));
             int i = messageConfigMapper.insertSelective(messageConfig);
             if (i > 0) {
                 return ResResult.success();
@@ -113,7 +120,6 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
 
 
     /**
-     *
      * @return
      */
     @Override
@@ -122,7 +128,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             messageConfig.setUpdateUser(username);
             messageConfig.setUpdateTime(new Date());
             int i = messageConfigMapper.updateRun(messageConfig);
-            if(i > 0){
+            if (i > 0) {
                 return ResResult.success();
             }
         } catch (Exception e) {
@@ -132,19 +138,20 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
 
     @Override
     public MessageConfig findMessageConfigByMsgModule(Integer msgModule, long cacheTime) {
-        List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,MessageConfig.class);
-        if(msgConfigs == null){
+        List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,
+                MessageConfig.class);
+        if (msgConfigs == null) {
             Example example = new Example(MessageConfig.class);
-            example.createCriteria().andEqualTo("isRun",0);
+            example.createCriteria().andEqualTo("isRun", 0);
             msgConfigs = messageConfigMapper.selectByExample(example);
-            if(ListUtil.isEmpty(msgConfigs)){
+            if (ListUtil.isEmpty(msgConfigs)) {
                 return null;
             }
-            redisService.putListWithExpireTime(RedisKeyContant.yofishdk_msg_notice_config,msgConfigs,cacheTime);
+            redisService.putListWithExpireTime(RedisKeyContant.yofishdk_msg_notice_config, msgConfigs, cacheTime);
         }
         msgConfigs = msgConfigs.stream().filter(t -> t.getMsgModule() == msgModule.intValue())
                 .collect(Collectors.toList());
-        if(ListUtil.isEmpty(msgConfigs)){
+        if (ListUtil.isEmpty(msgConfigs)) {
             return null;
         }
         return msgConfigs.get(0);
