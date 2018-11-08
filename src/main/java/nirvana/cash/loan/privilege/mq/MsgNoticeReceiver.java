@@ -82,10 +82,8 @@ public class MsgNoticeReceiver {
         //1:获取全部消息发送目标对象|并保存通知消息
         Set<Long> userIdSet = new HashSet<>();
         for (MsgConfigDetailVo item : configDetailVoList) {
-            if (StringUtils.isNotBlank(item.getMsgTarget()) && item.getMsgTarget().trim().split(",").length > 0) {
-                Set<String> tmpSet = new HashSet<>(Arrays.asList(item.getMsgTarget().trim().split(",")));
-                userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
-            }
+            Set<String> tmpSet = new HashSet<>(Arrays.asList(item.getMsgTarget().trim().split(",")));
+            userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
         }
         int i = 0;
         userIdSet.forEach(t -> {
