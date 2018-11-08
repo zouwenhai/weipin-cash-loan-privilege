@@ -11,7 +11,7 @@ public class MqMsgNoticFacade {
 
 
     /**
-     * UUID
+     * 消息唯一ID
      */
     private String uuid;
 
