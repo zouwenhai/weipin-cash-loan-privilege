@@ -136,9 +136,6 @@ public class MsgNoticeReceiver {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
             Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
             List<User> userList = userService.findByIds(userIdSet);
-            List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
-                    .map(t -> t.getEmail())
-                    .collect(Collectors.toList());
             userIdSet.forEach(t -> {
                try{
                    User user = userList.stream().filter(x->x.getUserId().equals(x)).findAny().orElse(null);
