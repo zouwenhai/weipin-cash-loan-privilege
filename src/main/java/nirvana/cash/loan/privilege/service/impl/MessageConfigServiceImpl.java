@@ -3,14 +3,17 @@ package nirvana.cash.loan.privilege.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
+import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
 import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
 import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MessageConfigMapper;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
+import nirvana.cash.loan.privilege.domain.vo.MsgConfigDetailVo;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -155,6 +158,25 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             return null;
         }
         return msgConfigs.get(0);
+    }
+
+    @Override
+    public boolean isTargtUser(Long userId, MsgChannelEnum msgChannelEnum) {
+        Example example = new Example(MessageConfig.class);
+        example.createCriteria().andEqualTo("isRun", 0);
+        List<MessageConfig> msgConfigs = messageConfigMapper.selectByExample(example);
+        List<String> list = msgConfigs.stream().filter(t -> StringUtils.isNotBlank(t.getMsgContent()))
+                .map(t -> t.getMsgContent())
+                .collect(Collectors.toList());
+        for (String msgContent : list) {
+            List<MsgConfigDetailVo> voList = JSON.parseArray(msgContent, MsgConfigDetailVo.class);
+            for (MsgConfigDetailVo vo : voList) {
+                if (vo.getMsgTarget().contains(userId.toString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
