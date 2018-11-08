@@ -49,7 +49,7 @@ public class WebSocketMessageHandler implements WebSocketHandler {
                 log.info("没有查询到数据" + webSocketSession.getId());
                 sink.next("");
             }
-        }).delayElements(Duration.ofSeconds(5)).map(webSocketSession::textMessage);
+        }).delayElements(Duration.ofSeconds(properties.getDelay())).map(webSocketSession::textMessage);
         return webSocketSession.send(messages);
     }
 
