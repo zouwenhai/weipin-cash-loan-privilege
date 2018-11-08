@@ -40,11 +40,11 @@ public class DateUtil {
 	/**
 	 * 获取当前日期
 	 *
-	 * @return 返回当前日期(yyyyMMdd HH:mm:ss)
+	 * @return 返回当前日期(yyyy-MM-dd HH:mm:ss)
 	 */
 	public static String getDateTime() {
 		Calendar calendar = Calendar.getInstance();
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 		return dateFormat.format(calendar.getTime());
 	}
