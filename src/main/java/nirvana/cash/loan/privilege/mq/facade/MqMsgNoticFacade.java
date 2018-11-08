@@ -9,14 +9,26 @@ import lombok.Data;
 @Data
 public class MqMsgNoticFacade {
 
-    //消息唯一ID
+
+    /**
+     * UUID
+     */
     private String uuid;
 
-    //通知模块
-    private Integer msgModule;
+    /**
+     * 订单ID
+     */
+    private String orderId;
 
-    //消息内容
-    private String content;
+    /**
+     * 订单状态
+     */
+    private Integer orderStatus;
+
+    /**
+     * 订单备注
+     */
+    private String orderRemark;
 
 
 }

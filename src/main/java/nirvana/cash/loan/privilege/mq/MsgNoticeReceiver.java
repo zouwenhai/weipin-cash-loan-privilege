@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
+import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
 import nirvana.cash.loan.privilege.common.util.DateUtil;
 import nirvana.cash.loan.privilege.common.util.EmaiUtil;
 import nirvana.cash.loan.privilege.common.util.ListUtil;
+import nirvana.cash.loan.privilege.common.util.MsgModuleUtil;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.domain.MsgList;
 import nirvana.cash.loan.privilege.domain.User;
@@ -57,28 +59,33 @@ public class MsgNoticeReceiver {
                     value = @Queue(value = "${rabbitmq.queue.auth_msg_notice}", durable = "true"),
                     exchange = @Exchange(value = "${rabbitmq.exchange.auth_msg_notice}", type = ExchangeTypes.TOPIC, durable = "true"),
                     key = "${rabbitmq.routingkey.auth_msg_notice}"),
-                    admin = "myRabbitAdmin"
+            admin = "myRabbitAdmin"
     )
     @RabbitHandler
     public void receive(String msg) {
         log.info("消息中心|接收消息推送:msg={}", msg);
         LocalTime now = LocalTime.now();
         MqMsgNoticFacade facade = JSON.parseObject(msg, MqMsgNoticFacade.class);
-        //消息通知模块
-        Integer msgModule = null;
-        //消息内容
-        String content = null;
         //消息唯一ID
-        String uuid = null;
+        String uuid = facade.getUuid();
+        //消息通知模块
+        MsgModuleEnum msgModuleEnum = MsgModuleUtil.transOrderStatus2MsgModule(Integer.valueOf(facade.getOrderStatus()));
+        if (msgModuleEnum == null) {
+            log.info("未设置该消息通知模块,不处理此消息:uuid={}", uuid);
+            return;
+        }
+        Integer msgModule = msgModuleEnum.getCode();
+        //消息内容
+        String content = msg;
         //查询消息模块对应配置
-        MessageConfig msgConfig = messageConfigService.findMessageConfigByMsgModule(msgModule,60*5L);
+        MessageConfig msgConfig = messageConfigService.findMessageConfigByMsgModule(msgModule, 60 * 5L);
         if (msgConfig == null || StringUtils.isBlank(msgConfig.getMsgContent())) {
-            log.info("未设置消息通知发送规则,不处理此消息.");
+            log.info("未设置消息通知发送规则,不处理此消息:uuid={}", uuid);
             return;
         }
         List<MsgConfigDetailVo> configDetailVoList = JSON.parseArray(msgConfig.getMsgContent(), MsgConfigDetailVo.class);
         if (ListUtil.isEmpty(configDetailVoList)) {
-            log.info("未设置消息通知发送规则,不处理此消息.");
+            log.info("未设置消息通知发送规则,不处理此消息:uuid={}", uuid);
             return;
         }
         //1:获取全部消息发送目标对象|并保存通知消息
