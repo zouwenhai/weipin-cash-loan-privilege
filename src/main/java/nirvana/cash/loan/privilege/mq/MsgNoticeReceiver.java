@@ -56,7 +56,9 @@ public class MsgNoticeReceiver {
             bindings = @QueueBinding(
                     value = @Queue(value = "${rabbitmq.queue.auth_msg_notice}", durable = "true"),
                     exchange = @Exchange(value = "${rabbitmq.exchange.auth_msg_notice}", type = ExchangeTypes.TOPIC, durable = "true"),
-                    key = "${rabbitmq.routingkey.auth_msg_notice}"))
+                    key = "${rabbitmq.routingkey.auth_msg_notice}"),
+                    admin = "myRabbitAdmin"
+    )
     @RabbitHandler
     public void receive(String msg) {
         log.info("消息中心|接收消息推送:msg={}", msg);
