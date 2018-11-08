@@ -107,34 +107,29 @@ public class MsgNoticeReceiver {
                 && wesocketVo.getMsgTarget().trim().split(",").length > 0) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(wesocketVo.getMsgTarget().trim().split(",")));
             userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+            userIdSet.forEach(t -> {
+                WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
+                websocketMsg.setUuid(uuid);
+                websocketMsg.setUserId(t);
+                websocketMsg.setMsg(content);
+                redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
+            });
         }
-        userIdSet.forEach(t -> {
-            WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
-            websocketMsg.setUuid(uuid);
-            websocketMsg.setUserId(t);
-            websocketMsg.setMsg(content);
-            redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
-        });
-
 
         //3:获取邮件通知目标对象|并发送邮件 TODO
         MsgConfigDetailVo emailVo = configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
-        if (emailVo != null) {
-            if (DateUtil.isTimeSpecifiedInTimeBucket(now, emailVo.getStartTime(), emailVo.getEndTime())) {
-                if (StringUtils.isNotBlank(emailVo.getMsgTarget()) && emailVo.getMsgTarget().trim().split(",").length > 0) {
-                    Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
-                    userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
-                }
-                if (userIdSet != null && userIdSet.size() > 0) {
-                    List<User> userList = userService.findByIds(userIdSet);
-                    List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
-                            .map(t -> t.getEmail())
-                            .collect(Collectors.toList());
-                    String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
-                    emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
-                }
+        if (emailVo != null && DateUtil.isTimeSpecifiedInTimeBucket(now, emailVo.getStartTime(), emailVo.getEndTime())) {
+            if (StringUtils.isNotBlank(emailVo.getMsgTarget()) && emailVo.getMsgTarget().trim().split(",").length > 0) {
+                Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
+                userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+                List<User> userList = userService.findByIds(userIdSet);
+                List<String> toAddresList = userList.stream().filter(t -> StringUtils.isNotBlank(t.getEmail()))
+                        .map(t -> t.getEmail())
+                        .collect(Collectors.toList());
+                String title = "消息中心|您好！“放款审核”环节有新订单需要您关注！";
+                emaiUtil.sendEmail(fromAddress, toAddresList, title, content);
             }
         }
 
