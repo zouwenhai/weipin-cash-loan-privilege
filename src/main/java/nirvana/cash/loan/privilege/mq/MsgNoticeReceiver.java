@@ -122,7 +122,7 @@ public class MsgNoticeReceiver {
                    websocketMsg.setMsg(content);
                    redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
                }catch (Exception ex){
-                   log.error("站内信|接收处理出来失败:uuid={},userId={}",facade.getUuid(),t);
+                   log.error("站内信|消息接收处理失败:uuid={},userId={}",facade.getUuid(),t);
                }
             });
 
@@ -145,7 +145,7 @@ public class MsgNoticeReceiver {
                    String toAddress = user.getEmail();
                    emaiUtil.sendEmailHtml(fromAddress,toAddress, title, content);
                }catch (Exception ex){
-                   log.error("邮件消息|接收处理出来失败:uuid={},userId={}",facade.getUuid(),t);
+                   log.error("邮件消息|消息接收处理失败:uuid={},userId={}",facade.getUuid(),t);
                }
             });
         }
