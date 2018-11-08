@@ -69,24 +69,8 @@ public class MsgNoticeReceiver {
         //消息唯一ID
         String uuid = null;
         //查询消息模块对应配置
-        List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,MessageConfig.class);
-        if(msgConfigs == null){
-            msgConfigs = messageConfigService.queryMessageConfigs();
-            if(msgConfigs == null){
-                log.info("未设置消息通知发送规则,不处理此消息.");
-                return;
-            }
-            redisService.putList(RedisKeyContant.yofishdk_msg_notice_config,msgConfigs);
-        }
-        msgConfigs = msgConfigs.stream().filter(t -> t.getIsRun() == 0)
-                .filter(t -> t.getMsgModule() == msgModule.intValue())
-                .collect(Collectors.toList());
-        if (ListUtil.isEmpty(msgConfigs)) {
-            log.info("未设置消息通知发送规则,不处理此消息.");
-            return;
-        }
-        MessageConfig msgConfig = msgConfigs.get(0);
-        if (StringUtils.isBlank(msgConfig.getMsgContent())) {
+        MessageConfig msgConfig = messageConfigService.findMessageConfigByMsgModule(msgModule,60*5L);
+        if (msgConfig == null || StringUtils.isBlank(msgConfig.getMsgContent())) {
             log.info("未设置消息通知发送规则,不处理此消息.");
             return;
         }

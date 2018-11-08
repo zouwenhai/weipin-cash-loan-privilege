@@ -21,4 +21,7 @@ public interface MessageConfigService extends IService<MessageConfig> {
     ResResult getMessageConfig(Long configId);
 
     ResResult updateRun(MessageConfig messageConfig,String username);
+
+    //根据统模块，查询运行中消息配置
+    MessageConfig findMessageConfigByMsgModule(Integer msgModule,long cacheTime);
 }

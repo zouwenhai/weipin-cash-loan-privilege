@@ -2,17 +2,22 @@ package nirvana.cash.loan.privilege.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
+import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MessageConfigMapper;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
+import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by sunyong on 2018-11-05.
@@ -23,6 +28,8 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
 
     @Autowired
     private MessageConfigMapper messageConfigMapper;
+    @Autowired
+    public RedisService redisService;
 
     /**
      * 查询消息列表
@@ -121,6 +128,26 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
         } catch (Exception e) {
         }
         return ResResult.error();
+    }
+
+    @Override
+    public MessageConfig findMessageConfigByMsgModule(Integer msgModule, long cacheTime) {
+        List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,MessageConfig.class);
+        if(msgConfigs == null){
+            Example example = new Example(MessageConfig.class);
+            example.createCriteria().andEqualTo("isRun",0);
+            msgConfigs = messageConfigMapper.selectByExample(example);
+            if(ListUtil.isEmpty(msgConfigs)){
+                return null;
+            }
+            redisService.putListWithExpireTime(RedisKeyContant.yofishdk_msg_notice_config,msgConfigs,cacheTime);
+        }
+        msgConfigs = msgConfigs.stream().filter(t -> t.getMsgModule() == msgModule.intValue())
+                .collect(Collectors.toList());
+        if(ListUtil.isEmpty(msgConfigs)){
+            return null;
+        }
+        return msgConfigs.get(0);
     }
 
     /**
