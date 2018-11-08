@@ -88,30 +88,27 @@ public class MsgNoticeReceiver {
             log.info("未设置消息通知发送规则,不处理此消息:uuid={}", uuid);
             return;
         }
-        //1:获取全部消息发送目标对象|并保存通知消息
-        Set<Long> userIdSet = new HashSet<>();
-        for (MsgConfigDetailVo item : configDetailVoList) {
-            Set<String> tmpSet = new HashSet<>(Arrays.asList(item.getMsgTarget().trim().split(",")));
-            userIdSet.addAll(tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet()));
-        }
-        int i = 0;
-        userIdSet.forEach(t -> {
-            MsgList msgList = new MsgList();
-            msgList.setUserId(t);
-            msgList.setUuid(uuid + "-" + (i + 1));
-            msgList.setMsgModule(msgModule);
-            msgList.setContent(content);
-            msgListService.saveMsg(msgList);
-        });
 
-        //2:获取站内信通知发送目标对象|并保存至redis中
-        //站内信通知
+        Set<Long> userIdSet = null;
+
+        //1:站内信通知
         MsgConfigDetailVo wesocketVo = configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_web_socket.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
         if (wesocketVo != null) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(wesocketVo.getMsgTarget().trim().split(",")));
             userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+            //站内信 - 插入数据表
+            int i = 0;
+            userIdSet.forEach(t -> {
+                MsgList msgList = new MsgList();
+                msgList.setUserId(t);
+                msgList.setUuid(uuid + "-" + (i + 1));
+                msgList.setMsgModule(msgModule);
+                msgList.setContent(content);
+                msgListService.saveMsg(msgList);
+            });
+            //站内信 - 缓存值redis
             userIdSet.forEach(t -> {
                 WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
                 websocketMsg.setUuid(uuid);
@@ -119,9 +116,10 @@ public class MsgNoticeReceiver {
                 websocketMsg.setMsg(content);
                 redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
             });
+
         }
 
-        //3:获取邮件通知目标对象|并发送邮件 TODO
+        //2:邮件通知
         MsgConfigDetailVo emailVo = configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
                 .findAny().orElse(null);
