@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.websocket;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.websocket.config.WebSocketProperties;
 import nirvana.cash.loan.privilege.websocket.subscribe.WebSocketMessageSubscriber;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author dongdong
@@ -38,14 +40,16 @@ public class WebSocketMessageHandler implements WebSocketHandler {
         WebSocketMessageSubscriber subscriber = new WebSocketMessageSubscriber(webSocketSession);
         webSocketSession.receive().subscribe(subscriber::onNext, subscriber::onError, subscriber::onComplete);
         Flux<WebSocketMessage> messages = Flux.<String>generate(sink -> {
-            String message = messageBasket.fetchOneUserMessage(userId);
+            Set<String> dataSet = messageBasket.fetchUserMessages(userId);
+            String message = JSONObject.toJSONString(dataSet);
+            log.info("messages={}", message);
             if (StringUtils.hasText(message)) {
                 sink.next(message);
             } else {
-                log.info("没有查询到数据");
+                log.info("没有查询到数据" + webSocketSession.getId());
                 sink.next("");
             }
-        }).delayElements(Duration.ofSeconds(properties.getDelay())).map(webSocketSession::textMessage);
+        }).delayElements(Duration.ofSeconds(5)).map(webSocketSession::textMessage);
         return webSocketSession.send(messages);
     }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,22 +24,27 @@ public class MessageBasket {
     @Autowired
     private RedisService redisService;
 
-    public String fetchOneUserMessage(String userId) {
-        String key = RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + userId, messageContent = null;
-        Set<String> messagesFromCache = getMessagesFromCache(key);
+    /**
+     *
+     * @param userId
+     * @return
+     */
+    public Set<String> fetchUserMessages(String userId) {
+        String key = RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + userId;
+        Set<String> messagesFromCache = getMessagesFromCache(key), messageContents = new HashSet<>();
         if (!CollectionUtils.isEmpty(messagesFromCache)) {
-            //取一条，返回给客户端
-            String messageValue = messagesFromCache.stream().findFirst().get();
             try {
-                redisService.remove(key, new String[]{messageValue});
+                redisService.delete(key);
             } catch (Exception e) {
-                log.error("从redis中移除用户的消息失败！" + e.getMessage(), e);
+                log.error("从redis中删除用户消息缓存失败！" + e.getMessage(), e);
             }
-            if (StringUtils.hasText(messageValue)) {
-                messageContent = JSONObject.parseObject(messageValue, WebSocketMsgNoticeFacade.class).getMsg();
-            }
+            messagesFromCache.forEach(m -> {
+                if (StringUtils.hasText(m)) {
+                    messageContents.add(JSONObject.parseObject(m, WebSocketMsgNoticeFacade.class).getMsg());
+                }
+            });
         }
-        return messageContent;
+        return messageContents;
     }
 
     private Set<String> getMessagesFromCache(String key) {
