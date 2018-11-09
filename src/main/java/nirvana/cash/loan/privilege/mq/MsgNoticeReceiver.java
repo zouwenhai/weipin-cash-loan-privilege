@@ -113,7 +113,7 @@ public class MsgNoticeReceiver {
         while (it.hasNext()) {
             Long userId = it.next();
             try {
-                User user = userList.stream().filter(x -> x.getUserId().equals(x)).findAny().orElse(null);
+                User user = userList.stream().filter(x -> x.getUserId().equals(userId)).findAny().orElse(null);
                 msgmap.put("userName", user.getName());
                 String content = JSON.toJSONString(msgmap);
                 //插入数据表
@@ -150,7 +150,7 @@ public class MsgNoticeReceiver {
                 Long userId = it.next();
                 try {
                     userList.stream()
-                            .filter(x -> x.getUserId().equals(x))
+                            .filter(x -> x.getUserId().equals(userId))
                             .findAny()
                             .ifPresent(t -> {
                                 msgmap.put("userName", t.getName());

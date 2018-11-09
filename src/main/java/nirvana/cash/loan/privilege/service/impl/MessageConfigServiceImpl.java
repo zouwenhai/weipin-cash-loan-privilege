@@ -162,7 +162,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
                 MessageConfig.class);
         if (msgConfigs == null) {
             Example example = new Example(MessageConfig.class);
-            example.createCriteria().andEqualTo("isRun", 0);
+            example.createCriteria().andEqualTo("isRun", 1);
             msgConfigs = messageConfigMapper.selectByExample(example);
             if (ListUtil.isEmpty(msgConfigs)) {
                 return null;
