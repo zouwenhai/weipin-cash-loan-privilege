@@ -84,6 +84,7 @@ public class MsgNoticeReceiver {
         List<MsgConfigDetailVo> configDetailVoList = JSON.parseArray(msgConfig.getMsgContent(), MsgConfigDetailVo.class);
 
         Map<String, String> msgmap = new HashMap();
+        msgmap.put("uuid", uuid);
         msgmap.put("msgModule", msgModuleEnum.getName());
         msgmap.put("orderId", facade.getOrderId());
         msgmap.put("orderStatus", orderStatusEnum.getDesc());
