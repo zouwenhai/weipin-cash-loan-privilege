@@ -31,14 +31,6 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
 
     @Override
     public ResResult saveMsg(MsgList msgList) {
-        String uuid = msgList.getUuid();
-        Example example = new Example(MsgList.class);
-        example.createCriteria().andEqualTo("uuid",uuid);
-        int rows = msgListMapper.selectCountByExample(example);
-        if(rows > 0){
-            log.info("重复消息:msg uuid={}",uuid);
-            return ResResult.error("重复消息");
-        }
         msgList.setStatus(0);
         msgList.setIsDelete(0);
         msgList.setId(this.getSequence(MsgList.SEQ));

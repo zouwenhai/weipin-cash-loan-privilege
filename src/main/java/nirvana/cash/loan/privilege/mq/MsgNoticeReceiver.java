@@ -119,19 +119,10 @@ public class MsgNoticeReceiver {
                 //插入数据表
                 MsgList msgList = new MsgList();
                 msgList.setUserId(userId);
-                msgList.setUuid(uuid + "-" + (i + 1));
+                msgList.setUuid(GeneratorId.guuid());
                 msgList.setMsgModule(msgModuleEnum.getCode());
                 msgList.setContent(content);
-                ResResult flag = msgListService.saveMsg(msgList);
-                if (!ResResult.SUCCESS.equals(flag.getCode())) {
-                    break;
-                }
-                //缓存redis
-                WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
-                websocketMsg.setUuid(uuid);
-                websocketMsg.setUserId(userId);
-                websocketMsg.setMsg(content);
-                redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + userId, new String[]{JSON.toJSONString(websocketMsg)});
+                msgListService.saveMsg(msgList);
             } catch (Exception ex) {
                 log.error("站内信|消息接收处理失败:uuid={},userId={}", uuid, userId);
             }
