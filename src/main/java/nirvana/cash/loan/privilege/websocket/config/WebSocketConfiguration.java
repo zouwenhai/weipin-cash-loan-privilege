@@ -2,11 +2,9 @@ package nirvana.cash.loan.privilege.websocket.config;
 
 import nirvana.cash.loan.privilege.websocket.handler.WebSocketMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
@@ -43,11 +41,6 @@ public class WebSocketConfiguration {
     @Bean
     public WebSocketHandlerAdapter handlerAdapter() {
         return new WebSocketHandlerAdapter();
-    }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplateBuilder().build();
     }
 
 }

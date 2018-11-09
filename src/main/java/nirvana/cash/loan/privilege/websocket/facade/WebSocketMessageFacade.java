@@ -6,7 +6,7 @@ import lombok.Data;
  * Created by Administrator on 2018/11/7.
  */
 @Data
-public class WebSocketMsgNoticeFacade {
+public class WebSocketMessageFacade {
 
     private String uuid;
 

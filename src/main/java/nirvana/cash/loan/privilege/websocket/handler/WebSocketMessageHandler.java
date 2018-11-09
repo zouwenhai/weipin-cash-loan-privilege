@@ -55,6 +55,19 @@ public class WebSocketMessageHandler implements WebSocketHandler {
         return processor;
     }
 
+    public void sendMessageToClient(String userId, String message) {
+        List<EmitterProcessor<String>> processors = map.get(userId);
+        if (!CollectionUtils.isEmpty(processors)) {
+            processors.forEach(p -> {
+                try {
+                    p.onNext(message);
+                } catch (Exception e) {
+                    log.error(String.format("通过webSocket发送消息给用户：%s 出现异常！", userId), e);
+                }
+            });
+        }
+    }
+
     @Override
     public List<String> getSubProtocols() {
         return null;
@@ -68,7 +81,4 @@ public class WebSocketMessageHandler implements WebSocketHandler {
         }
     }
 
-    public Map<String, List<EmitterProcessor<String>>> getMap() {
-        return map;
-    }
 }

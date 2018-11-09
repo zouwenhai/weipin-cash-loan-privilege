@@ -5,7 +5,6 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.web.RequestCheck;
-import nirvana.cash.loan.privilege.websocket.hook.WebSocketMessageHook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -41,7 +40,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         noLoginUrls.add("/privilige/notauth/isLogin");
         noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
-        noLoginUrls.add(WebSocketMessageHook.MESSAGE_SEND_API);
         whiteListUrls.add("/privilege/notauth/webSocket/*");
     }
 

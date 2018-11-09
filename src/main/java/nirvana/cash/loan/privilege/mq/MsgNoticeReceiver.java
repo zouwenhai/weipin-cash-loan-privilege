@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.mq;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
 import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
@@ -15,7 +16,9 @@ import nirvana.cash.loan.privilege.service.MessageConfigService;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import nirvana.cash.loan.privilege.service.UserService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
+import nirvana.cash.loan.privilege.websocket.facade.WebSocketMessageFacade;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -37,6 +40,11 @@ public class MsgNoticeReceiver {
 
     @Value("${spring.mail.username}")
     private String fromAddress;
+    @Value("${rabbitmq.exchange.auth_msg_notice_websocket}")
+    private String exchange;
+    @Value("${rabbitmq.routingkey.auth_msg_notice_websocket}")
+    private String key;
+
     @Autowired
     private MsgListService msgListService;
     @Autowired
@@ -49,6 +57,8 @@ public class MsgNoticeReceiver {
     public UserService userService;
     @Autowired
     FreemarkerUtil freemarkerUtil;
+    @Autowired
+    private AmqpTemplate rabbitTemplate;
 
     final static String template_email_notice_msg = "email_notice_msg.ftl";
 
@@ -93,7 +103,6 @@ public class MsgNoticeReceiver {
                 .filter(t -> MsgChannelEnum.channel_web_socket.getValue() == t.getMsgChannel())
                 .forEach(t -> processWebsocketMsg(t, uuid, msgmap, msgModuleEnum));
 
-
         //2:邮件通知
         configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
@@ -126,6 +135,12 @@ public class MsgNoticeReceiver {
                             msgList.setMsgModule(msgModuleEnum.getCode());
                             msgList.setContent(content);
                             msgListService.saveMsg(msgList);
+
+                            WebSocketMessageFacade msgNoticeFacade=new WebSocketMessageFacade();
+                            msgNoticeFacade.setUserId(userId);
+                            msgNoticeFacade.setMsg(content);
+                            msgNoticeFacade.setUuid(uuid);
+                            rabbitTemplate.convertAndSend(exchange,key, JSONObject.toJSONString(msgNoticeFacade));
                         });
             } catch (Exception ex) {
                 log.error("站内信|消息接收处理失败:uuid={},userId={}", uuid, userId);
