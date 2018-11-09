@@ -60,6 +60,7 @@ public class WebSocketMessageHandler implements WebSocketHandler {
         return null;
     }
 
+    //主动推送消息至客户端
     public void sendMessageToClient(String userId, String message) {
         List<EmitterProcessor<String>> processors = map.get(userId);
         if (!CollectionUtils.isEmpty(processors)) {
