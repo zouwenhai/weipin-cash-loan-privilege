@@ -22,7 +22,7 @@ public class WebSocketReceiver {
 
     @RabbitListener(containerFactory = "myContainerFactory",
             bindings = @QueueBinding(
-                    value = @Queue(value = "${rabbitmq.queue.auth_msg_notice_websocket}_${eureka.instance.instance-id:}", durable = "false"),
+                    value = @Queue(value = "${rabbitmq.queue.auth_msg_notice_websocket}_${eureka.instance.instance-id:}", durable = "false", autoDelete = "true"),
                     exchange = @Exchange(value = "${rabbitmq.exchange.auth_msg_notice_websocket}", type = ExchangeTypes.TOPIC),
                     key = "${rabbitmq.routingkey.auth_msg_notice_websocket}"),
             admin = "myRabbitAdmin"
