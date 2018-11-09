@@ -122,6 +122,7 @@ public class MsgNoticeReceiver {
         while (it.hasNext()) {
             Long userId = it.next();
             try {
+                String userMsgId = GeneratorId.guuid();
                 userList.stream()
                         .filter(x -> x.getUserId().equals(userId))
                         .findAny()
@@ -131,7 +132,7 @@ public class MsgNoticeReceiver {
                             //插入数据表
                             MsgList msgList = new MsgList();
                             msgList.setUserId(userId);
-                            msgList.setUuid(GeneratorId.guuid());
+                            msgList.setUuid(userMsgId);
                             msgList.setMsgModule(msgModuleEnum.getCode());
                             msgList.setContent(content);
                             msgListService.saveMsg(msgList);
@@ -139,7 +140,7 @@ public class MsgNoticeReceiver {
                             WebSocketMessageFacade msgNoticeFacade=new WebSocketMessageFacade();
                             msgNoticeFacade.setUserId(userId);
                             msgNoticeFacade.setMsg(content);
-                            msgNoticeFacade.setUuid(uuid);
+                            msgNoticeFacade.setUuid(userMsgId);
                             rabbitTemplate.convertAndSend(exchange,key, JSONObject.toJSONString(msgNoticeFacade));
                         });
             } catch (Exception ex) {
