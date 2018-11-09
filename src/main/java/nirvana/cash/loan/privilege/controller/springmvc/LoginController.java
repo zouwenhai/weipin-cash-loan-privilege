@@ -102,7 +102,7 @@ public class LoginController extends BaseController {
 
     //注销
     @RequestMapping(value = "/notauth/logout")
-    public void logout(ServerHttpResponse response, ServerHttpRequest request) {
+    public void logout(ServerHttpResponse response) {
         try {
             response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,"",0));
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class LoginController extends BaseController {
 
     //是否处于登录状态
     @RequestMapping(value = "/notauth/isLogin")
-    public ResResult isLogin(ServerHttpResponse response, ServerHttpRequest request) {
+    public ResResult isLogin(ServerHttpRequest request) {
         String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
         if (jsessionid == null || jsessionid.trim().length() == 0) {
             return ResResult.error("未登录", ResResult.LOGIN_WHETHER);
