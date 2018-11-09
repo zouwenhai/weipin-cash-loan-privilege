@@ -64,7 +64,6 @@ public class MsgNoticeReceiver {
     @RabbitHandler
     public void receive(String msg) {
         log.info("接收消息推送:msg={}", msg);
-        LocalTime now = LocalTime.now();
         MqMsgNoticFacade facade = JSON.parseObject(msg, MqMsgNoticFacade.class);
         //消息唯一ID
         String uuid = facade.getUuid();
@@ -83,75 +82,84 @@ public class MsgNoticeReceiver {
             return;
         }
         List<MsgConfigDetailVo> configDetailVoList = JSON.parseArray(msgConfig.getMsgContent(), MsgConfigDetailVo.class);
-        if (ListUtil.isEmpty(configDetailVoList)) {
-            log.info("未设置消息通知发送规则,不处理此消息:uuid={}", uuid);
-            return;
-        }
 
-        Map<String,String> msgmap=new HashMap();
-        msgmap.put("msgModule",msgModuleEnum.getName());
-        msgmap.put("orderId",facade.getOrderId());
+        Map<String, String> msgmap = new HashMap();
+        msgmap.put("msgModule", msgModuleEnum.getName());
+        msgmap.put("orderId", facade.getOrderId());
         msgmap.put("orderStatus", orderStatusEnum.getDesc());
-        msgmap.put("time",DateUtil.getDateTime());
+        msgmap.put("time", DateUtil.getDateTime());
 
         //1:站内信通知
-        MsgConfigDetailVo wesocketVo = configDetailVoList.stream()
+        configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_web_socket.getValue() == t.getMsgChannel())
-                .findAny().orElse(null);
-        if (wesocketVo != null) {
-            Set<String> tmpSet = new HashSet<>(Arrays.asList(wesocketVo.getMsgTarget().trim().split(",")));
-            Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
-            List<User> userList = userService.findByIds(userIdSet);
-            int i = 0;
-            userIdSet.forEach(t -> {
-               try{
-                   User user = userList.stream().filter(x->x.getUserId().equals(x)).findAny().orElse(null);
-                   msgmap.put("userName",user.getName());
-                   String content = JSON.toJSONString(msgmap);
-                   //插入数据表
-                   MsgList msgList = new MsgList();
-                   msgList.setUserId(t);
-                   msgList.setUuid(uuid + "-" + (i + 1));
-                   msgList.setMsgModule(msgModule);
-                   msgList.setContent(content);
-                   msgListService.saveMsg(msgList);
-                   //缓存redis
-                   WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
-                   websocketMsg.setUuid(uuid);
-                   websocketMsg.setUserId(t);
-                   websocketMsg.setMsg(content);
-                   redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + t, new String[]{JSON.toJSONString(websocketMsg)});
-               }catch (Exception ex){
-                   log.error("站内信|消息接收处理失败:uuid={},userId={}",facade.getUuid(),t);
-               }
-            });
+                .forEach(t -> processWebsocketMsg(t, uuid, msgmap, msgModuleEnum));
 
-        }
 
         //2:邮件通知
-        MsgConfigDetailVo emailVo = configDetailVoList.stream()
+        configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
-                .findAny().orElse(null);
-        if (emailVo != null && DateUtil.isTimeSpecifiedInTimeBucket(now, emailVo.getStartTime(), emailVo.getEndTime())) {
-            Set<String> tmpSet = new HashSet<>(Arrays.asList(emailVo.getMsgTarget().trim().split(",")));
-            Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
-            List<User> userList = userService.findByIds(userIdSet);
-            userIdSet.forEach(t -> {
-               try{
-                   User user = userList.stream().filter(x->x.getUserId().equals(x)).findAny().orElse(null);
-                   msgmap.put("userName",user.getName());
-                   String title = msgModuleEnum.getName()+"模块-有新订单需要您处理";
-                   String content = freemarkerUtil.resolve(template_email_notice_msg,msgmap);
-                   String toAddress = user.getEmail();
-                   emaiUtil.sendEmailHtml(fromAddress,toAddress, title, content);
-               }catch (Exception ex){
-                   log.error("邮件消息|消息接收处理失败:uuid={},userId={}",facade.getUuid(),t);
-               }
-            });
-        }
-
+                .forEach(t -> processEmailMsg(t, uuid, msgmap, msgModuleEnum));
 
     }
 
+
+    //站内信处理
+    private void processWebsocketMsg(MsgConfigDetailVo vo, String uuid, Map<String, String> msgmap, MsgModuleEnum msgModuleEnum) {
+        Set<String> tmpSet = new HashSet<>(Arrays.asList(vo.getMsgTarget().trim().split(",")));
+        Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+        List<User> userList = userService.findByIds(userIdSet);
+        int i = 0;
+        Iterator<Long> it = userIdSet.iterator();
+        while (it.hasNext()) {
+            Long userId = it.next();
+            try {
+                User user = userList.stream().filter(x -> x.getUserId().equals(x)).findAny().orElse(null);
+                msgmap.put("userName", user.getName());
+                String content = JSON.toJSONString(msgmap);
+                //插入数据表
+                MsgList msgList = new MsgList();
+                msgList.setUserId(userId);
+                msgList.setUuid(uuid + "-" + (i + 1));
+                msgList.setMsgModule(msgModuleEnum.getCode());
+                msgList.setContent(content);
+                ResResult flag = msgListService.saveMsg(msgList);
+                if (!ResResult.SUCCESS.equals(flag.getCode())) {
+                    break;
+                }
+                //缓存redis
+                WebSocketMsgNoticeFacade websocketMsg = new WebSocketMsgNoticeFacade();
+                websocketMsg.setUuid(uuid);
+                websocketMsg.setUserId(userId);
+                websocketMsg.setMsg(content);
+                redisService.putSet(RedisKeyContant.YOFISHDK_MSG_NOTICE_PREFIX + userId, new String[]{JSON.toJSONString(websocketMsg)});
+            } catch (Exception ex) {
+                log.error("站内信|消息接收处理失败:uuid={},userId={}", uuid, userId);
+            }
+        }
+    }
+
+    //邮件消息处理
+    private void processEmailMsg(MsgConfigDetailVo vo, String uuid, Map<String, String> msgmap, MsgModuleEnum msgModuleEnum){
+        LocalTime now = LocalTime.now();
+        if (DateUtil.isTimeSpecifiedInTimeBucket(now, vo.getStartTime(), vo.getEndTime())) {
+            Set<String> tmpSet = new HashSet<>(Arrays.asList(vo.getMsgTarget().trim().split(",")));
+            Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
+            List<User> userList = userService.findByIds(userIdSet);
+            Iterator<Long> it = userIdSet.iterator();
+            while (it.hasNext()) {
+                Long userId = it.next();
+                try {
+                    User user = userList.stream().filter(x -> x.getUserId().equals(x)).findAny().orElse(null);
+                    msgmap.put("userName", user.getName());
+                    String title = msgModuleEnum.getName() + "模块-有新订单需要您处理";
+                    String content = freemarkerUtil.resolve(template_email_notice_msg, msgmap);
+                    String toAddress = user.getEmail();
+                    emaiUtil.sendEmailHtml(fromAddress, toAddress, title, content);
+                } catch (Exception ex) {
+                    log.error("邮件消息|消息接收处理失败:uuid={},userId={}",uuid, userId);
+                }
+            }
+        }
+    }
 
 }
