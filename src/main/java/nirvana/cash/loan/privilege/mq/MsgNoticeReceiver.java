@@ -161,7 +161,6 @@ public class MsgNoticeReceiver {
                             });
                 } catch (Exception ex) {
                     log.error("邮件消息|消息接收处理失败:uuid={},userId={}", uuid, userId);
-                    break;
                 }
             }
         }
