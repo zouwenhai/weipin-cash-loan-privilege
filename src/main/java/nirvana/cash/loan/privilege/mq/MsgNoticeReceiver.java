@@ -112,16 +112,20 @@ public class MsgNoticeReceiver {
         while (it.hasNext()) {
             Long userId = it.next();
             try {
-                User user = userList.stream().filter(x -> x.getUserId().equals(userId)).findAny().orElse(null);
-                msgmap.put("userName", user.getName());
-                String content = JSON.toJSONString(msgmap);
-                //插入数据表
-                MsgList msgList = new MsgList();
-                msgList.setUserId(userId);
-                msgList.setUuid(GeneratorId.guuid());
-                msgList.setMsgModule(msgModuleEnum.getCode());
-                msgList.setContent(content);
-                msgListService.saveMsg(msgList);
+                userList.stream()
+                        .filter(x -> x.getUserId().equals(userId))
+                        .findAny()
+                        .ifPresent(x->{
+                            msgmap.put("userName", x.getName());
+                            String content = JSON.toJSONString(msgmap);
+                            //插入数据表
+                            MsgList msgList = new MsgList();
+                            msgList.setUserId(userId);
+                            msgList.setUuid(GeneratorId.guuid());
+                            msgList.setMsgModule(msgModuleEnum.getCode());
+                            msgList.setContent(content);
+                            msgListService.saveMsg(msgList);
+                        });
             } catch (Exception ex) {
                 log.error("站内信|消息接收处理失败:uuid={},userId={}", uuid, userId);
             }
