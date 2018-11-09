@@ -72,4 +72,16 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
         example.createCriteria().andEqualTo("userId",userId);
         return msgListMapper.selectCountByExample(example);
     }
+
+    @Override
+    public void updateMessageStatus(String uuid, Integer status, User user) {
+        Example example = new Example(MsgList.class);
+        example.createCriteria().andEqualTo("uuid",uuid);
+        MsgList msgList = new MsgList();
+        msgList.setUpdateUser(user.getUsername());
+        msgList.setUpdateTime(new Date());
+        msgList.setStatus(status);
+        msgListMapper.updateByExampleSelective(msgList,example);
+    }
+
 }

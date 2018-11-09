@@ -68,4 +68,16 @@ public class MsgListController extends BaseController {
         return ResResult.success();
     }
 
+    /**
+     * 设置消息状态为已读
+     * @param request
+     * @return
+     */
+    @PostMapping("msg/read/{uuid}")
+    public ResResult msgRead(ServerHttpRequest request,@PathVariable(name="uuid") String uuid){
+        User user = this.getLoginUser(request);
+        msgListService.updateMessageStatus(uuid,1,user);
+        return ResResult.success();
+    }
+
 }
