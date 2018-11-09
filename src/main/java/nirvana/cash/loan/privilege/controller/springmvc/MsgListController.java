@@ -73,8 +73,8 @@ public class MsgListController extends BaseController {
      * @param request
      * @return
      */
-    @PostMapping("msg/read/{uuid}")
-    public ResResult msgRead(ServerHttpRequest request,@PathVariable(name="uuid") String uuid){
+    @GetMapping("msg/read")
+    public ResResult msgRead(ServerHttpRequest request,@RequestParam(name="uuid") String uuid){
         User user = this.getLoginUser(request);
         msgListService.updateMessageStatus(uuid,1,user);
         return ResResult.success();
