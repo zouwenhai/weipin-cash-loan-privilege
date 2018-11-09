@@ -1,7 +1,7 @@
 package nirvana.cash.loan.privilege.websocket.subscribe;
 
 import lombok.extern.slf4j.Slf4j;
-import nirvana.cash.loan.privilege.websocket.WebSocketMessageHandler;
+import nirvana.cash.loan.privilege.websocket.handler.WebSocketMessageHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.EmitterProcessor;

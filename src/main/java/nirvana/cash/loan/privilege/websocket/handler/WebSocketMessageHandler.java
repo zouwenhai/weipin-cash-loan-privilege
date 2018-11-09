@@ -1,4 +1,4 @@
-package nirvana.cash.loan.privilege.websocket;
+package nirvana.cash.loan.privilege.websocket.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.websocket.subscribe.WebSocketMessageSubscriber;
@@ -60,20 +60,6 @@ public class WebSocketMessageHandler implements WebSocketHandler {
         return null;
     }
 
-    //主动推送消息至客户端
-    public void sendMessageToClient(String userId, String message) {
-        List<EmitterProcessor<String>> processors = map.get(userId);
-        if (!CollectionUtils.isEmpty(processors)) {
-            processors.forEach(p -> {
-                try {
-                    p.onNext(message);
-                } catch (Exception e) {
-                    log.error(String.format("通过webSocket发送消息给用户：%s 出现异常！", userId), e);
-                }
-            });
-        }
-    }
-
     public void removeSessionProcessor(String userId, EmitterProcessor processor) {
         List<EmitterProcessor<String>> processors = this.map.get(userId);
         if (!CollectionUtils.isEmpty(processors)) {
@@ -82,4 +68,7 @@ public class WebSocketMessageHandler implements WebSocketHandler {
         }
     }
 
+    public Map<String, List<EmitterProcessor<String>>> getMap() {
+        return map;
+    }
 }

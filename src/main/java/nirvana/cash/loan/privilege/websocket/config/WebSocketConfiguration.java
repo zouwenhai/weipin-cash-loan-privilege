@@ -1,10 +1,12 @@
 package nirvana.cash.loan.privilege.websocket.config;
 
-import nirvana.cash.loan.privilege.websocket.WebSocketMessageHandler;
+import nirvana.cash.loan.privilege.websocket.handler.WebSocketMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
@@ -25,7 +27,7 @@ public class WebSocketConfiguration {
     public HandlerMapping webSocketMapping(final WebSocketMessageHandler handler) {
         //使用 map 指定 WebSocket 协议的路由
         final Map<String, WebSocketHandler> map = new HashMap<>(1);
-        map.put("/notauth/webSocket/*", handler);
+        map.put("/privilege/notauth/webSocket/*", handler);
         //SimpleUrlHandlerMapping 指定了 WebSocket 的路由配置
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
@@ -41,6 +43,11 @@ public class WebSocketConfiguration {
     @Bean
     public WebSocketHandlerAdapter handlerAdapter() {
         return new WebSocketHandlerAdapter();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplateBuilder().build();
     }
 
 }
