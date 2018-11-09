@@ -104,6 +104,7 @@ public class MsgNoticeReceiver {
 
     //站内信处理
     private void processWebsocketMsg(MsgConfigDetailVo vo, String uuid, Map<String, String> msgmap, MsgModuleEnum msgModuleEnum) {
+        log.info("站内信处理:uuid={}",uuid);
         Set<String> tmpSet = new HashSet<>(Arrays.asList(vo.getMsgTarget().trim().split(",")));
         Set<Long> userIdSet = tmpSet.stream().map(t -> Long.valueOf(t)).collect(Collectors.toSet());
         List<User> userList = userService.findByIds(userIdSet);
@@ -134,6 +135,7 @@ public class MsgNoticeReceiver {
 
     //邮件消息处理
     private void processEmailMsg(MsgConfigDetailVo vo, String uuid, Map<String, String> msgmap, MsgModuleEnum msgModuleEnum) {
+        log.info("邮件消息处理:uuid={}",uuid);
         LocalTime now = LocalTime.now();
         if (DateUtil.isTimeSpecifiedInTimeBucket(now, vo.getStartTime(), vo.getEndTime())) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(vo.getMsgTarget().trim().split(",")));
