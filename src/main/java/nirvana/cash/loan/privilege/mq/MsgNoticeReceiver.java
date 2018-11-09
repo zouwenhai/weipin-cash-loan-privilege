@@ -139,7 +139,7 @@ public class MsgNoticeReceiver {
     }
 
     //邮件消息处理
-    private void processEmailMsg(MsgConfigDetailVo vo, String uuid, Map<String, String> msgmap, MsgModuleEnum msgModuleEnum){
+    private void processEmailMsg(MsgConfigDetailVo vo, String uuid, Map<String, String> msgmap, MsgModuleEnum msgModuleEnum) {
         LocalTime now = LocalTime.now();
         if (DateUtil.isTimeSpecifiedInTimeBucket(now, vo.getStartTime(), vo.getEndTime())) {
             Set<String> tmpSet = new HashSet<>(Arrays.asList(vo.getMsgTarget().trim().split(",")));
@@ -149,14 +149,18 @@ public class MsgNoticeReceiver {
             while (it.hasNext()) {
                 Long userId = it.next();
                 try {
-                    User user = userList.stream().filter(x -> x.getUserId().equals(x)).findAny().orElse(null);
-                    msgmap.put("userName", user.getName());
-                    String title = msgModuleEnum.getName() + "模块-有新订单需要您处理";
-                    String content = freemarkerUtil.resolve(template_email_notice_msg, msgmap);
-                    String toAddress = user.getEmail();
-                    emaiUtil.sendEmailHtml(fromAddress, toAddress, title, content);
+                    userList.stream()
+                            .filter(x -> x.getUserId().equals(x))
+                            .findAny()
+                            .ifPresent(t -> {
+                                msgmap.put("userName", t.getName());
+                                String title = msgModuleEnum.getName() + "模块-有新订单需要您处理";
+                                String content = freemarkerUtil.resolve(template_email_notice_msg, msgmap);
+                                String toAddress = t.getEmail();
+                                emaiUtil.sendEmailHtml(fromAddress, toAddress, title, content);
+                            });
                 } catch (Exception ex) {
-                    log.error("邮件消息|消息接收处理失败:uuid={},userId={}",uuid, userId);
+                    log.error("邮件消息|消息接收处理失败:uuid={},userId={}", uuid, userId);
                 }
             }
         }
