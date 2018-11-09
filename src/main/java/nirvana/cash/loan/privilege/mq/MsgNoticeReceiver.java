@@ -2,7 +2,6 @@ package nirvana.cash.loan.privilege.mq;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
 import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
 import nirvana.cash.loan.privilege.common.enums.OrderStatusEnum;
@@ -16,7 +15,6 @@ import nirvana.cash.loan.privilege.service.MessageConfigService;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import nirvana.cash.loan.privilege.service.UserService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
-import nirvana.cash.loan.privilege.websocket.facade.WebSocketMsgNoticeFacade;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
