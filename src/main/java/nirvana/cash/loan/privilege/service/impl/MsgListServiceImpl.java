@@ -39,6 +39,7 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
             log.info("重复消息:msg uuid={}",uuid);
             return ResResult.error("重复消息");
         }
+        msgList.setStatus(0);
         msgList.setIsDelete(0);
         msgList.setId(this.getSequence(MsgList.SEQ));
         msgList.setCreateUser("system");
