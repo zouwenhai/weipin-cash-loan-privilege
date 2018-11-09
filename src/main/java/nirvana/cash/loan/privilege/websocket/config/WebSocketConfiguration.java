@@ -19,18 +19,14 @@ import java.util.Map;
  */
 @Configuration
 public class WebSocketConfiguration {
+
     @Autowired
     @Bean
     public HandlerMapping webSocketMapping(final WebSocketMessageHandler handler) {
-        /**
-         * 使用 map 指定 WebSocket 协议的路由
-         */
-        final Map<String, WebSocketHandler> map = new HashMap<>();
-        map.put("/privilige/notauth/webSocket/*", handler);
-
-        /**
-         * SimpleUrlHandlerMapping 指定了 WebSocket 的路由配置
-         */
+        //使用 map 指定 WebSocket 协议的路由
+        final Map<String, WebSocketHandler> map = new HashMap<>(1);
+        map.put("/notauth/webSocket/*", handler);
+        //SimpleUrlHandlerMapping 指定了 WebSocket 的路由配置
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
         mapping.setUrlMap(map);
