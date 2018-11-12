@@ -25,8 +25,8 @@ public class MsgController extends BaseController{
     private MsgListService msgListService;
 
     //判断是否为站内消息发送目标对象
-    @RequestMapping(value = "/isWebsocketUser")
-    public ResResult isLogin(ServerHttpRequest request) {
+    @RequestMapping(value = "/notauth/msg/isWebsocketUser")
+    public ResResult isWebsocketUser(ServerHttpRequest request) {
         Map<String,Object> resMap = new HashMap();
         resMap.put("count",0);
         resMap.put("flag",0);
