@@ -17,6 +17,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -33,10 +35,31 @@ public class RequestCheck {
     @Autowired
     private RedisService redisService;
 
+    //白名单的url,无需登录
+    private static final List<String> whiteListUrls = new ArrayList<>();
+    private static final List<String> noLoginUrls = new ArrayList<>();
+    static {
+        noLoginUrls.add("/privilige/notauth/gifCode");
+        noLoginUrls.add("/privilige/notauth/login");
+        noLoginUrls.add("/privilige/notauth/isLogin");
+        noLoginUrls.add("/privilige/notauth/logout");
+        noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
+//        whiteListUrls.add("/privilege/notauth/webSocket/*");
+//        whiteListUrls.add("/privilige/notauth/testWebSocket/*");
+    }
+
     //check登录和权限
     public ResResult check(ServerHttpRequest request) {
         URI uri = request.getURI();
         String url = uri.getPath();
+//        //websocket|无需登录接口
+//        if (URLUtil.isInWhiteList(whiteListUrls,url)) {
+//            return ResResult.success(null);
+//        }
+        //无需登录接口
+        if(URLUtil.isEndsWith(noLoginUrls,url)){
+            return ResResult.success(null);
+        }
         //check用户是否登录或登录失效
         User user = this.getLoginUser(request);
         if (user == null) {

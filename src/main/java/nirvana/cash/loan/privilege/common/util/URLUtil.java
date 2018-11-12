@@ -2,6 +2,8 @@ package nirvana.cash.loan.privilege.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -58,5 +60,10 @@ public class URLUtil {
             }
         }
         return false;
+    }
+
+    public static boolean isInWhiteList(List<String> urls,String url) {
+        PathMatcher pathMatcher = new AntPathMatcher();
+        return urls.stream().anyMatch(white -> pathMatcher.match(white, url));
     }
 }
