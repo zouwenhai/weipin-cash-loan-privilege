@@ -31,7 +31,7 @@ public class WebSocketReceiver {
     public void receive(String message) {
         log.info("收到消息：{}", message);
         WebSocketMessageFacade msgNoticeFacade = JSONObject.parseObject(message, WebSocketMessageFacade.class);
-        handler.sendMessageToClient(String.valueOf(msgNoticeFacade.getUserId()), msgNoticeFacade.getMsg());
+        handler.sendMessageToClient(String.valueOf(msgNoticeFacade.getUserId()), JSONObject.toJSONString(msgNoticeFacade));
     }
 
 }

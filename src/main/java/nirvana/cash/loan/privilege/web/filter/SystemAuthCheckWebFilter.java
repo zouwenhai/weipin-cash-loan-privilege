@@ -41,6 +41,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
         whiteListUrls.add("/privilege/notauth/webSocket/*");
+        whiteListUrls.add("/privilige/notauth/testWebSocket/*");
     }
 
     @Override
