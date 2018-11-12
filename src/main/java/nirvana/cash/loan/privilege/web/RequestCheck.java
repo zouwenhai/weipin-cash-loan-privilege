@@ -36,7 +36,6 @@ public class RequestCheck {
     private RedisService redisService;
 
     //白名单的url,无需登录
-    private static final List<String> whiteListUrls = new ArrayList<>();
     private static final List<String> noLoginUrls = new ArrayList<>();
     static {
         noLoginUrls.add("/privilige/notauth/gifCode");
@@ -44,18 +43,12 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/notauth/isLogin");
         noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
-//        whiteListUrls.add("/privilege/notauth/webSocket/*");
-//        whiteListUrls.add("/privilige/notauth/testWebSocket/*");
     }
 
     //check登录和权限
     public ResResult check(ServerHttpRequest request) {
         URI uri = request.getURI();
         String url = uri.getPath();
-//        //websocket|无需登录接口
-//        if (URLUtil.isInWhiteList(whiteListUrls,url)) {
-//            return ResResult.success(null);
-//        }
         //无需登录接口
         if(URLUtil.isEndsWith(noLoginUrls,url)){
             return ResResult.success(null);
