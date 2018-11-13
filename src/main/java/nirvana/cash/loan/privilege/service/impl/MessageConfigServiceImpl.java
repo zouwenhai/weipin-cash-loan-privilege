@@ -180,7 +180,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
     @Override
     public boolean isTargtUser(Long userId) {
         Example example = new Example(MessageConfig.class);
-        example.createCriteria().andEqualTo("isRun", 0);
+        example.createCriteria().andEqualTo("isRun", 1);
         List<MessageConfig> msgConfigs = messageConfigMapper.selectByExample(example);
         List<String> list = msgConfigs.stream().filter(t -> StringUtils.isNotBlank(t.getMsgContent()))
                 .map(t -> t.getMsgContent())
