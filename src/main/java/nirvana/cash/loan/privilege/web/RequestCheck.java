@@ -51,7 +51,7 @@ public class RequestCheck {
     public ResResult check(ServerHttpRequest request) {
         URI uri = request.getURI();
         String url = uri.getPath();
-        //websocket url TODO
+        //websocket url
         if(URLUtil.isWebsocketUrl(websocket_url,url)){
             return ResResult.success(null);
         }
