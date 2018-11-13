@@ -91,17 +91,18 @@ public class MsgListController extends BaseController {
 
     @GetMapping("/notauth/testWebSocket/{userId}")
     public ResResult testWebSocket(@PathVariable Long userId){
-
         WebSocketMessageFacade facade = new WebSocketMessageFacade();
         facade.setUserId(userId);
         facade.setUuid(GeneratorId.guuid());
         facade.setMsg("消息内容1......");
+        facade.setCount(1);
         rabbit.convertAndSend("exchange_auth_msg_notice_websocket","routingkey_auth_msg_notice_websocket", JSON.toJSONString(facade));
 
         WebSocketMessageFacade facade2 = new WebSocketMessageFacade();
         facade2.setUserId(userId);
         facade2.setUuid(UUID.randomUUID().toString());
         facade2.setMsg("消息内容2......");
+        facade2.setCount(2);
         rabbit.convertAndSend("exchange_auth_msg_notice_websocket","routingkey_auth_msg_notice_websocket",JSON.toJSONString(facade2));
         return ResResult.success();
     }

@@ -122,6 +122,7 @@ public class MsgNoticeReceiver {
         while (it.hasNext()) {
             Long userId = it.next();
             try {
+                Integer count = msgListService.countUnReadMsg(userId);
                 String userMsgId = GeneratorId.guuid();
                 userList.stream()
                         .filter(x -> x.getUserId().equals(userId))
@@ -141,6 +142,7 @@ public class MsgNoticeReceiver {
                             msgNoticeFacade.setUserId(userId);
                             msgNoticeFacade.setMsg(content);
                             msgNoticeFacade.setUuid(userMsgId);
+                            msgNoticeFacade.setCount(count);
                             rabbitTemplate.convertAndSend(exchange,key, JSONObject.toJSONString(msgNoticeFacade));
                         });
             } catch (Exception ex) {
