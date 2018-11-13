@@ -1,7 +1,4 @@
-<style>
-    .text{
-        text-indent:2em;
-    }
+<style>.text{text-indent:2em;}
 </style>
 <div>
     <p>${userName},您好</p>
