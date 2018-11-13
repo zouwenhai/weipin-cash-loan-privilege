@@ -66,4 +66,9 @@ public class URLUtil {
         PathMatcher pathMatcher = new AntPathMatcher();
         return urls.stream().anyMatch(white -> pathMatcher.match(white, url));
     }
+
+    public static boolean isWebsocketUrl(String websocketUrl,String url) {
+        PathMatcher pathMatcher = new AntPathMatcher();
+        return pathMatcher.match(websocketUrl, url);
+    }
 }

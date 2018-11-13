@@ -45,10 +45,16 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
     }
 
+    private static String websocket_url="/privilege/notauth/webSocket/*";
+
     //check登录和权限
     public ResResult check(ServerHttpRequest request) {
         URI uri = request.getURI();
         String url = uri.getPath();
+        //websocket url TODO
+        if(URLUtil.isWebsocketUrl(websocket_url,url)){
+            return ResResult.success(null);
+        }
         //无需登录接口
         if(URLUtil.isEndsWith(noLoginUrls,url)){
             return ResResult.success(null);
