@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
+import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.MsgList;
@@ -93,7 +94,7 @@ public class MsgListController extends BaseController {
 
         WebSocketMessageFacade facade = new WebSocketMessageFacade();
         facade.setUserId(userId);
-        facade.setUuid(UUID.randomUUID().toString());
+        facade.setUuid(GeneratorId.guuid());
         facade.setMsg("消息内容1......");
         rabbit.convertAndSend("exchange_auth_msg_notice_websocket","routingkey_auth_msg_notice_websocket", JSON.toJSONString(facade));
 
