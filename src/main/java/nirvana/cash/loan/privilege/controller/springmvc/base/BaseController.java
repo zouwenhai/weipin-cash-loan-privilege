@@ -5,7 +5,7 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.web.RequestCheck;
-import nirvana.cash.loan.privilege.web.exception.BizException;
+import nirvana.cash.loan.privilege.common.exception.BizException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -21,7 +21,7 @@ import nirvana.cash.loan.privilege.domain.UserRole;
 import nirvana.cash.loan.privilege.domain.UserWithRole;
 import nirvana.cash.loan.privilege.service.UserRoleService;
 import nirvana.cash.loan.privilege.service.UserService;
-import nirvana.cash.loan.privilege.web.exception.BizException;
+import nirvana.cash.loan.privilege.common.exception.BizException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

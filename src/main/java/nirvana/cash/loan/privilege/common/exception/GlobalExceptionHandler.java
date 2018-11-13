@@ -1,4 +1,4 @@
-package nirvana.cash.loan.privilege.web.exception;
+package nirvana.cash.loan.privilege.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.util.ResResult;
