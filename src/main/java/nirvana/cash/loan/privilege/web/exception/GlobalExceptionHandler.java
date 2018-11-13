@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BizException.class)
     @ResponseBody
     public ResResult jsonErrorHandler(ServerHttpRequest request, BizException e) {
-        log.error("[exception]:request==>{},message==>{},e==>{}",
+        log.info("[exception]:request==>{},message==>{},e==>{}",
                 request.getURI(), e.getMessage(), e);
         return ResResult.error(e.getDesc(), e.getCode());
     }
