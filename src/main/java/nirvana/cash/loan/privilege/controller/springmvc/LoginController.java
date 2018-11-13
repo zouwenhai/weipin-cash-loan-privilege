@@ -33,8 +33,8 @@ public class LoginController extends BaseController {
     private MenuService menuService;
 
     //登录
-    @PostMapping("/notauth/login")
-    public ResResult login(ServerHttpRequest request, ServerHttpResponse response,@RequestBody LoginFacade facade) {
+    @RequestMapping("/notauth/login")
+    public ResResult login(ServerHttpRequest request, ServerHttpResponse response, LoginFacade facade) {
         User user=null;
         String roleIds=null;
         String roleCodes=null;
