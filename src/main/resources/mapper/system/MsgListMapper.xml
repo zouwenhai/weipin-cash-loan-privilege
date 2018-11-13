@@ -17,7 +17,7 @@
 
   <select id="findPageList" resultMap="resultMap" parameterType="nirvana.cash.loan.privilege.domain.MsgList">
     select * from TB_YOFISHDK_AUTH_MSG_LIST
-    where IS_DELETE = 0
+    where IS_DELETE = 0 and USER_ID = #{userId}
   </select>
 
 </mapper>

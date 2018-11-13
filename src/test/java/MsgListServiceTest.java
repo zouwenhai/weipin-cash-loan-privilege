@@ -20,6 +20,7 @@ public class MsgListServiceTest extends BaseTest {
     @Test
     public void findPageList() {
         MsgList msgList  = new MsgList();
+        msgList.setUserId(1L);
         List<MsgList> list =  msgListService.findPageList(msgList);
         System.err.println(JSON.toJSONString(list));
     }
