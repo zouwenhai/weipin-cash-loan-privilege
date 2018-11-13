@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface MessageConfigMapper extends MyMapper<MessageConfig> {
 
+    int updateMessageConfig(MessageConfig messageConfig);
 
-    void insertMessageConfig(MessageConfig messageConfig);
-
+    int updateRun(MessageConfig messageConfig);
 }

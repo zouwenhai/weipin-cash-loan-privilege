@@ -27,18 +27,6 @@ public class MessageConfig implements Serializable {
     @Column(name = "MSG_MODULE")
     private int msgModule;
 
-    @Column(name = "MSG_CHANNEL")
-    private int msgChannel;
-
-    @Column(name = "MSG_TARGET")
-    private String msgTarget;
-
-    @Column(name = "START_TIME")
-    private String startTime;
-
-    @Column(name = "END_TIME")
-    private String endTime;
-
     @Column(name = "IS_RUN")
     private int isRun;
 
@@ -53,4 +41,7 @@ public class MessageConfig implements Serializable {
 
     @Column(name = "UPDATE_USER")
     private String updateUser;
+
+    @Column(name = "MSG_CONTENT")
+    private String msgContent;
 }

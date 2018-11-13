@@ -9,12 +9,11 @@ import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.RoleService;
 import nirvana.cash.loan.privilege.service.UserService;
-import nirvana.cash.loan.privilege.web.exception.BizException;
+import nirvana.cash.loan.privilege.common.exception.BizException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;

@@ -18,6 +18,11 @@ spring:
       discovery:
         enabled: true
         serviceId: yofishdk-cloud-config
+  rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: none
+        retry.enabled: false
 feign:
   hystrix:
     enabled: true

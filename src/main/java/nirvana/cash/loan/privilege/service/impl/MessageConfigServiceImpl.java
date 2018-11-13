@@ -1,23 +1,27 @@
 package nirvana.cash.loan.privilege.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageHelper;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import nirvana.cash.loan.privilege.common.domain.QueryRequest;
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
+import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
+import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
+import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MessageConfigMapper;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
-import nirvana.cash.loan.privilege.domain.User;
-import nirvana.cash.loan.privilege.domain.vo.MessageConfigVo;
+import nirvana.cash.loan.privilege.domain.vo.MsgConfigDetailVo;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
+import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by sunyong on 2018-11-05.
@@ -28,6 +32,8 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
 
     @Autowired
     private MessageConfigMapper messageConfigMapper;
+    @Autowired
+    public RedisService redisService;
 
     /**
      * 查询消息列表
@@ -48,79 +54,54 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
     /**
      * 新增消息列表
      *
-     * @param messageConfigVo
+     * @param messageConfig
      * @return
      */
     @Override
-    public ResResult insertMessageConfig(MessageConfigVo messageConfigVo, User loginUser) {
+    public ResResult insertMessageConfig(MessageConfig messageConfig, String username) {
         try {
-            String msgJson = messageConfigVo.getMsgJson();
-            JSONArray jsonArray = JSONArray.parseArray(msgJson);
-            List<MessageConfig> list = new ArrayList<>();
-            if (jsonArray != null && jsonArray.size() > 0) {
-                jsonArray.forEach(json -> {
-                    JSONObject jsonObject = (JSONObject) json;
-                    MessageConfig messageConfig = new MessageConfig();
-                    messageConfig.setMsgModule(messageConfigVo.getMsgModule());
-                    messageConfig.setMsgChannel(jsonObject.getInteger("msgChannel"));
-                    messageConfig.setMsgTarget(jsonObject.getString("msgTarget"));
-                    messageConfig.setStartTime(jsonObject.getString("startTime"));
-                    messageConfig.setEndTime(jsonObject.getString("endTime"));
-                    messageConfig.setCreateUser(loginUser.getUsername());
-                    messageConfig.setUpdateUser(loginUser.getUsername());
-                    list.add(messageConfig);
-                });
+            Example example = new Example(MessageConfig.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("msgModule", messageConfig.getMsgModule());
+            List<MessageConfig> messageConfigs = messageConfigMapper.selectByExample(example);
+            if (messageConfigs != null && messageConfigs.size() > 0) {
+                return ResResult.error("通知模块 " + MsgModuleEnum.getMsgModuleEnum(messageConfig.getMsgModule()).getName() + " 不能重复添加");
             }
-            if (list != null && list.size() > 0) {
-                list.forEach(messageConfig -> {
-                    log.info("123");
-                    messageConfigMapper.insertMessageConfig(messageConfig);
-                });
+            messageConfig.setCreateUser(username);
+            messageConfig.setUpdateUser(username);
+            messageConfig.setCreateTime(new Date());
+            messageConfig.setUpdateTime(new Date());
+            messageConfig.setId(this.getSequence(MessageConfig.SEQ));
+            int i = messageConfigMapper.insertSelective(messageConfig);
+            if (i > 0) {
+                return ResResult.success();
             }
-            return ResResult.success();
         } catch (Exception e) {
             log.error("消息列表新增失败:{}", e, e.getMessage());
-            return ResResult.error();
         }
+        return ResResult.error();
     }
 
     /**
      * 编辑消息列表
      *
-     * @param messageConfigVo
+     * @param messageConfig
      * @return
      */
     @Override
-    public ResResult updateMessageConfig(MessageConfigVo messageConfigVo, User loginUser) {
+    public ResResult updateMessageConfig(MessageConfig messageConfig, String username) {
         try {
-            String msgJson = messageConfigVo.getMsgJson();
-            JSONArray jsonArray = JSONArray.parseArray(msgJson);
-            List<MessageConfig> list = new ArrayList<>();
-            if (jsonArray != null && jsonArray.size() > 0) {
-                jsonArray.forEach(json -> {
-                    MessageConfig messageConfig = new MessageConfig();
-                    JSONObject jsonObject = (JSONObject) json;
-                    messageConfig.setId(jsonObject.getLong("id"));
-                    messageConfig.setMsgModule(messageConfigVo.getMsgModule());
-                    messageConfig.setMsgChannel(jsonObject.getInteger("msgChannel"));
-                    messageConfig.setMsgTarget(jsonObject.getString("msgTarget"));
-                    messageConfig.setStartTime(jsonObject.getString("startTime"));
-                    messageConfig.setEndTime(jsonObject.getString("endTime"));
-                    messageConfig.setUpdateTime(new Date());
-                    messageConfig.setUpdateUser(loginUser.getUsername());
-                    list.add(messageConfig);
-                });
+            messageConfig.setUpdateTime(new Date());
+            messageConfig.setUpdateUser(username);
+            int i = messageConfigMapper.updateMessageConfig(messageConfig);
+            if (i > 0) {
+                return ResResult.success();
             }
-            if (list != null && list.size() > 0) {
-                list.forEach(messageConfig -> {
-                    messageConfigMapper.updateByPrimaryKeySelective(messageConfig);
-                });
-            }
-            return ResResult.success();
+            return ResResult.error();
         } catch (Exception e) {
             log.error("消息列表编辑失败:{}", e, e.getMessage());
-            return ResResult.error();
         }
+        return ResResult.error();
     }
 
     /**
@@ -136,8 +117,26 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             return ResResult.success(messageConfig);
         } catch (Exception e) {
             log.error("通知管理列表回显失败：{}", e);
-            return ResResult.error();
         }
+        return ResResult.error();
+    }
+
+
+    /**
+     * @return
+     */
+    @Override
+    public ResResult updateRun(MessageConfig messageConfig, String username) {
+        try {
+            messageConfig.setUpdateUser(username);
+            messageConfig.setUpdateTime(new Date());
+            int i = messageConfigMapper.updateRun(messageConfig);
+            if (i > 0) {
+                return ResResult.success();
+            }
+        } catch (Exception e) {
+        }
+        return ResResult.error();
     }
 
     /**
@@ -153,9 +152,50 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             return ResResult.success();
         } catch (Exception e) {
             log.error("消息列表删除失败:{}", e, e.getMessage());
-            return ResResult.error();
         }
+        return ResResult.error();
     }
+
+    @Override
+    public MessageConfig findMessageConfigByMsgModule(Integer msgModule, long cacheTime) {
+        List<MessageConfig> msgConfigs = redisService.getList(RedisKeyContant.yofishdk_msg_notice_config,
+                MessageConfig.class);
+        if (msgConfigs == null) {
+            Example example = new Example(MessageConfig.class);
+            example.createCriteria().andEqualTo("isRun", 1);
+            msgConfigs = messageConfigMapper.selectByExample(example);
+            if (ListUtil.isEmpty(msgConfigs)) {
+                return null;
+            }
+            redisService.putListWithExpireTime(RedisKeyContant.yofishdk_msg_notice_config, msgConfigs, cacheTime);
+        }
+        msgConfigs = msgConfigs.stream().filter(t -> t.getMsgModule() == msgModule.intValue())
+                .collect(Collectors.toList());
+        if (ListUtil.isEmpty(msgConfigs)) {
+            return null;
+        }
+        return msgConfigs.get(0);
+    }
+
+    @Override
+    public boolean isTargtUser(Long userId) {
+        Example example = new Example(MessageConfig.class);
+        example.createCriteria().andEqualTo("isRun", 0);
+        List<MessageConfig> msgConfigs = messageConfigMapper.selectByExample(example);
+        List<String> list = msgConfigs.stream().filter(t -> StringUtils.isNotBlank(t.getMsgContent()))
+                .map(t -> t.getMsgContent())
+                .collect(Collectors.toList());
+        for (String msgContent : list) {
+            List<MsgConfigDetailVo> voList = JSON.parseArray(msgContent, MsgConfigDetailVo.class);
+            for (MsgConfigDetailVo vo : voList) {
+                if (vo.getMsgTarget().contains(userId.toString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
 
 }

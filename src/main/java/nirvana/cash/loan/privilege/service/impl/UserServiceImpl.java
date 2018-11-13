@@ -21,7 +21,7 @@ import nirvana.cash.loan.privilege.domain.UserRole;
 import nirvana.cash.loan.privilege.domain.UserWithRole;
 import nirvana.cash.loan.privilege.service.UserRoleService;
 import nirvana.cash.loan.privilege.service.UserService;
-import nirvana.cash.loan.privilege.web.exception.BizException;
+import nirvana.cash.loan.privilege.common.exception.BizException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImpl extends BaseService<User> implements UserService {
@@ -338,12 +335,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		return  collRoleCodeList;
 	}
 
-//	public List<Integer> transRoleIds(Long[] roles){
-//		List<Integer> roleIds=new ArrayList<>();
-//		for(Long item:roles){
-//			roleIds.add(item.intValue());
-//		}
-//		return roleIds;
-//	}
-
+	@Override
+	public List<User> findByIds(Set<Long> userIdSet) {
+		Example example = new Example(User.class);
+		example.createCriteria().andIn("userId",userIdSet);
+		return userMapper.selectByExample(example);
+	}
 }

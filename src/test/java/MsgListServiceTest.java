@@ -5,6 +5,7 @@ import nirvana.cash.loan.privilege.service.MsgListService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ public class MsgListServiceTest extends BaseTest {
     @Test
     public void findPageList() {
         MsgList msgList  = new MsgList();
+        msgList.setUserId(1L);
         List<MsgList> list =  msgListService.findPageList(msgList);
         System.err.println(JSON.toJSONString(list));
     }
@@ -30,9 +32,6 @@ public class MsgListServiceTest extends BaseTest {
         msgList.setUuid(GeneratorId.guuid());
         msgList.setMsgModule(1);
         msgList.setContent("测试test2");
-        msgList.setStatus(1);
-        msgList.setCreateUser("system");
-        msgList.setUpdateUser("system");
         msgListService.saveMsg(msgList);
     }
 

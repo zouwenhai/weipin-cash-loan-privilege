@@ -1,8 +1,12 @@
 package nirvana.cash.loan.privilege.common.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -36,11 +40,11 @@ public class DateUtil {
 	/**
 	 * 获取当前日期
 	 *
-	 * @return 返回当前日期(yyyyMMdd HH:mm:ss)
+	 * @return 返回当前日期(yyyy-MM-dd HH:mm:ss)
 	 */
 	public static String getDateTime() {
 		Calendar calendar = Calendar.getInstance();
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 		return dateFormat.format(calendar.getTime());
 	}
@@ -634,6 +638,27 @@ public class DateUtil {
 				break;
 		}
 		return week;
+	}
+
+	/**
+	 * 判断时间是否在通知配置的生效时段内,用于确定是否发送消息
+	 *
+	 * @param time       指定时间点
+	 * @param startPoint 开始时间点时分秒字符串 eg: 07:15
+	 * @param endPoint   结束时间点时分秒字符串 eg: 18:05
+	 * @return
+	 */
+	public static boolean isTimeSpecifiedInTimeBucket(LocalTime time, String startPoint, String endPoint) {
+		startPoint = StringUtils.isBlank(startPoint) ? "00:00" : startPoint;
+		endPoint = StringUtils.isBlank(endPoint) ? "23:59" : endPoint;
+		try {
+			LocalTime start = LocalTime.parse(startPoint);
+			LocalTime end = LocalTime.parse(endPoint);
+			return time.isAfter(start) && time.isBefore(end);
+		} catch (DateTimeParseException ex) {
+			ex.printStackTrace();
+		}
+		return false;
 	}
 
 }

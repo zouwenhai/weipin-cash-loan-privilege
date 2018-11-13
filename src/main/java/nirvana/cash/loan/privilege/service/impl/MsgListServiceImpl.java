@@ -31,16 +31,11 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
 
     @Override
     public ResResult saveMsg(MsgList msgList) {
-        String uuid = msgList.getUuid();
-        Example example = new Example(MsgList.class);
-        example.createCriteria().andEqualTo("uuid",uuid);
-        int rows = msgListMapper.selectCountByExample(example);
-        if(rows > 0){
-            log.info("重复消息:msg uuid={}",uuid);
-            return ResResult.error("重复消息");
-        }
+        msgList.setStatus(0);
         msgList.setIsDelete(0);
         msgList.setId(this.getSequence(MsgList.SEQ));
+        msgList.setCreateUser("system");
+        msgList.setUpdateUser("system");
         msgList.setCreateTime(new Date());
         msgList.setUpdateTime(new Date());
         this.save(msgList);
@@ -59,11 +54,6 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
     }
 
     @Override
-    public MsgList msgRead(Long id) {
-        return  this.selectByKey(id);
-    }
-
-    @Override
     public void updateStatus(List<Long> idList, Integer status,User user) {
         MsgList msgList = new MsgList();
         msgList.setUpdateUser(user.getUsername());
@@ -75,4 +65,24 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
         msgListMapper.updateByExampleSelective(msgList,example);
 
     }
+
+    @Override
+    public Integer countUnReadMsg(Long userId) {
+        Example example = new Example(MsgList.class);
+        example.createCriteria().andEqualTo("userId",userId)
+        .andEqualTo("status",1);
+        return msgListMapper.selectCountByExample(example);
+    }
+
+    @Override
+    public void updateMessageStatus(String uuid, Integer status, User user) {
+        Example example = new Example(MsgList.class);
+        example.createCriteria().andEqualTo("uuid",uuid);
+        MsgList msgList = new MsgList();
+        msgList.setUpdateUser(user.getUsername());
+        msgList.setUpdateTime(new Date());
+        msgList.setStatus(status);
+        msgListMapper.updateByExampleSelective(msgList,example);
+    }
+
 }
