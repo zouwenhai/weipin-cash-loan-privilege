@@ -9,12 +9,15 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Menu;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.domain.facade.LoginFacade;
 import nirvana.cash.loan.privilege.service.MenuService;
 import nirvana.cash.loan.privilege.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,12 +33,15 @@ public class LoginController extends BaseController {
     private MenuService menuService;
 
     //登录
-    @RequestMapping("/notauth/login")
-    public ResResult login(ServerHttpRequest request, ServerHttpResponse response, String username, String password, String code) {
+    @PostMapping("/notauth/login")
+    public ResResult login(ServerHttpRequest request, ServerHttpResponse response,@RequestBody LoginFacade facade) {
         User user=null;
         String roleIds=null;
         String roleCodes=null;
         try {
+             String username = facade.getUsername();
+             String password  = facade.getPassword();
+             String code = facade.getCode();
             if (StringUtils.isBlank(code)) {
                 return ResResult.error("验证码不能为空！");
             }
