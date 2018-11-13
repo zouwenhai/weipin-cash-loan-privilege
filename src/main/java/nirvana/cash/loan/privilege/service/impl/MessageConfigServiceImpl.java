@@ -193,7 +193,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
                 }
             }
         }
-        return false;
+        return true;
     }
 
 
