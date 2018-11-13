@@ -34,14 +34,14 @@ public class LoginController extends BaseController {
 
     //登录
     @RequestMapping("/notauth/login")
-    public ResResult login(ServerHttpRequest request, ServerHttpResponse response, LoginFacade facade) {
+    public ResResult login(ServerHttpRequest request, ServerHttpResponse response,  String username, String password,String code) {
         User user=null;
         String roleIds=null;
         String roleCodes=null;
         try {
-             String username = facade.getUsername();
-             String password  = facade.getPassword();
-             String code = facade.getCode();
+//             String username = facade.getUsername();
+//             String password  = facade.getPassword();
+//             String code = facade.getCode();
             if (StringUtils.isBlank(code)) {
                 return ResResult.error("验证码不能为空！");
             }
