@@ -1,10 +1,8 @@
 package nirvana.cash.loan.privilege.controller.springmvc;
 
-import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
-import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.MsgList;
@@ -12,16 +10,13 @@ import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.MsgListDeleteVo;
 import nirvana.cash.loan.privilege.domain.vo.MsgListReadVo;
 import nirvana.cash.loan.privilege.service.MsgListService;
-import nirvana.cash.loan.privilege.websocket.facade.WebSocketMessageFacade;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -86,25 +81,16 @@ public class MsgListController extends BaseController {
         return ResResult.success();
     }
 
-    @Autowired
-    private AmqpTemplate rabbit;
-
-    @GetMapping("/notauth/testWebSocket/{userId}")
-    public ResResult testWebSocket(@PathVariable Long userId){
-        WebSocketMessageFacade facade = new WebSocketMessageFacade();
-        facade.setUserId(userId);
-        facade.setUuid(GeneratorId.guuid());
-        facade.setMsg("消息内容1......");
-        facade.setCount(1);
-        rabbit.convertAndSend("exchange_auth_msg_notice_websocket","routingkey_auth_msg_notice_websocket", JSON.toJSONString(facade));
-
-        WebSocketMessageFacade facade2 = new WebSocketMessageFacade();
-        facade2.setUserId(userId);
-        facade2.setUuid(UUID.randomUUID().toString());
-        facade2.setMsg("消息内容2......");
-        facade2.setCount(2);
-        rabbit.convertAndSend("exchange_auth_msg_notice_websocket","routingkey_auth_msg_notice_websocket",JSON.toJSONString(facade2));
-        return ResResult.success();
+    /**
+     * 查询用户未读的消息数量
+     * @param request
+     * @return
+     */
+    @GetMapping("msg/unreadCount")
+    public ResResult unreadCount(ServerHttpRequest request){
+        User user = this.getLoginUser(request);
+        Integer count = msgListService.countUnReadMsg(user.getUserId());
+        return ResResult.success(count != null ? count : 0);
     }
 
 }
