@@ -65,7 +65,8 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             criteria.andEqualTo("msgModule", messageConfig.getMsgModule());
             List<MessageConfig> messageConfigs = messageConfigMapper.selectByExample(example);
             if (messageConfigs != null && messageConfigs.size() > 0) {
-                return ResResult.error("通知模块 " + MsgModuleEnum.getMsgModuleEnum(messageConfig.getMsgModule()).getName() + " 不能重复添加");
+                return ResResult.error("通知模块 " + MsgModuleEnum.getMsgModuleEnum(messageConfig.getMsgModule()).getName
+                        () + " 不能重复添加");
             }
             messageConfig.setCreateUser(username);
             messageConfig.setUpdateUser(username);
@@ -196,6 +197,15 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
         return false;
     }
 
-
-
+    @Override
+    public ResResult queryMsgModule(Integer moduleId) {
+        Example example = new Example(MessageConfig.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("msgModule", moduleId);
+        List<MessageConfig> messageConfigs = messageConfigMapper.selectByExample(example);
+        if (messageConfigs != null && messageConfigs.size() > 0) {
+            return ResResult.error(MsgModuleEnum.getMsgModuleEnum(moduleId).getName() + "模块已创建");
+        }
+        return ResResult.success();
+    }
 }

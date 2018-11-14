@@ -78,20 +78,25 @@ public class MessageConfigController extends BaseController {
 
     /**
      * 回显
+     *
      * @param configId
      * @return
      */
     @RequestMapping("/getMessageConfig")
-    public ResResult getMessageConfig(@RequestParam("configId") Long configId){
+    public ResResult getMessageConfig(@RequestParam("configId") Long configId) {
         return messageConfigService.getMessageConfig(configId);
     }
 
     @RequestMapping("/updateRun")
-    public ResResult updateRun(ServerHttpRequest request, MessageConfig messageConfig){
+    public ResResult updateRun(ServerHttpRequest request, MessageConfig messageConfig) {
         User loginUser = getLoginUser(request);
         String username = loginUser.getUsername();
         return messageConfigService.updateRun(messageConfig, username);
     }
 
+    @RequestMapping("/queryMsgModule")
+    public ResResult queryMsgModule(@RequestParam("moduleId") Integer moduleId) {
+        return messageConfigService.queryMsgModule(moduleId);
+    }
 
 }
