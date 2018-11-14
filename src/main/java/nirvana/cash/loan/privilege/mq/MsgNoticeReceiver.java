@@ -97,6 +97,7 @@ public class MsgNoticeReceiver {
         msgmap.put("orderId", facade.getOrderId());
         msgmap.put("orderStatus", orderStatusEnum.getDesc());
         msgmap.put("time", DateUtil.getDateTime());
+        msgmap.put("orderRemark", facade.getOrderRemark());
 
         //1:站内信通知
         configDetailVoList.stream()
@@ -142,7 +143,7 @@ public class MsgNoticeReceiver {
                             msgNoticeFacade.setUserId(userId);
                             msgNoticeFacade.setMsg(content);
                             msgNoticeFacade.setUuid(userMsgId);
-                            msgNoticeFacade.setCount(count);
+                            msgNoticeFacade.setCount(count != null ? count + 1 : 1);
                             rabbitTemplate.convertAndSend(exchange,key, JSONObject.toJSONString(msgNoticeFacade));
                         });
             } catch (Exception ex) {
