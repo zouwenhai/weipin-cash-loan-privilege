@@ -97,6 +97,7 @@ public class MsgNoticeReceiver {
         msgmap.put("orderId", facade.getOrderId());
         msgmap.put("orderStatus", orderStatusEnum.getDesc());
         msgmap.put("time", DateUtil.getDateTime());
+        msgmap.put("orderRemark", facade.getOrderRemark());
 
         //1:站内信通知
         configDetailVoList.stream()
