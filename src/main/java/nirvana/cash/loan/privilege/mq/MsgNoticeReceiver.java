@@ -143,7 +143,7 @@ public class MsgNoticeReceiver {
                             msgNoticeFacade.setUserId(userId);
                             msgNoticeFacade.setMsg(content);
                             msgNoticeFacade.setUuid(userMsgId);
-                            msgNoticeFacade.setCount(count);
+                            msgNoticeFacade.setCount(count != null ? count + 1 : 1);
                             rabbitTemplate.convertAndSend(exchange,key, JSONObject.toJSONString(msgNoticeFacade));
                         });
             } catch (Exception ex) {
