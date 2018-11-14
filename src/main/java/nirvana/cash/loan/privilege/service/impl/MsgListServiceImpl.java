@@ -47,6 +47,7 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
         MsgList msgList = new MsgList();
         msgList.setUpdateUser(user.getUsername());
         msgList.setUpdateTime(new Date());
+        msgList.setIsDelete(1);
 
         Example example = new Example(MsgList.class);
         example.createCriteria().andIn("id",idList);
