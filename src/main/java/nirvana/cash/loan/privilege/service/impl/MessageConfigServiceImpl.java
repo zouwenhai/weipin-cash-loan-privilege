@@ -197,15 +197,19 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
         return false;
     }
 
+    /**
+     * 查询已配置好的模块
+     *
+     * @return
+     */
     @Override
-    public ResResult queryMsgModule(Integer moduleId) {
-        Example example = new Example(MessageConfig.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("msgModule", moduleId);
-        List<MessageConfig> messageConfigs = messageConfigMapper.selectByExample(example);
-        if (messageConfigs != null && messageConfigs.size() > 0) {
-            return ResResult.error(MsgModuleEnum.getMsgModuleEnum(moduleId).getName() + "模块已创建");
+    public ResResult queryMsgModule() {
+        try {
+            List<MessageConfig> messageConfigs = messageConfigMapper.selectModule();
+            return ResResult.success(messageConfigs);
+        } catch (Exception e) {
+            log.error("查询已配置好的模块失败：{}", e);
         }
-        return ResResult.success();
+        return ResResult.error();
     }
 }

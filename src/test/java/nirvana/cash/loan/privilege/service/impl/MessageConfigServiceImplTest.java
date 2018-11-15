@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -74,10 +75,8 @@ public class MessageConfigServiceImplTest {
 
     @Test
     public void queryMsgModule(){
-        int moduleId = 1;
-        ResResult resResult = messageConfigService.queryMsgModule(moduleId);
+        ResResult resResult = messageConfigService.queryMsgModule();
         System.out.println(JSONObject.toJSONString(resResult));
-
     }
 
 

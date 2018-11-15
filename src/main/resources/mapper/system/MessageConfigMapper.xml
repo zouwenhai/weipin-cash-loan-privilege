@@ -12,4 +12,9 @@
          SET is_run = #{isRun, jdbcType=INTEGER}, UPDATE_TIME = #{updateTime, jdbcType=VARCHAR},UPDATE_USER = #{updateUser, jdbcType=VARCHAR}
          WHERE ID = #{id}
     </update>
+
+    <select id="selectModule" resultType="nirvana.cash.loan.privilege.domain.MessageConfig">
+            SELECT MSG_MODULE AS msgModule, IS_RUN AS isRun
+            FROM TB_YOFISHDK_AUTH_MSG_CONFIG
+    </select>
 </mapper>
