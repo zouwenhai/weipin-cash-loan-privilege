@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -172,7 +173,10 @@ public class MsgNoticeReceiver {
                                 String title = msgModuleEnum.getName() + "模块-有新订单需要您处理";
                                 String content = freemarkerUtil.resolve(template_email_notice_msg, msgmap);
                                 String toAddress = t.getEmail();
-                                emaiUtil.sendEmailHtml(fromAddress, toAddress, title, content);
+                                boolean valid = emaiUtil.verifyEmailFormat(toAddress);
+                                if(valid) {
+                                    emaiUtil.sendEmailHtml(fromAddress, toAddress, title, content);
+                                }
                             });
                 } catch (Exception ex) {
                     log.error("邮件消息|消息接收处理失败:uuid={},userId={}", uuid, userId);

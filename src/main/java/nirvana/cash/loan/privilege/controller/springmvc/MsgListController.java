@@ -93,4 +93,16 @@ public class MsgListController extends BaseController {
         return ResResult.success(count != null ? count : 0);
     }
 
+    /**
+     * 查询用户未读的消息
+     * @param request
+     * @return
+     */
+    @GetMapping("msg/unreadMessage")
+    public ResResult unreadMessage(ServerHttpRequest request){
+        User user = this.getLoginUser(request);
+        List<MsgList> messages = msgListService.queryUnreadMessage(user.getUserId());
+        return ResResult.success(messages);
+    }
+
 }

@@ -87,4 +87,12 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
         msgListMapper.updateByExampleSelective(msgList,example);
     }
 
+    @Override
+    public List<MsgList> queryUnreadMessage(Long userId) {
+        Example example =new Example(MsgList.class);
+        example.createCriteria().andEqualTo("userId", userId)
+                .andEqualTo("status", 0)
+                .andEqualTo("isDelete", 0);
+        return msgListMapper.selectByExample(example);
+    }
 }

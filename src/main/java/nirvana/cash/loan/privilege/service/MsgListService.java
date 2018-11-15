@@ -35,4 +35,11 @@ public interface MsgListService extends IService<MsgList> {
      * @param user  操作用户
      */
     void updateMessageStatus(String uuid,Integer status,User user);
+
+    /**
+     * 查询指定用户的未读消息
+     * @param userId 用户id
+     * @return
+     */
+    List<MsgList> queryUnreadMessage(Long userId);
 }
