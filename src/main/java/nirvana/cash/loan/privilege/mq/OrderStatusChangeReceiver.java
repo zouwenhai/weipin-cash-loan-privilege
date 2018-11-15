@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 接收订单状态变更消息
  * @author dongdong
  * @date 2018/11/6
  */
