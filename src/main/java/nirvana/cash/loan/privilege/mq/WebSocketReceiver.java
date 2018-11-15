@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * websocket分布式消息中心
+ * MQ分布式websocket
  * @author dongdong
  * @date 2018/11/9
  */
