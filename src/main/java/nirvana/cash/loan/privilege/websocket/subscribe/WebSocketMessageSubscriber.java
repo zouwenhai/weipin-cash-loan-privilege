@@ -26,7 +26,6 @@ public class WebSocketMessageSubscriber {
     }
 
     public void onError(Throwable e) {
-        log.error("webSocket连接出错！", e);
     }
 
     public void onComplete() {

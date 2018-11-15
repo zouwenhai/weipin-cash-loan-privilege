@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.common.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @Author wangqiang
@@ -18,6 +20,9 @@ import java.util.List;
 @Component
 @Slf4j
 public class EmaiUtil {
+
+    private final String regex = "^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
+    private Pattern compile = Pattern.compile(regex);
 
     @Autowired
     JavaMailSender jms;
@@ -113,6 +118,13 @@ public class EmaiUtil {
             return ResResult.error("发送失败");
         }
         return ResResult.success("发送成功");
+    }
+
+    public boolean verifyEmailFormat(String emailAddress){
+        if(StringUtils.isNotBlank(emailAddress)) {
+            return compile.matcher(emailAddress).matches();
+        }
+        return false;
     }
 
 }
