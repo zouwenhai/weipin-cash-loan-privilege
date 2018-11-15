@@ -29,4 +29,6 @@ public interface MessageConfigService extends IService<MessageConfig> {
 
     //判断是否为消息发送对象
     boolean isTargtUser(Long userId);
+
+    ResResult queryMsgModule(Integer moduleId);
 }

@@ -72,5 +72,13 @@ public class MessageConfigServiceImplTest {
         System.out.println(JSONObject.toJSONString(resResult));
     }
 
+    @Test
+    public void queryMsgModule(){
+        int moduleId = 1;
+        ResResult resResult = messageConfigService.queryMsgModule(moduleId);
+        System.out.println(JSONObject.toJSONString(resResult));
+
+    }
+
 
 }

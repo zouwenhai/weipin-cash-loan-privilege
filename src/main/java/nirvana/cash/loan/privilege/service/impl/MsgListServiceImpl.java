@@ -71,7 +71,8 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
     public Integer countUnReadMsg(Long userId) {
         Example example = new Example(MsgList.class);
         example.createCriteria().andEqualTo("userId",userId)
-        .andEqualTo("status",0);
+        .andEqualTo("status",0)
+        .andEqualTo("isDelete",0);
         return msgListMapper.selectCountByExample(example);
     }
 
