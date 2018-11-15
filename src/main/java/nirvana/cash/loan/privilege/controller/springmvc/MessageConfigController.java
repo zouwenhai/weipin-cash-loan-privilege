@@ -95,8 +95,8 @@ public class MessageConfigController extends BaseController {
     }
 
     @RequestMapping("/queryMsgModule")
-    public ResResult queryMsgModule(@RequestParam("moduleId") Integer moduleId) {
-        return messageConfigService.queryMsgModule(moduleId);
+    public ResResult queryMsgModule() {
+        return messageConfigService.queryMsgModule();
     }
 
 }

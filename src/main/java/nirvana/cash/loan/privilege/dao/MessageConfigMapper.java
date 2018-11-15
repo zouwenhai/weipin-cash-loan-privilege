@@ -14,4 +14,6 @@ public interface MessageConfigMapper extends MyMapper<MessageConfig> {
     int updateMessageConfig(MessageConfig messageConfig);
 
     int updateRun(MessageConfig messageConfig);
+
+    List<MessageConfig> selectModule();
 }
