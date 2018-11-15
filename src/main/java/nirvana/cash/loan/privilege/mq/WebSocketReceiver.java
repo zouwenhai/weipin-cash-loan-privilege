@@ -22,16 +22,17 @@ public class WebSocketReceiver {
 
     @RabbitListener(containerFactory = "myContainerFactory",
             bindings = @QueueBinding(
-                    value = @Queue(value = "${rabbitmq.queue.auth_msg_notice_websocket}_${eureka.instance.instance-id:}", durable = "false", autoDelete = "true"),
-                    exchange = @Exchange(value = "${rabbitmq.exchange.auth_msg_notice_websocket}", type = ExchangeTypes.TOPIC),
-                    key = "${rabbitmq.routingkey.auth_msg_notice_websocket}"),
+                    value = @Queue(value = "${rabbitmq.queue.message_center_ws}_${eureka.instance.instance-id:}",
+                            durable = "false", autoDelete = "true"),
+                    exchange = @Exchange(value = "${rabbitmq.exchange.message_center_ws}", type = ExchangeTypes.TOPIC),
+                    key = "${rabbitmq.routing-key.message_center_ws}"),
             admin = "myRabbitAdmin"
     )
     @RabbitHandler
     public void receive(String message) {
-        log.info("收到消息：{}", message);
-        WebSocketMessageFacade msgNoticeFacade = JSONObject.parseObject(message, WebSocketMessageFacade.class);
-        handler.sendMessageToClient(String.valueOf(msgNoticeFacade.getUserId()), JSONObject.toJSONString(msgNoticeFacade));
+        log.info("有消息需要推送给用户,消息：{}", message);
+        WebSocketMessageFacade webSocketMessageFacade = JSONObject.parseObject(message, WebSocketMessageFacade.class);
+        handler.sendMessageToClient(String.valueOf(webSocketMessageFacade.getUserId()), JSONObject.toJSONString(webSocketMessageFacade));
     }
 
 }
