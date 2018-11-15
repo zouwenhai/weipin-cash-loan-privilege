@@ -3,12 +3,11 @@ package nirvana.cash.loan.privilege.mq.facade;
 import lombok.Data;
 
 /**
- * 消息中心-推送的消息格式
- * Created by Administrator on 2018/11/7.
+ * @author dongdong
+ * @date 2018/11/6
  */
 @Data
-public class MqMsgNoticFacade {
-
+public class OrderStatusChangeFacade {
 
     /**
      * 消息唯一ID
@@ -26,9 +25,7 @@ public class MqMsgNoticFacade {
     private Integer orderStatus;
 
     /**
-     * 订单备注
+     * 消息接收者
      */
-    private String orderRemark;
-
-
+    private String orderUser;
 }
