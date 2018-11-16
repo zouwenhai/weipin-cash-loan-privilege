@@ -204,7 +204,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setMobile(user.getMobile());
 			if(newRriskRoleCodeList.size() == 0){
                 facade.setRoleType(oldRriskRoleCodeList.get(0));
-				facade.setUserStatus("2");//下线
+				facade.setUserStatus("0");//删除
 			}
 			else{
                 facade.setRoleType(newRriskRoleCodeList.get(0));
