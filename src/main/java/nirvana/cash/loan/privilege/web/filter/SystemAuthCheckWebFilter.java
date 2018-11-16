@@ -52,7 +52,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
-        log.info("request header:{}", JSON.toJSONString(host.getHeaders()));
+        log.info("request header:{}", URLUtil.decode(JSON.toJSONString(host.getHeaders()),"utf-8"));
         return webFilterChain.filter(build);
     }
 
