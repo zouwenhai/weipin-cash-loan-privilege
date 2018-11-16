@@ -256,11 +256,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
 			logger.info("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
 		}
-
-//		//更新被删除用户的登录名称为UUID，让新用户以后可用使用该登录名
-//		user.setDescription(user.getUsername());
-//		user.setUsername(GeneratorId.guuid());
-//		this.updateNotNull(user);
 	}
 
 	@Override
