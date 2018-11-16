@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * MQ借款订单状态变更通知
  * @author dongdong
  * @date 2018/11/6
  */

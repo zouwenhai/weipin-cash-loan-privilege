@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * MQ统一消息中心
  * @author dongdong
  * @date 2018/11/6
  */

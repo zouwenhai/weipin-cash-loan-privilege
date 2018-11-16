@@ -30,10 +30,6 @@ public class MsgModuleUtil {
             case LoanApproving:
                 msgModuleEnum = MsgModuleEnum.LOAN_CHECK_PENDING;
                 break;
-            //待催收
-            case Penaltying:
-                msgModuleEnum = MsgModuleEnum.CHECK_COLL;
-                break;
             default:
         }
         return msgModuleEnum;
