@@ -195,7 +195,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		List<String> oldRriskRoleCodeList = filterRoleCodeList(oldRoleCodeList,"risk");
 		List<String> newRriskRoleCodeList = filterRoleCodeList(newRoleCodeList,"risk");
 		if(oldRriskRoleCodeList.size()>0 || newRriskRoleCodeList.size()>0){
-			if(newCollRoleCodeList.size()>1){
+			if(newRriskRoleCodeList.size()>1){
 				throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
 			}
 			RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
