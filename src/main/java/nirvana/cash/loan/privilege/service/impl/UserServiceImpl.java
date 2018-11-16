@@ -241,12 +241,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setMobile(user.getMobile());
 			facade.setRoleCodeList(collRoleCodeList);
 			facade.setStatus(2);
-			try{
-				NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
-				logger.info("删除催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-			} catch (Exception ex){
-				logger.error("删除催收用户失败|程序异常:{}", ex);
-			}
+			NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
+			logger.info("删除催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
 		}
 		//风控
 		List<String> riskRoleCodeList = filterRoleCodeList(roleCodeList,"risk");
@@ -257,12 +253,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setMobile(user.getMobile());
 			facade.setRoleType(riskRoleCodeList.get(0));
 			facade.setUserStatus("0");//删除
-			try{
-				NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
-				logger.info("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-			} catch (Exception ex){
-				logger.error("删除风控用户失败|程序异常:{}", ex);
-			}
+			NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
+			logger.info("删除风控用户失败|响应数据:{}", JSON.toJSONString(apiRes));
 		}
 
 //		//更新被删除用户的登录名称为UUID，让新用户以后可用使用该登录名
