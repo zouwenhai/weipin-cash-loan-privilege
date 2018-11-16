@@ -154,6 +154,7 @@ public class MessageReceiver {
                     Long id = u.getUserId();
                     Integer unreadCount = msgListService.countUnReadMsg(id);
                     messageContent.put("userName", u.getName());
+                    log.info("保存消息：{}",JSONObject.toJSONString(messageContent));
                     MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
                     //发送到webSocket消息队列
                     sendMessageToUserClient(id, msgList, unreadCount != null ? unreadCount + 1 : 1);
@@ -167,6 +168,7 @@ public class MessageReceiver {
         targetUsers.stream().filter(id -> userIds.contains(id)).peek(id -> {
             Integer unreadCount = msgListService.countUnReadMsg(id);
             Optional.ofNullable(userService.findById(id)).ifPresent(s -> messageContent.put("userName", s.getName()));
+            log.info("保存消息：{}",JSONObject.toJSONString(messageContent));
             MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
             //发送到webSocket消息队列
             sendMessageToUserClient(id, msgList, unreadCount != null ? unreadCount + 1 : 1);

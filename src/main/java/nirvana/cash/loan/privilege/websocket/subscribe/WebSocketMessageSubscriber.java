@@ -38,7 +38,6 @@ public class WebSocketMessageSubscriber {
     }
 
     public void onNext(WebSocketMessage webSocketMessage) {
-        log.info("客户端有数据通过webSocket推送过来了,数据：{}", webSocketMessage.getPayloadAsText());
     }
 
 }
