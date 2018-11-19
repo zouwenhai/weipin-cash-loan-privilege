@@ -3,7 +3,6 @@ package nirvana.cash.loan.privilege.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
-import nirvana.cash.loan.privilege.common.enums.MsgChannelEnum;
 import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
 import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.ResResult;
@@ -96,6 +95,7 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             messageConfig.setUpdateUser(username);
             int i = messageConfigMapper.updateMessageConfig(messageConfig);
             if (i > 0) {
+                redisService.delete(RedisKeyContant.yofishdk_msg_notice_config);
                 return ResResult.success();
             }
             return ResResult.error();
