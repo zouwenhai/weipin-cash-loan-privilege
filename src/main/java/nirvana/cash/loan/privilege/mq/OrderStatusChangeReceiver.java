@@ -64,6 +64,12 @@ public class OrderStatusChangeReceiver {
             log.info("未设置该消息通知模块,不处理此消息:uuid={}", facade.getUuid());
             return;
         }
+
+        //只有人工复审和待催收需要指定发个给某个具体的用户
+        if (MsgModuleEnum.CHECK_COLL != msgModuleEnum && MsgModuleEnum.MANUAL_REVIEW != msgModuleEnum) {
+            facade.setOrderUser(null);
+        }
+
         MessageFacade messageFacade = new MessageFacade();
         BeanUtils.copyProperties(facade, messageFacade);
         messageFacade.setMessageModule(msgModuleEnum.getCode());
