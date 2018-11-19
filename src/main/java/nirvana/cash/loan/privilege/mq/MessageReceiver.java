@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 /**
  * MQ统一消息中心
+ *
  * @author dongdong
  * @date 2018/11/6
  */
@@ -118,16 +119,30 @@ public class MessageReceiver {
         messageMap.put("time", DateUtil.getDateTime());
         messageMap.put("details", facade.getDetails());
 
+        //需要发送给哪些用户
+        Set<Long> targetUsers = getTargetUsers(facade);
+
         List<MsgConfigDetailVo> configDetailVoList = JSON.parseArray(msgConfig.getMsgContent(), MsgConfigDetailVo.class);
         MsgModuleEnum messageModuleEnum = msgModuleEnum;
         //1:站内信通知
         configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_web_socket.getValue() == t.getMsgChannel())
-                .forEach(t -> processWebSocketMessage(t, messageMap, messageModuleEnum, facade.getUserIds()));
+                .forEach(t -> processWebSocketMessage(t, messageMap, messageModuleEnum, targetUsers));
         //2:邮件通知
         configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
-                .forEach(t -> processEmailMessage(t, messageMap, messageModuleEnum, facade.getUserIds()));
+                .forEach(t -> processEmailMessage(t, messageMap, messageModuleEnum, targetUsers));
+    }
+
+    private Set<Long> getTargetUsers(MessageFacade facade) {
+        Set<Long> targetUsers = Optional.ofNullable(facade.getUserIds()).orElseGet(() -> new ArrayList<>())
+                .stream().filter(i -> i != null).collect(Collectors.toSet());
+        Set<String> targetUserNames = Optional.ofNullable(facade.getLoginNames()).orElseGet(() -> new ArrayList<>())
+                .stream().filter(n -> StringUtils.isNotBlank(n)).collect(Collectors.toSet());
+        targetUserNames.forEach(n -> {
+            Optional.ofNullable(userService.findByName(n)).ifPresent(u -> targetUsers.add(u.getUserId()));
+        });
+        return targetUsers;
     }
 
     /**
@@ -138,14 +153,12 @@ public class MessageReceiver {
      * @param msgModuleEnum  通知模块
      * @param targetUsers    需要发送给哪些用户
      */
-    private void processWebSocketMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, List<Long> targetUsers) {
+    private void processWebSocketMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, Set<Long> targetUsers) {
         log.info("站内信处理:uuid={}", messageContent.get("uuid"));
         Set<Long> userIds = getUserIdsFromMessageConfig(messageConfig);
         if (CollectionUtils.isEmpty(userIds)) {
             return;
         }
-        targetUsers = Optional.ofNullable(targetUsers).orElseGet(() -> Collections.emptyList())
-                .stream().filter(u -> u != null).collect(Collectors.toList());
 
         //没有指定发送给谁，则发送给所有配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {
@@ -154,7 +167,7 @@ public class MessageReceiver {
                     Long id = u.getUserId();
                     Integer unreadCount = msgListService.countUnReadMsg(id);
                     messageContent.put("userName", u.getName());
-                    log.info("保存消息：{}",JSONObject.toJSONString(messageContent));
+                    log.info("保存消息：{}", JSONObject.toJSONString(messageContent));
                     MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
                     //发送到webSocket消息队列
                     sendMessageToUserClient(id, msgList, unreadCount != null ? unreadCount + 1 : 1);
@@ -168,7 +181,7 @@ public class MessageReceiver {
         targetUsers.stream().filter(id -> userIds.contains(id)).peek(id -> {
             Integer unreadCount = msgListService.countUnReadMsg(id);
             Optional.ofNullable(userService.findById(id)).ifPresent(s -> messageContent.put("userName", s.getName()));
-            log.info("保存消息：{}",JSONObject.toJSONString(messageContent));
+            log.info("保存消息：{}", JSONObject.toJSONString(messageContent));
             MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
             //发送到webSocket消息队列
             sendMessageToUserClient(id, msgList, unreadCount != null ? unreadCount + 1 : 1);
@@ -184,7 +197,7 @@ public class MessageReceiver {
      * @param msgModuleEnum  通知模块
      * @param targetUsers    需要发送给哪些用户
      */
-    private void processEmailMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, List<Long> targetUsers) {
+    private void processEmailMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, Set<Long> targetUsers) {
         log.info("邮件消息处理:uuid={}", messageContent.get("uuid"));
 
         //不在邮件通知设置的时间范围内，不发邮件
@@ -195,9 +208,6 @@ public class MessageReceiver {
         if (CollectionUtils.isEmpty(userIds)) {
             return;
         }
-
-        targetUsers = Optional.ofNullable(targetUsers).orElseGet(() -> Collections.emptyList())
-                .stream().filter(u -> u != null).collect(Collectors.toList());
 
         //没有指定发送给谁，则发送给所有配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {

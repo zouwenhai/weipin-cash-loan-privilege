@@ -37,6 +37,11 @@ public class MessageFacade {
     private List<Long> userIds;
 
     /**
+     * 要接收消息的人的登录名
+     */
+    private List<String> loginNames;
+
+    /**
      * 消息详细描述
      */
     private String details;
