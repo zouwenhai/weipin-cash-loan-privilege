@@ -6,11 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
 import nirvana.cash.loan.privilege.common.enums.OrderStatusEnum;
 import nirvana.cash.loan.privilege.common.util.MsgModuleUtil;
-import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
 import nirvana.cash.loan.privilege.mq.facade.OrderStatusChangeFacade;
 import nirvana.cash.loan.privilege.service.UserService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
@@ -21,9 +19,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * MQ借款订单状态变更通知
+ *
  * @author dongdong
  * @date 2018/11/6
  */
@@ -65,25 +65,19 @@ public class OrderStatusChangeReceiver {
             return;
         }
 
-        //只有人工复审和待催收需要指定发个给某个具体的用户
-        if (MsgModuleEnum.CHECK_COLL != msgModuleEnum && MsgModuleEnum.MANUAL_REVIEW != msgModuleEnum) {
+        //只有人工复审和待催收需要指定发个给某个具体的用户,待催收消息不在这里处理
+        if (MsgModuleEnum.MANUAL_REVIEW != msgModuleEnum) {
             facade.setOrderUser(null);
         }
 
         MessageFacade messageFacade = new MessageFacade();
         BeanUtils.copyProperties(facade, messageFacade);
         messageFacade.setMessageModule(msgModuleEnum.getCode());
-
-        User user = null;
-        String userName = facade.getOrderUser();
-        if (StringUtils.isNotBlank(userName)) {
-            user = userService.findByName(userName);
-        }
-        if (user != null) {
+        Optional.ofNullable(facade.getOrderUser()).map(n -> userService.findByName(n)).ifPresent(u -> {
             List userIds = new ArrayList();
-            userIds.add(user.getUserId());
+            userIds.add(u.getUserId());
             messageFacade.setUserIds(userIds);
-        }
+        });
         rabbitTemplate.convertAndSend(mcExchange, mcRoutingKey, JSONObject.toJSONString(messageFacade));
     }
 
