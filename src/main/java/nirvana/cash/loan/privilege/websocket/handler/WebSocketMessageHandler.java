@@ -60,11 +60,14 @@ public class WebSocketMessageHandler implements WebSocketHandler {
         if (!CollectionUtils.isEmpty(processors)) {
             processors.forEach(p -> {
                 try {
+                    log.info("发送webSocket消息：{} 给用户：{}", message, userId);
                     p.onNext(message);
                 } catch (Exception e) {
                     log.error(String.format("通过webSocket发送消息给用户：%s 出现异常！", userId), e);
                 }
             });
+        } else {
+            log.info("当前没有用户：{} 的webSocket连接,不推送消息：{} 给客户端", userId, message);
         }
     }
 
