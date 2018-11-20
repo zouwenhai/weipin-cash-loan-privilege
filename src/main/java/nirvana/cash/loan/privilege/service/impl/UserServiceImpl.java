@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
@@ -185,7 +186,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             }
             try{
 				NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
-				logger.info("修改催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				logger.info("修改催收用户成功|响应数据:{}", JSON.toJSONString(apiRes));
 			} catch (Exception ex){
 				logger.error("修改催收用户失败|程序异常:{}", ex);
 			}
@@ -202,19 +203,23 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			facade.setUserName(user.getName());
 			facade.setLoginName(user.getUsername());
 			facade.setMobile(user.getMobile());
+			logger.info("old risk role:"+oldRriskRoleCodeList.get(0)+",new risk role:"+newCollRoleCodeList.get(0));
 			if(newRriskRoleCodeList.size() == 0){
+				logger.info("delete risk user:{}",facade.getLoginName());
                 facade.setRoleType(oldRriskRoleCodeList.get(0));
 				facade.setUserStatus("0");//删除
 			}
 			else{
+				logger.info("update risk role:{} for user:{}",newCollRoleCodeList.get(0),facade.getLoginName());
                 facade.setRoleType(newRriskRoleCodeList.get(0));
 				facade.setUserStatus("1");//在线
 			}
 			try{
+				logger.info("修改风控用户:"+ JSONObject.toJSONString(facade));
 				NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
-				logger.info("修改风用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				logger.info("修改风控用户成功|响应数据:{}", JSON.toJSONString(apiRes));
 			} catch (Exception ex){
-				logger.error("修改风用户失败|程序异常:{}", ex);
+				logger.error("修改风控用户失败|程序异常:{}", ex);
 			}
 		}
 
