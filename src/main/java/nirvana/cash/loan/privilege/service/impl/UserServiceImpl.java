@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
@@ -185,39 +187,40 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             }
             try{
 				NewResponseUtil apiRes = feginCollectionApi.updateUser(facade);
-				logger.info("修改催收用户失败|响应数据:{}", JSON.toJSONString(apiRes));
+				logger.info("修改催收用户成功|响应数据:{}", JSON.toJSONString(apiRes));
 			} catch (Exception ex){
 				logger.error("修改催收用户失败|程序异常:{}", ex);
 			}
 		}
 
-		//风控
-		List<String> oldRriskRoleCodeList = filterRoleCodeList(oldRoleCodeList,"risk");
-		List<String> newRriskRoleCodeList = filterRoleCodeList(newRoleCodeList,"risk");
-		if(oldRriskRoleCodeList.size()>0 || newRriskRoleCodeList.size()>0){
-			if(newRriskRoleCodeList.size()>1){
-				throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
-			}
-			RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
-			facade.setUserName(user.getName());
-			facade.setLoginName(user.getUsername());
-			facade.setMobile(user.getMobile());
-			if(newRriskRoleCodeList.size() == 0){
-                facade.setRoleType(oldRriskRoleCodeList.get(0));
-				facade.setUserStatus("0");//删除
-			}
-			else{
-                facade.setRoleType(newRriskRoleCodeList.get(0));
-				facade.setUserStatus("1");//在线
-			}
-			try{
-				NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
-				logger.info("修改风用户失败|响应数据:{}", JSON.toJSONString(apiRes));
-			} catch (Exception ex){
-				logger.error("修改风用户失败|程序异常:{}", ex);
-			}
-		}
-
+        //风控
+        List<String> newRiskRoleCodes = filterRoleCodeList(newRoleCodeList, "risk");
+		RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
+		facade.setMobile(user.getMobile());
+		facade.setLoginName(user.getUsername());
+		facade.setUserName(user.getName());
+		if (CollectionUtils.isEmpty(newRiskRoleCodes)) {
+            //删除风控用户
+            logger.info("删除风控用户:{}",user.getUsername());
+            facade.setUserStatus("0");
+        } else if (newRiskRoleCodes.size() > 1) {
+            throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
+        } else {
+            //更新风控用户角色
+            String newRoleCode = newRiskRoleCodes.get(0);
+            logger.info("更新风控用户：{} 的角色为：{}", user.getUsername(), newRoleCode);
+            facade.setRoleType(newRoleCode);
+            facade.setUserStatus("1");
+        }
+        try {
+            logger.info("修改风控用户:" + JSONObject.toJSONString(facade));
+            NewResponseUtil result = feginRiskApi.updateOrderUser(facade);
+            if(!NewResponseUtil.SUCCESS.equals(result.getCode())) {
+                throw new BizException(result.getDesc());
+            }
+        } catch (Exception e) {
+            logger.error("修改风控用户失败:{}", e.getMessage());
+        }
 	}
 
 	@Override
