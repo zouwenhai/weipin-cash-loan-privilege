@@ -210,6 +210,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             String newRoleCode = newRiskRoleCodes.get(0);
             logger.info("更新风控用户：{} 的角色为：{}", user.getUsername(), newRoleCode);
             facade.setRoleType(newRoleCode);
+            facade.setUserStatus("1");
         }
         try {
             logger.info("修改风控用户:" + JSONObject.toJSONString(facade));
@@ -218,7 +219,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
                 throw new BizException(result.getDesc());
             }
         } catch (Exception e) {
-            logger.error("修改风控用户失败:{}", e);
+            logger.error("修改风控用户失败:{}", e.getMessage());
         }
 	}
 
