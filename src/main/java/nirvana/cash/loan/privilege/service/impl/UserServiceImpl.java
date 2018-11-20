@@ -193,29 +193,33 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 			}
 		}
 
-		//风控
-		List<String> newRriskRoleCodeList = filterRoleCodeList(newRoleCodeList,"risk");
+        //风控
+        List<String> newRiskRoleCodes = filterRoleCodeList(newRoleCodeList, "risk");
 		RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
-		facade.setUserName(user.getName());
-		facade.setLoginName(user.getUsername());
 		facade.setMobile(user.getMobile());
-		if(CollectionUtils.isEmpty(newRriskRoleCodeList)){
-			logger.info("删除风控用户");
-			facade.setUserStatus("0");//删除
-		}else if(newRriskRoleCodeList.size()==1){
-			logger.info("更新风控用户角色");
-			facade.setRoleType(newRriskRoleCodeList.get(0));
-			facade.setUserStatus("1");//在线
-		}else{
-			throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
-		}
-		try{
-			logger.info("修改风控用户:"+ JSONObject.toJSONString(facade));
-			NewResponseUtil apiRes = feginRiskApi.updateOrderUser(facade);
-			logger.info("修改风控用户成功|响应数据:{}", JSON.toJSONString(apiRes));
-		} catch (Exception ex){
-			logger.error("修改风控用户失败|程序异常:{}", ex);
-		}
+		facade.setLoginName(user.getUsername());
+		facade.setUserName(user.getName());
+		if (CollectionUtils.isEmpty(newRiskRoleCodes)) {
+            //删除风控用户
+            logger.info("删除风控用户:{}",user.getUsername());
+            facade.setUserStatus("0");
+        } else if (newRiskRoleCodes.size() > 1) {
+            throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
+        } else {
+            //更新风控用户角色
+            String newRoleCode = newRiskRoleCodes.get(0);
+            logger.info("更新风控用户：{} 的角色为：{}", user.getUsername(), newRoleCode);
+            facade.setRoleType(newRoleCode);
+        }
+        try {
+            logger.info("修改风控用户:" + JSONObject.toJSONString(facade));
+            NewResponseUtil result = feginRiskApi.updateOrderUser(facade);
+            if(!NewResponseUtil.SUCCESS.equals(result.getCode())) {
+                throw new BizException(result.getDesc());
+            }
+        } catch (Exception e) {
+            logger.error("修改风控用户失败:{}", e);
+        }
 	}
 
 	@Override
