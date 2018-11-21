@@ -29,7 +29,7 @@ public class WebSocketReceiver {
             bindings = @QueueBinding(
                     value = @Queue(value = "${rabbitmq.queue.message_center_ws}_${eureka.instance.instance-id:}",
                             durable = "true", autoDelete = "true"),
-                    exchange = @Exchange(value = "${rabbitmq.exchange.message_center_ws}", type = ExchangeTypes.TOPIC, durable = "true"),
+                    exchange = @Exchange(value = "${rabbitmq.exchange.message_center_ws}", type = ExchangeTypes.TOPIC),
                     key = "${rabbitmq.routing-key.message_center_ws}"),
             admin = "myRabbitAdmin"
     )
