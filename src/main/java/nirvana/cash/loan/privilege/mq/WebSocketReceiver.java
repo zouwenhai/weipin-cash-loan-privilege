@@ -5,7 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.websocket.facade.WebSocketMessageFacade;
 import nirvana.cash.loan.privilege.websocket.handler.WebSocketMessageHandler;
 import org.springframework.amqp.core.ExchangeTypes;
-import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +28,8 @@ public class WebSocketReceiver {
     @RabbitListener(containerFactory = "myContainerFactory",
             bindings = @QueueBinding(
                     value = @Queue(value = "${rabbitmq.queue.message_center_ws}_${eureka.instance.instance-id:}",
-                            durable = "false", autoDelete = "true"),
-                    exchange = @Exchange(value = "${rabbitmq.exchange.message_center_ws}", type = ExchangeTypes.TOPIC),
+                            durable = "true", autoDelete = "true"),
+                    exchange = @Exchange(value = "${rabbitmq.exchange.message_center_ws}", type = ExchangeTypes.TOPIC, durable = "true"),
                     key = "${rabbitmq.routing-key.message_center_ws}"),
             admin = "myRabbitAdmin"
     )
