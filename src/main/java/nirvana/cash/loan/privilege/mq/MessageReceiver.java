@@ -12,7 +12,6 @@ import nirvana.cash.loan.privilege.common.util.FreemarkerUtil;
 import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.domain.MsgList;
-import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.MsgConfigDetailVo;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
@@ -160,9 +159,9 @@ public class MessageReceiver {
             return;
         }
 
-        //没有指定发送给谁，则发送给所有配置的用户
+        //没有指定发送给谁，则发送给所配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {
-            Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> Collections.emptyList()).stream().peek(u -> {
+            Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> Collections.emptyList()).forEach(u -> {
                 try {
                     Long id = u.getUserId();
                     Integer unreadCount = msgListService.countUnReadMsg(id);
@@ -174,19 +173,21 @@ public class MessageReceiver {
                 } catch (Exception e) {
                     log.error("站内信消息处理失败", e.getMessage());
                 }
-            }).count();
+            });
             return;
         }
         //只发送给目标用户
-        targetUsers.stream().filter(id -> userIds.contains(id)).peek(id -> {
+        targetUsers.stream().filter(id -> userIds.contains(id)).forEach(id -> {
             Integer unreadCount = msgListService.countUnReadMsg(id);
             Optional.ofNullable(userService.findById(id)).ifPresent(s -> messageContent.put("userName", s.getName()));
             log.info("保存消息：{}", JSONObject.toJSONString(messageContent));
             MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
             //发送到webSocket消息队列
             sendMessageToUserClient(id, msgList, unreadCount != null ? unreadCount + 1 : 1);
-        }).count();
-        targetUsers.stream().filter(id -> !userIds.contains(id)).peek(u -> log.info("用户{}不在消息配置的用户列表中，不发送站内信", u)).count();
+        });
+        targetUsers.stream().filter(id -> !userIds.contains(id)).forEach(
+                u -> log.info("用户{}不在消息配置的用户列表中，不发送站内信", u)
+        );
     }
 
     /**
@@ -211,18 +212,18 @@ public class MessageReceiver {
 
         //没有指定发送给谁，则发送给所有配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {
-            List<User> users = userService.findByIds(userIds);
-            Optional.ofNullable(users).ifPresent(user -> {
-                user.forEach(u -> sendEmail(msgModuleEnum.getName() + "模块-有新订单需要您处理", messageContent, u));
-            });
+            List<String> toUsers = Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> new ArrayList<>())
+                    .stream().map(u -> u.getEmail()).collect(Collectors.toList());
+            sendEmail(msgModuleEnum.getName() + "模块-有新订单需要您处理", messageContent, toUsers);
             return;
         }
         //只发送给目标的用户
-        targetUsers.stream().filter(id -> userIds.contains(id)).peek(id -> {
-            Optional.ofNullable(userService.findById(id)).ifPresent(u ->
-                    sendEmail(msgModuleEnum.getName() + "模块-有新订单需要您处理", messageContent, u));
-        }).count();
-        targetUsers.stream().filter(id -> !userIds.contains(id)).peek(u -> log.info("用户{}不在消息配置的用户列表中，不发送邮件", u)).count();
+        List<String> toUsers = targetUsers.stream().filter(id -> userIds.contains(id)).map(id -> userService.findById(id))
+                .map(u -> u.getEmail()).collect(Collectors.toList());
+        sendEmail(msgModuleEnum.getName() + "模块-有新订单需要您处理", messageContent, toUsers);
+        targetUsers.stream().filter(id -> !userIds.contains(id)).forEach(
+                u -> log.info("用户{}不在消息配置的用户列表中，不发送邮件", u)
+        );
     }
 
     private Set<Long> getUserIdsFromMessageConfig(MsgConfigDetailVo msgConfig) {
@@ -253,18 +254,20 @@ public class MessageReceiver {
         rabbitTemplate.convertAndSend(exchange, key, JSONObject.toJSONString(webSocketMessage));
     }
 
-    private void sendEmail(String title, Map messageContent, User targetUser) {
-        try {
-            messageContent.put("userName", targetUser.getName());
-            String content = freemarkerUtil.resolve(template_email_notice_msg, messageContent);
-            String toAddress = targetUser.getEmail();
-            boolean valid = emaiUtil.verifyEmailFormat(toAddress);
-            if (valid) {
-                emaiUtil.sendEmailHtml(fromAddress, toAddress, title, content);
-            }
-        } catch (Exception ex) {
-            log.error("邮件消息|消息接收处理失败:uuid={},userId={}", messageContent.get("uuid"), targetUser.getUserId());
+    private void sendEmail(String title, Map messageContent, List<String> targetUsers) {
+        if (CollectionUtils.isEmpty(targetUsers)) {
+            return;
         }
+        log.info("发送邮件给用户：{}", targetUsers.toString());
+        List<String> toAddressList = targetUsers.stream().filter(t -> {
+            boolean b = emaiUtil.verifyEmailFormat(t);
+            if (b) {
+                log.info("邮箱：{}格式不正确，不发送", t);
+            }
+            return b;
+        }).collect(Collectors.toList());
+        String content = freemarkerUtil.resolve(template_email_notice_msg, messageContent);
+        emaiUtil.sendEmailHtml(fromAddress, toAddressList, title, content);
     }
 
 }
