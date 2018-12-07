@@ -259,15 +259,8 @@ public class MessageReceiver {
             return;
         }
         log.info("发送邮件给用户：{}", targetUsers.toString());
-        List<String> toAddressList = targetUsers.stream().filter(t -> {
-            boolean b = emaiUtil.verifyEmailFormat(t);
-            if (b) {
-                log.info("邮箱：{}格式不正确，不发送", t);
-            }
-            return b;
-        }).collect(Collectors.toList());
         String content = freemarkerUtil.resolve(template_email_notice_msg, messageContent);
-        emaiUtil.sendEmailHtml(fromAddress, toAddressList, title, content);
+        emaiUtil.sendEmailHtml(fromAddress, targetUsers, title, content);
     }
 
 }
