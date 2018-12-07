@@ -22,9 +22,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class EmaiUtil {
 
-    private final String regex = "^[A-Za-z0-9\\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
-    private Pattern compile = Pattern.compile(regex);
-
     @Autowired
     JavaMailSender jms;
 
@@ -127,7 +124,7 @@ public class EmaiUtil {
 
     public boolean verifyEmailFormat(String emailAddress){
         if(StringUtils.isNotBlank(emailAddress)) {
-            return compile.matcher(emailAddress).matches();
+            return true;
         }
         return false;
     }
