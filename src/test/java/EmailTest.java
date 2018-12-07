@@ -48,8 +48,8 @@ public class EmailTest extends BaseTest {
         msgmap.put("time", DateUtil.getDateTime());
         msgmap.put("userName", "刘晓伟");
         String emailContent = freemarkerUtil.resolve("email_notice_msg.ftl",msgmap);
-        //发送邮件
-        emaiUtil.sendEmailHtml(fromAddress, toAddresList, title, emailContent);
+        //发送邮件 TODO
+        //emaiUtil.sendEmailHtml(fromAddress, toAddresList, title, emailContent);
         System.err.println("done");
     }
 }

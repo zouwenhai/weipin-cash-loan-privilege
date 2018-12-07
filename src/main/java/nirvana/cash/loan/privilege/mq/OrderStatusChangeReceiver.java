@@ -61,7 +61,7 @@ public class OrderStatusChangeReceiver {
         OrderStatusEnum orderStatusEnum = OrderStatusEnum.getEnum(facade.getOrderStatus());
         MsgModuleEnum msgModuleEnum = MsgModuleUtil.transOrderStatus2MsgModule(orderStatusEnum);
         if (msgModuleEnum == null) {
-            log.info("未设置该消息通知模块,不处理此消息:uuid={}", facade.getUuid());
+            log.info("未设置该消息通知模块或订单状态变更消息队列不处理此消息:uuid={}", facade.getUuid());
             return;
         }
 
