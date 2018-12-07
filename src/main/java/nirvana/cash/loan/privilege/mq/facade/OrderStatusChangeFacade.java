@@ -28,4 +28,9 @@ public class OrderStatusChangeFacade {
      * 消息接收者
      */
     private String orderUser;
+
+    /**
+     * 消息详细描述
+     */
+    private String details;
 }
