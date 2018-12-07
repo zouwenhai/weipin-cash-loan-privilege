@@ -89,7 +89,7 @@ public class EmaiUtil {
             jms.send(message);
             log.info("html邮件发送成功,from={},to={}",fromAddress, toAddress);
         } catch (Exception e) {
-            log.error("发送Html邮件失败", e);
+            log.error(String.format("发送Html邮件失败,接收者：%s,主题：%s,邮件内容：%s", toAddress, title, content), e);
             return ResResult.error("发送失败");
         }
         return ResResult.success("发送成功");
