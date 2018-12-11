@@ -33,7 +33,7 @@ hystrix:
         timeout.enabled: true
         isolation:
           strategy: SEMAPHORE
-          semaphore.maxConcurrentRequests: 20
+          semaphore.maxConcurrentRequests: 200
           thread.timeoutInMilliseconds: 120000
 ribbon:
   MaxAutoRetries: 0
@@ -99,7 +99,7 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
   client:
-    serviceUrl.defaultZone: http://172.20.20.101:13115/eureka/,http://172.20.20.101:13116/eureka/,http://172.20.20.101:13117/eureka/
+    serviceUrl.defaultZone: http://172.20.20.101:13115/eureka/,http://172.20.20.102:13116/eureka/,http://172.20.20.103:13117/eureka/
     register-with-eureka: true
     registry-fetch-interval-seconds: 5
 spring:
