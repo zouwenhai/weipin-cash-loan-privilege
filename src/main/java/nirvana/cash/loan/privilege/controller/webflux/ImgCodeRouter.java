@@ -44,7 +44,6 @@ public class ImgCodeRouter {
             //图形验证码,,缓存5min
             String verifyId= GeneratorId.guuid();
             redisService.putWithExpireTime(verifyId,verifyCode,60 * 5L);
-            log.info("输出登录图形验证码|verifyId={},verifyCode={}",verifyId,verifyCode);
             //输出响应
             DataBuffer buffer = new DefaultDataBufferFactory().wrap(imageBytes);
             return ServerResponse
