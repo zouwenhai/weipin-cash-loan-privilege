@@ -109,11 +109,7 @@ public class LoginController extends BaseController {
     //注销
     @RequestMapping(value = "/notauth/logout")
     public void logout(ServerHttpResponse response) {
-        try {
-            response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,"",0));
-        } catch (Exception e) {
-            logger.error("注销失败:{}",e);
-        }
+        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,"",0));
     }
 
     //是否处于登录状态

@@ -49,12 +49,8 @@ public class UserController extends BaseController {
     //根据用户ID，查询指定用户信息
     @RequestMapping("notauth/user/getUser")
     public ResResult getUser(Long userId) {
-        try {
-            User user = this.userService.findById(userId);
-            return ResResult.success(user);
-        } catch (Exception e) {
-            return ResResult.error("获取用户信息失败！");
-        }
+        User user = this.userService.findById(userId);
+        return ResResult.success(user);
     }
 
 
@@ -80,10 +76,6 @@ public class UserController extends BaseController {
             logger.error("用户管理|新增用户|执行异常:{}", e);
             return ResResult.error(e.getMessage());
         }
-        catch (Exception e) {
-            logger.error("用户管理|新增用户|执行异常:{}", e);
-            return ResResult.error("新增用户失败！");
-        }
     }
 
     //修改用户
@@ -106,51 +98,32 @@ public class UserController extends BaseController {
             logger.error("用户管理|修改用户|执行异常:{}", e);
             return ResResult.error(e.getMessage());
         }
-        catch (Exception e) {
-            logger.error("用户管理|修改用户|执行异常:{}", e);
-            return ResResult.error("修改用户失败！");
-        }
     }
 
     //删除用户
     @RequestMapping("user/delete")
     public ResResult deleteUser(Integer id) {
-        try {
-            this.userService.deleteUser(id);
-            return ResResult.success();
-        } catch (Exception e) {
-            logger.error("用户管理|删除用户|执行异常:{}", e);
-            return ResResult.error("删除用户失败！");
-        }
+        this.userService.deleteUser(id);
+        return ResResult.success();
     }
 
     //修改密码
     @RequestMapping("user/updatePassword")
     public ResResult updatePassword(String newpassword,Long userId) {
-        try {
-            User user = new User();
-            user.setUserId(userId);
-            this.userService.updatePassword(newpassword, userId);
-            return ResResult.success();
-        } catch (Exception e) {
-            logger.error("用户管理|修改密码|执行异常:{}", e);
-            return ResResult.error("修改密码失败！");
-        }
+        User user = new User();
+        user.setUserId(userId);
+        this.userService.updatePassword(newpassword, userId);
+        return ResResult.success();
     }
 
     //校验登录名
     @RequestMapping("notauth/user/checkUserName")
     public ResResult checkUserName(String userName) {
-        try {
-            User user = this.userService.findByName(userName.trim());
-            if (user != null) {
-                return ResResult.error("登录名不可用！");
-            }
-            return ResResult.success("登录名可用！");
-        } catch (Exception e) {
-            logger.error("用户管理|校验登录名|执行异常:{}", e);
-            return ResResult.error("校验登录名失败！");
+        User user = this.userService.findByName(userName.trim());
+        if (user != null) {
+            return ResResult.error("登录名不可用！");
         }
+        return ResResult.success("登录名可用！");
     }
 
     //角色列表,新增用户时使用

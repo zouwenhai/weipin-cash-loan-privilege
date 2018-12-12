@@ -36,63 +36,44 @@ public class RoleController extends BaseController {
 	//根据角色ID，查找指定角色信息
 	@RequestMapping("notauth/role/getRole")
 	public ResResult getRole(Long roleId) {
-		try {
-			Role role = this.roleService.findRoleWithMenus(roleId);
-			return ResResult.success(role);
-		} catch (Exception e) {
-			return ResResult.error("获取角色信息失败！");
-		}
+		Role role = this.roleService.findRoleWithMenus(roleId);
+		return ResResult.success(role);
 	}
 
 	//新增角色
 	@RequestMapping("role/add")
 	public ResResult addRole(Role role) {
-		try {
-			if(StringUtils.isBlank(role.getMenuIds2())){
-				return ResResult.error("请选择菜单权限！");
-			}
-			List<Long> menuIds = Arrays.asList(role.getMenuIds2().split(",")).stream().map(t->Long.valueOf(t))
-					.collect(Collectors.toList());
-			Role oldRoleName2 = this.roleService.findByRoleName2(role.getRoleName2());
-			if(oldRoleName2 != null){
-				return ResResult.error("您选择的角色已存在！");
-			}
-			this.roleService.addRole(role, menuIds);
-			return ResResult.success();
-		} catch (Exception e) {
-			logger.error("角色管理|新增角色|执行异常:{}",e);
-			return ResResult.error("新增角色失败！");
+		if(StringUtils.isBlank(role.getMenuIds2())){
+			return ResResult.error("请选择菜单权限！");
 		}
+		List<Long> menuIds = Arrays.asList(role.getMenuIds2().split(",")).stream().map(t->Long.valueOf(t))
+				.collect(Collectors.toList());
+		Role oldRoleName2 = this.roleService.findByRoleName2(role.getRoleName2());
+		if(oldRoleName2 != null){
+			return ResResult.error("您选择的角色已存在！");
+		}
+		this.roleService.addRole(role, menuIds);
+		return ResResult.success();
 	}
 
 	//修改角色
 	@RequestMapping("role/update")
 	public ResResult updateRole(Role role,ServerHttpRequest request) {
-		try {
-			if(StringUtils.isBlank(role.getMenuIds2())){
-				return ResResult.error("请选择菜单权限！");
-			}
-			List<Long> menuIds = Arrays.asList(role.getMenuIds2().split(",")).stream().map(t->Long.valueOf(t))
-					.collect(Collectors.toList());
-			Long loginUserId=this.getLoginUser(request).getUserId();
-			this.roleService.updateRole(role,menuIds,loginUserId);
-			return ResResult.success();
-		} catch (Exception e) {
-			logger.error("角色管理|修改角色|执行异常:{}",e);
-			return ResResult.error("修改角色失败！");
+		if(StringUtils.isBlank(role.getMenuIds2())){
+			return ResResult.error("请选择菜单权限！");
 		}
+		List<Long> menuIds = Arrays.asList(role.getMenuIds2().split(",")).stream().map(t->Long.valueOf(t))
+				.collect(Collectors.toList());
+		Long loginUserId=this.getLoginUser(request).getUserId();
+		this.roleService.updateRole(role,menuIds,loginUserId);
+		return ResResult.success();
 	}
 
 	//删除角色
 	@RequestMapping("role/delete")
 	public ResResult deleteRoles(Long ids,ServerHttpRequest request) {
-		try {
-			Long loginUserId=this.getLoginUser(request).getUserId();
-			return this.roleService.deleteRoles(ids,loginUserId);
-		} catch (Exception e) {
-			logger.error("角色管理|删除角色|执行异常:{}",e);
-			return ResResult.error("删除角色失败！");
-		}
+		Long loginUserId=this.getLoginUser(request).getUserId();
+		return this.roleService.deleteRoles(ids,loginUserId);
 	}
 
 	//角色配置下拉列表
