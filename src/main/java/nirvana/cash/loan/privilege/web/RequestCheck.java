@@ -75,17 +75,11 @@ public class RequestCheck {
         }
         List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
         //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
-        boolean priviligeFlag = false;
-        for (Menu menu : permissionList) {
-            if (StringUtils.isBlank(menu.getPerms())) {
-                continue;
-            }
-            priviligeFlag = url.endsWith(menu.getPerms().trim());
-            if (priviligeFlag) {
-                break;
-            }
-        }
-        if (!priviligeFlag) {
+        long count = permissionList.stream()
+                .filter(t->StringUtils.isNotBlank(t.getPerms()))
+                .filter(t->url.endsWith(t.getPerms().trim()))
+                .count();
+        if(count == 0){
             return ResResult.error("您访问的接口未经授权!", ResResult.UNAUTHORIZED_URL);
         }
         return ResResult.success(user);
