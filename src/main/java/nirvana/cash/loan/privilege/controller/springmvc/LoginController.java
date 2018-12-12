@@ -108,7 +108,12 @@ public class LoginController extends BaseController {
 
     //注销
     @RequestMapping(value = "/notauth/logout")
-    public void logout(ServerHttpResponse response) {
+    public void logout(ServerHttpRequest request,ServerHttpResponse response) {
+        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+        if (jsessionid == null || jsessionid.trim().length() == 0) {
+            return ;
+        }
+        redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
         response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,"",0));
     }
 
