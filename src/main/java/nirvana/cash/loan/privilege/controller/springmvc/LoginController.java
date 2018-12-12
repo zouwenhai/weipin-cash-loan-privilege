@@ -120,12 +120,7 @@ public class LoginController extends BaseController {
     //是否处于登录状态
     @RequestMapping(value = "/notauth/isLogin")
     public ResResult isLogin(ServerHttpRequest request) {
-        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
-        if (jsessionid == null || jsessionid.trim().length() == 0) {
-            return ResResult.error("未登录", ResResult.LOGIN_WHETHER);
-        }
-        String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid, String.class);
-        if (StringUtils.isBlank(data)) {
+        if(requestCheck.getLoginUser(request) == null){
             return ResResult.error("未登录", ResResult.LOGIN_WHETHER);
         }
         return ResResult.success("登录中", ResResult.SUCCESS);
