@@ -166,7 +166,6 @@ public class MessageReceiver {
                     Long id = u.getUserId();
                     Integer unreadCount = msgListService.countUnReadMsg(id);
                     messageContent.put("userName", u.getName());
-                    log.info("保存消息：{}", JSONObject.toJSONString(messageContent));
                     MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
                     //发送到webSocket消息队列
                     sendMessageToUserClient(id, msgList, unreadCount != null ? unreadCount + 1 : 1);
@@ -180,14 +179,10 @@ public class MessageReceiver {
         targetUsers.stream().filter(id -> userIds.contains(id)).forEach(id -> {
             Integer unreadCount = msgListService.countUnReadMsg(id);
             Optional.ofNullable(userService.findById(id)).ifPresent(s -> messageContent.put("userName", s.getName()));
-            log.info("保存消息：{}", JSONObject.toJSONString(messageContent));
             MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
             //发送到webSocket消息队列
             sendMessageToUserClient(id, msgList, unreadCount != null ? unreadCount + 1 : 1);
         });
-        targetUsers.stream().filter(id -> !userIds.contains(id)).forEach(
-                u -> log.info("用户{}不在消息配置的用户列表中，不发送站内信", u)
-        );
     }
 
     /**
@@ -200,7 +195,6 @@ public class MessageReceiver {
      */
     private void processEmailMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, Set<Long> targetUsers) {
         log.info("邮件消息处理:uuid={}", messageContent.get("uuid"));
-
         //不在邮件通知设置的时间范围内，不发邮件
         if (!DateUtil.isTimeSpecifiedInTimeBucket(LocalTime.now(), messageConfig.getStartTime(), messageConfig.getEndTime())) {
             return;
@@ -221,9 +215,6 @@ public class MessageReceiver {
         List<String> toUsers = targetUsers.stream().filter(id -> userIds.contains(id)).map(id -> userService.findById(id))
                 .map(u -> u.getEmail()).collect(Collectors.toList());
         sendEmail(msgModuleEnum.getName() + "模块-有新订单需要您处理", messageContent, toUsers);
-        targetUsers.stream().filter(id -> !userIds.contains(id)).forEach(
-                u -> log.info("用户{}不在消息配置的用户列表中，不发送邮件", u)
-        );
     }
 
     private Set<Long> getUserIdsFromMessageConfig(MsgConfigDetailVo msgConfig) {
