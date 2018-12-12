@@ -1,6 +1,5 @@
 package nirvana.cash.loan.privilege.web.filter;
 
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
@@ -43,7 +42,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         if(checkResResult.getData() == null){
             return webFilterChain.filter(exchange);
         }
-        log.info("before request header:{}", URLUtil.decode(JSON.toJSONString(request.getHeaders()),"utf-8"));
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
         ServerHttpRequest host = null;
@@ -53,7 +51,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
-        log.info("after request header:{}", URLUtil.decode(JSON.toJSONString(host.getHeaders()),"utf-8"));
         return webFilterChain.filter(build);
     }
 
