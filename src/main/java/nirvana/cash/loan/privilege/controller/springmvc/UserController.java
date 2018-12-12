@@ -57,47 +57,35 @@ public class UserController extends BaseController {
     //新增用户
     @RequestMapping("user/add")
     public ResResult addUser(User user, ServerHttpRequest request) {
-        try {
-            String rolesSelect = user.getRoleIds2();
-            if(StringUtils.isBlank(rolesSelect)){
-                return ResResult.error("请选择用户角色！");
-            }
-            List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
-                    .collect(Collectors.toList());
-            user.setUsername(user.getUsername().trim());
-            User oldUser = this.userService.findByName(user.getUsername());
-            if (oldUser != null) {
-                return ResResult.error("登录名不可用！");
-            }
-            User loginUser = getLoginUser(request);
-            return this.userService.addUser(user, roleIdList, loginUser);
+        String rolesSelect = user.getRoleIds2();
+        if(StringUtils.isBlank(rolesSelect)){
+            return ResResult.error("请选择用户角色！");
         }
-        catch (BizException e) {
-            logger.error("用户管理|新增用户|执行异常:{}", e);
-            return ResResult.error(e.getMessage());
+        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
+                .collect(Collectors.toList());
+        user.setUsername(user.getUsername().trim());
+        User oldUser = this.userService.findByName(user.getUsername());
+        if (oldUser != null) {
+            return ResResult.error("登录名不可用！");
         }
+        User loginUser = getLoginUser(request);
+        return this.userService.addUser(user, roleIdList, loginUser);
     }
 
     //修改用户
     @RequestMapping("user/update")
     public ResResult updateUser(User user, ServerHttpRequest request) {
-        try {
-            String rolesSelect = user.getRoleIds2();
-            if(StringUtils.isBlank(rolesSelect)){
-                return ResResult.error("请选择用户角色！");
-            }
-            List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
-                    .collect(Collectors.toList());
-            User loginUser = this.getLoginUser(request);
-            Long loginUserId= loginUser.getUserId();
-            String username = loginUser.getUsername();
-            this.userService.updateUser(user,roleIdList,loginUserId, username);
-            return ResResult.success();
+        String rolesSelect = user.getRoleIds2();
+        if(StringUtils.isBlank(rolesSelect)){
+            return ResResult.error("请选择用户角色！");
         }
-        catch (BizException e) {
-            logger.error("用户管理|修改用户|执行异常:{}", e);
-            return ResResult.error(e.getMessage());
-        }
+        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
+                .collect(Collectors.toList());
+        User loginUser = this.getLoginUser(request);
+        Long loginUserId= loginUser.getUserId();
+        String username = loginUser.getUsername();
+        this.userService.updateUser(user,roleIdList,loginUserId, username);
+        return ResResult.success();
     }
 
     //删除用户
