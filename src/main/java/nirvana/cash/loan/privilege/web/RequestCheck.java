@@ -104,7 +104,7 @@ public class RequestCheck {
     }
 
     public Mono<Void> failResBody(ServerHttpResponse response, ResResult resResult) {
-        log.info("failResBody:{}", JSON.toJSONString(resResult));
+        log.info("权限拦截:{}", JSON.toJSONString(resResult));
         //设置headers
         HttpHeaders httpHeaders = response.getHeaders();
         httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
