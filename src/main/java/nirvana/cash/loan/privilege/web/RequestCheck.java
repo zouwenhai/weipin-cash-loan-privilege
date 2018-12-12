@@ -49,8 +49,7 @@ public class RequestCheck {
 
     //check登录和权限
     public ResResult check(ServerHttpRequest request) {
-        URI uri = request.getURI();
-        String url = uri.getPath();
+        String url = request.getURI().getPath();
         //websocket url
         if(URLUtil.isWebsocketUrl(websocket_url,url)){
             return ResResult.success(null);
