@@ -55,52 +55,24 @@ eureka:
 
 ---
 eureka:
-  instance:
-    hostname: ${HOST}
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}
-    ip-address: ${HOST}
-    non-secure-port: ${PORT0:${PORT:${server.port:8080}}}
-    home-page-url: http://${HOST}:${PORT0:${PORT:${server.port:8080}}}
-    statusPageUrl: ${eureka.instance.home-page-url}/info
-    healthCheckUrl: ${eureka.instance.home-page-url}/health
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
   client:
     serviceUrl.defaultZone: http://test.lb.gs.youyuwo.com:13115/eureka/,http://test.lb.gs.youyuwo.com:13116/eureka/,http://test.lb.gs.youyuwo.com:13117/eureka/
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
 spring:
   profiles: test
 
 ---
 eureka:
-  instance:
-    hostname: ${HOST}
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}
-    ip-address: ${HOST}
-    non-secure-port: ${PORT0:${PORT:${server.port:8080}}}
-    home-page-url: http://${HOST}:${PORT0:${PORT:${server.port:8080}}}
-    statusPageUrl: ${eureka.instance.home-page-url}/info
-    healthCheckUrl: ${eureka.instance.home-page-url}/health
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
   client:
     serviceUrl.defaultZone: http://10.0.40.14:13115/eureka/,http://10.0.40.14:13116/eureka/,http://10.0.40.14:13117/eureka/
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
 spring:
   profiles: pre
 
 ---
 eureka:
-  instance:
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}
-    prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 10
   client:
     serviceUrl.defaultZone: http://172.20.20.101:13115/eureka/,http://172.20.20.102:13116/eureka/,http://172.20.20.103:13117/eureka/
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
 spring:
   profiles: prod
