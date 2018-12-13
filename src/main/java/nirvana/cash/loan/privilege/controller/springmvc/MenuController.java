@@ -27,33 +27,21 @@ public class MenuController extends BaseController {
     //菜单列表
     @RequestMapping("menu/list")
     public ResResult menuList(Menu menu) {
-        try {
-            return ResResult.success(this.menuService.findAllMenus(menu));
-        } catch (Exception e) {
-            return ResResult.error();
-        }
+        return ResResult.success(this.menuService.findAllMenus(menu));
     }
 
     //根据menuId，查询指定菜单信息
     @RequestMapping("notauth/menu/getMenu")
     public ResResult getMenu(Long menuId) {
-        try {
-            Menu menu = this.menuService.findById(menuId);
-            return ResResult.success(menu);
-        } catch (Exception e) {
-            return ResResult.error("获取信息失败！");
-        }
+        Menu menu = this.menuService.findById(menuId);
+        return ResResult.success(menu);
     }
 
     //查询菜单树（非按钮级别）
     @RequestMapping("notauth/menu/tree")
     public ResResult getMenuTree() {
-        try {
-            Tree<Menu> tree = this.menuService.getMenuTree();
-            return ResResult.success(tree);
-        } catch (Exception e) {
-            return ResResult.error("获取菜单列表失败！");
-        }
+        Tree<Menu> tree = this.menuService.getMenuTree();
+        return ResResult.success(tree);
     }
 
     //新增
@@ -65,32 +53,16 @@ public class MenuController extends BaseController {
         } else {
             name = "按钮";
         }
-        try {
-            this.menuService.addMenu(menu);
-            return ResResult.success();
-        } catch (Exception e) {
-            logger.error("菜单管理|新增菜单|执行异常:{}",e);
-            return ResResult.error("新增" + name + "失败！");
-        }
+        this.menuService.addMenu(menu);
+        return ResResult.success();
     }
 
     //修改菜单
     @RequestMapping("menu/update")
     public ResResult updateMenu(Menu menu,ServerHttpRequest request) {
-        String name;
-        if (Menu.TYPE_MENU.equals(menu.getType())) {
-            name = "菜单";
-        } else {
-            name = "按钮";
-        }
-        try {
-            Long loginUserId=this.getLoginUser(request).getUserId();
-            this.menuService.updateMenu(menu,loginUserId);
-            return ResResult.success();
-        } catch (Exception e) {
-            logger.error("菜单管理|修改菜单|执行异常:{}",e);
-            return ResResult.error("修改" + name + "失败！");
-        }
+        Long loginUserId=this.getLoginUser(request).getUserId();
+        this.menuService.updateMenu(menu,loginUserId);
+        return ResResult.success();
     }
 
     //修改菜单排序值
@@ -103,67 +75,50 @@ public class MenuController extends BaseController {
     //删除菜单
     @RequestMapping("menu/delete")
     public ResResult deleteMenus(Long menuIds,ServerHttpRequest request) {
-        try {
-            Long loginUserId=this.getLoginUser(request).getUserId();
-            this.menuService.deleteMeuns(menuIds,loginUserId);
-            return ResResult.success();
-        } catch (Exception e) {
-            logger.error("菜单管理|删除菜单|执行异常:{}",e);
-            return ResResult.error("删除失败！");
-        }
+        Long loginUserId=this.getLoginUser(request).getUserId();
+        this.menuService.deleteMeuns(menuIds,loginUserId);
+        return ResResult.success();
     }
 
     //查询菜单树（包含按钮级别）
     @RequestMapping("notauth/menu/menuButtonTree")
     public ResResult getMenuButtonTree() {
-        try {
-            Tree<Menu> tree = this.menuService.getMenuButtonTree();
-            return ResResult.success(tree);
-        } catch (Exception e) {
-            return ResResult.error("获取菜单列表失败！");
-        }
+        Tree<Menu> tree = this.menuService.getMenuButtonTree();
+        return ResResult.success(tree);
     }
 
     //查询用户权限
     @RequestMapping("/notauth/menu/findUserPermissions")
     public ResResult findUserPermissions(ServerHttpRequest request) {
-        try {
-            User user=this.getLoginUser(request);
-            if(user == null){
-                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
-            }
-            String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(),String.class);
-            List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
-            return ResResult.success(permissionList);
-        } catch (Exception e) {
-            return ResResult.error("查询用户权限失败！");
+        User user=this.getLoginUser(request);
+        if(user == null){
+            return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
+        String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(),String.class);
+        List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
+        return ResResult.success(permissionList);
     }
 
     //查询左侧菜单列表
     @RequestMapping("/notauth/menu/findLeftMenuList")
     public ResResult findLeftMenuList(ServerHttpRequest request) {
-        try {
-            User user=this.getLoginUser(request);
-            if(user == null){
-                return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
-            }
-            List<LeftMenuVo> menus=menuService.findUserMenus();
-            //转换为树结构
-            List<Tree<LeftMenuVo>> trees = new ArrayList<>();
-            for (LeftMenuVo menu : menus) {
-                Tree<LeftMenuVo> tree = new Tree<>();
-                tree.setId(menu.getMenuId().toString());
-                tree.setParentId(menu.getParentId().toString());
-                tree.setText(menu.getMenuName());
-                tree.setIcon(menu.getIcon());
-                tree.setUrl(menu.getUrl());
-                tree.setRoleIds(menu.getRoleIds());
-                trees.add(tree);
-            }
-            return ResResult.success(TreeUtils.build(trees));
-        } catch (Exception e) {
-            return ResResult.error("查询左侧菜单列表失败！");
+        User user=this.getLoginUser(request);
+        if(user == null){
+            return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
+        List<LeftMenuVo> menus=menuService.findUserMenus();
+        //转换为树结构
+        List<Tree<LeftMenuVo>> trees = new ArrayList<>();
+        for (LeftMenuVo menu : menus) {
+            Tree<LeftMenuVo> tree = new Tree<>();
+            tree.setId(menu.getMenuId().toString());
+            tree.setParentId(menu.getParentId().toString());
+            tree.setText(menu.getMenuName());
+            tree.setIcon(menu.getIcon());
+            tree.setUrl(menu.getUrl());
+            tree.setRoleIds(menu.getRoleIds());
+            trees.add(tree);
+        }
+        return ResResult.success(TreeUtils.build(trees));
     }
 }

@@ -49,8 +49,7 @@ public class RequestCheck {
 
     //check登录和权限
     public ResResult check(ServerHttpRequest request) {
-        URI uri = request.getURI();
-        String url = uri.getPath();
+        String url = request.getURI().getPath();
         //websocket url
         if(URLUtil.isWebsocketUrl(websocket_url,url)){
             return ResResult.success(null);
@@ -75,17 +74,11 @@ public class RequestCheck {
         }
         List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
         //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
-        boolean priviligeFlag = false;
-        for (Menu menu : permissionList) {
-            if (StringUtils.isBlank(menu.getPerms())) {
-                continue;
-            }
-            priviligeFlag = url.endsWith(menu.getPerms().trim());
-            if (priviligeFlag) {
-                break;
-            }
-        }
-        if (!priviligeFlag) {
+        long count = permissionList.stream()
+                .filter(t->StringUtils.isNotBlank(t.getPerms()))
+                .filter(t->url.endsWith(t.getPerms().trim()))
+                .count();
+        if(count == 0){
             return ResResult.error("您访问的接口未经授权!", ResResult.UNAUTHORIZED_URL);
         }
         return ResResult.success(user);
@@ -104,7 +97,7 @@ public class RequestCheck {
     }
 
     public Mono<Void> failResBody(ServerHttpResponse response, ResResult resResult) {
-        log.info("failResBody:{}", JSON.toJSONString(resResult));
+        log.info("权限拦截:{}", JSON.toJSONString(resResult));
         //设置headers
         HttpHeaders httpHeaders = response.getHeaders();
         httpHeaders.add("Content-Type", "application/json; charset=UTF-8");

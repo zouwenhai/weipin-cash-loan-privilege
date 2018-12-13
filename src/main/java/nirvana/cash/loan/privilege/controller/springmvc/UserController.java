@@ -49,108 +49,69 @@ public class UserController extends BaseController {
     //根据用户ID，查询指定用户信息
     @RequestMapping("notauth/user/getUser")
     public ResResult getUser(Long userId) {
-        try {
-            User user = this.userService.findById(userId);
-            return ResResult.success(user);
-        } catch (Exception e) {
-            return ResResult.error("获取用户信息失败！");
-        }
+        User user = this.userService.findById(userId);
+        return ResResult.success(user);
     }
 
 
     //新增用户
     @RequestMapping("user/add")
     public ResResult addUser(User user, ServerHttpRequest request) {
-        try {
-            String rolesSelect = user.getRoleIds2();
-            if(StringUtils.isBlank(rolesSelect)){
-                return ResResult.error("请选择用户角色！");
-            }
-            List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
-                    .collect(Collectors.toList());
-            user.setUsername(user.getUsername().trim());
-            User oldUser = this.userService.findByName(user.getUsername());
-            if (oldUser != null) {
-                return ResResult.error("登录名不可用！");
-            }
-            User loginUser = getLoginUser(request);
-            return this.userService.addUser(user, roleIdList, loginUser);
+        String rolesSelect = user.getRoleIds2();
+        if(StringUtils.isBlank(rolesSelect)){
+            return ResResult.error("请选择用户角色！");
         }
-        catch (BizException e) {
-            logger.error("用户管理|新增用户|执行异常:{}", e);
-            return ResResult.error(e.getMessage());
+        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
+                .collect(Collectors.toList());
+        user.setUsername(user.getUsername().trim());
+        User oldUser = this.userService.findByName(user.getUsername());
+        if (oldUser != null) {
+            return ResResult.error("登录名不可用！");
         }
-        catch (Exception e) {
-            logger.error("用户管理|新增用户|执行异常:{}", e);
-            return ResResult.error("新增用户失败！");
-        }
+        User loginUser = getLoginUser(request);
+        return this.userService.addUser(user, roleIdList, loginUser);
     }
 
     //修改用户
     @RequestMapping("user/update")
     public ResResult updateUser(User user, ServerHttpRequest request) {
-        try {
-            String rolesSelect = user.getRoleIds2();
-            if(StringUtils.isBlank(rolesSelect)){
-                return ResResult.error("请选择用户角色！");
-            }
-            List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
-                    .collect(Collectors.toList());
-            User loginUser = this.getLoginUser(request);
-            Long loginUserId= loginUser.getUserId();
-            String username = loginUser.getUsername();
-            this.userService.updateUser(user,roleIdList,loginUserId, username);
-            return ResResult.success();
+        String rolesSelect = user.getRoleIds2();
+        if(StringUtils.isBlank(rolesSelect)){
+            return ResResult.error("请选择用户角色！");
         }
-        catch (BizException e) {
-            logger.error("用户管理|修改用户|执行异常:{}", e);
-            return ResResult.error(e.getMessage());
-        }
-        catch (Exception e) {
-            logger.error("用户管理|修改用户|执行异常:{}", e);
-            return ResResult.error("修改用户失败！");
-        }
+        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
+                .collect(Collectors.toList());
+        User loginUser = this.getLoginUser(request);
+        Long loginUserId= loginUser.getUserId();
+        String username = loginUser.getUsername();
+        this.userService.updateUser(user,roleIdList,loginUserId, username);
+        return ResResult.success();
     }
 
     //删除用户
     @RequestMapping("user/delete")
     public ResResult deleteUser(Integer id) {
-        try {
-            this.userService.deleteUser(id);
-            return ResResult.success();
-        } catch (Exception e) {
-            logger.error("用户管理|删除用户|执行异常:{}", e);
-            return ResResult.error("删除用户失败！");
-        }
+        this.userService.deleteUser(id);
+        return ResResult.success();
     }
 
     //修改密码
     @RequestMapping("user/updatePassword")
     public ResResult updatePassword(String newpassword,Long userId) {
-        try {
-            User user = new User();
-            user.setUserId(userId);
-            this.userService.updatePassword(newpassword, userId);
-            return ResResult.success();
-        } catch (Exception e) {
-            logger.error("用户管理|修改密码|执行异常:{}", e);
-            return ResResult.error("修改密码失败！");
-        }
+        User user = new User();
+        user.setUserId(userId);
+        this.userService.updatePassword(newpassword, userId);
+        return ResResult.success();
     }
 
     //校验登录名
     @RequestMapping("notauth/user/checkUserName")
     public ResResult checkUserName(String userName) {
-        try {
-            User user = this.userService.findByName(userName.trim());
-            if (user != null) {
-                return ResResult.error("登录名不可用！");
-            }
-            return ResResult.success("登录名可用！");
-        } catch (Exception e) {
-            logger.error("用户管理|校验登录名|执行异常:{}", e);
-            return ResResult.error("校验登录名失败！");
+        User user = this.userService.findByName(userName.trim());
+        if (user != null) {
+            return ResResult.error("登录名不可用！");
         }
+        return ResResult.success("登录名可用！");
     }
 
     //角色列表,新增用户时使用
