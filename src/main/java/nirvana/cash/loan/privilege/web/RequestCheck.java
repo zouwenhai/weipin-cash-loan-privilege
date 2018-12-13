@@ -43,6 +43,8 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/notauth/isLogin");
         noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
+        //监控
+        noLoginUrls.add("/actuator/info");
     }
 
     private static String websocket_url="/privilege/notauth/webSocket/*";
