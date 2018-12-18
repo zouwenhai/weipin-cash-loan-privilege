@@ -62,19 +62,16 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         //从缓存获取关联产品编号
         String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
         String productNos = redisService.get(redisKey, String.class);
-        if("empty".equals(productNos)){
-            return default_product_no;
-        }
         if (StringUtils.isNotBlank(productNos)) {
             return productNos;
         }
         //缓存未获取到，从数据库获取授权产品编号
         productNos = this.findProductNosByDeptId(deptId);
         if (StringUtils.isBlank(productNos)) {
-            productNos = "empty";
+            productNos = default_product_no;
         }
         redisService.putWithExpireTime(redisKey, productNos, 60*6);
-        return "empty".equals(productNos)?"0":productNos;
+        return productNos;
     }
 
     @Transactional
