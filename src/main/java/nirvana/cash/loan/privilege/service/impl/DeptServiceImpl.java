@@ -54,8 +54,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 			example.createCriteria().andCondition("dept_name=", dept.getDeptName());
 		}
 		example.setOrderByClause("dept_id");
-		List<Dept> deptList =  this.selectByExample(example);
-		return deptList;
+		return  this.selectByExample(example);
 	}
 
 	@Override
