@@ -4,9 +4,11 @@ import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,15 +61,17 @@ public class DeptController extends BaseController {
 
 	//修改部门
 	@RequestMapping("dept/update")
-	public ResResult updateRole(Dept dept) {
-		this.deptService.updateDept(dept);
+	public ResResult updateRole(ServerHttpRequest request,Dept dept) {
+		User loginUser = this.getLoginUser(request);
+		this.deptService.updateDept(dept,loginUser);
 		return ResResult.success();
 	}
 
 	//删除部门
 	@RequestMapping("dept/delete")
-	public ResResult deleteDept(Long id) {
-		this.deptService.deleteDepts(id);
+	public ResResult deleteDept(ServerHttpRequest request,Long id) {
+		User loginUser = this.getLoginUser(request);
+		this.deptService.deleteDepts(id,loginUser);
 		return ResResult.success();
 	}
 

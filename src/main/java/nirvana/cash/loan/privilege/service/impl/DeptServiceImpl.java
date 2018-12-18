@@ -6,8 +6,10 @@ import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.dao.UserMapper;
 import nirvana.cash.loan.privilege.domain.Dept;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
+import nirvana.cash.loan.privilege.service.LogoutUserService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +34,8 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	private DeptProductService deptProductService;
 	@Autowired
 	private RedisService redisService;
+	@Autowired
+	private LogoutUserService logoutUserService;
 
 	@Override
 	public Tree<Dept> getDeptTree() {
@@ -87,7 +91,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 
 	@Override
 	@Transactional
-	public void deleteDepts(Long deptId) {
+	public void deleteDepts(Long deptId, User loginUser) {
 		List<Dept> depts = this.findAllDepts(new Dept());
 		//转换列表
 		List<FilterId> allList = new ArrayList<>();
@@ -102,7 +106,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 			list.add(item.getId()+"");
 		}
 		this.batchDelete(list, "deptId", Dept.class);
-		userMapper.setDeptIdNull(deptId);
 
 		//删除部门产品关联信息
 		deptProductService.delete(list);
@@ -110,6 +113,16 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 		//删除关联产品缓存
 		String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
 		redisService.delete(redisKey);
+
+		//关联登录用户强制退出
+		Example example = new Example(User.class);
+		example.createCriteria().andIn("deptId",list);
+		List<User> userList =  userMapper.selectByExample(example);
+		List<Long> userIds = userList.stream().filter(t->t.getDeptId()!=null && loginUser.getDeptId()!=null).filter(t->t.getDeptId()!=loginUser.getDeptId()).map(t->t.getUserId()).collect(Collectors.toList());
+		logoutUserService.batchLogoutUser(userIds);
+
+		//部门ID，重置为null
+		userMapper.setDeptIdNull(deptId);
 	}
 
 	@Override
@@ -119,8 +132,9 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 
 	@Override
 	@Transactional
-	public void updateDept(Dept dept) {
+	public void updateDept(Dept dept, User loginUser) {
 		this.updateNotNull(dept);
+
 		//重新添加部门产品关联信息
 		Long deptId = dept.getDeptId();
 		String productNos = dept.getProductNos();
@@ -130,6 +144,13 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 		//删除关联产品缓存
 		String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
 		redisService.delete(redisKey);
+
+		//关联登录用户强制退出
+		Example example = new Example(User.class);
+		example.createCriteria().andEqualTo("deptId",deptId);
+		List<User> userList =  userMapper.selectByExample(example);
+		List<Long> userIds = userList.stream().filter(t->t.getDeptId()!=null && loginUser.getDeptId()!=null).filter(t->t.getDeptId()!=loginUser.getDeptId()).map(t->t.getUserId()).collect(Collectors.toList());
+		logoutUserService.batchLogoutUser(userIds);
 	}
 
 }
