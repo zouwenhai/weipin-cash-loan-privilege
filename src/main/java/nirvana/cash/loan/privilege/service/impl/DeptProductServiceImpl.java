@@ -74,7 +74,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
             productNos = "empty";
         }
         redisService.putWithExpireTime(redisKey, productNos, 60*6);
-        return productNos;
+        return "empty".equals(productNos)?"0":productNos;
     }
 
     @Transactional
