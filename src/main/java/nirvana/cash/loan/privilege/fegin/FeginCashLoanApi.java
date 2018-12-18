@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(value = "yofishdk-cash-loan-api", fallback = HystrixCashLoanApi.class)
 public interface FeginCashLoanApi {
 
-    @RequestMapping(value = "/getAllProductList", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/product/getAllProductList", method = RequestMethod.GET)
     NewResponseUtil getAllProductList();
 
 }
