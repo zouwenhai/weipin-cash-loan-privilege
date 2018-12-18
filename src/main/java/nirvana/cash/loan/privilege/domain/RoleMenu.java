@@ -1,10 +1,13 @@
 package nirvana.cash.loan.privilege.domain;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 
+@Data
 @Table(name = "tb_yofishdk_auth_role_menu")
 public class RoleMenu implements Serializable {
 	
@@ -15,32 +18,4 @@ public class RoleMenu implements Serializable {
 
     @Column(name = "MENU_ID")
     private Long menuId;
-
-    /**
-     * @return ROLE_ID
-     */
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    /**
-     * @param roleId
-     */
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    /**
-     * @return MENU_ID
-     */
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    /**
-     * @param menuId
-     */
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
-    }
 }

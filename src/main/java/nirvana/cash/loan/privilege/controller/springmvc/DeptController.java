@@ -4,6 +4,7 @@ import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
+import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +18,17 @@ public class DeptController extends BaseController {
 
 	@Autowired
 	private DeptService deptService;
+	@Autowired
+	private DeptProductService deptProductService;
 
 	//部门列表
 	@RequestMapping("dept/list")
 	public ResResult deptList(Dept dept) {
-		List<Dept> list = this.deptService.findAllDepts(dept);;
+		List<Dept> list = this.deptService.findAllDepts(dept);
+		list.forEach(t->{
+			String productNos =  deptProductService.findProductNosByDeptId(t.getDeptId());
+			t.setProductNos(productNos);
+		});
 		return ResResult.success(list);
 	}
 

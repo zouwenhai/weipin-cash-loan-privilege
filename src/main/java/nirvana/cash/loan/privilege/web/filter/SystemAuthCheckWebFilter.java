@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -25,6 +26,8 @@ public class SystemAuthCheckWebFilter implements WebFilter {
 
     @Autowired
     private RequestCheck requestCheck;
+    @Autowired
+    private DeptProductService deptProductService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain webFilterChain) {
@@ -43,11 +46,14 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         }
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
+        //产品编号
+        String productNos = deptProductService.findProductNosByDeptIdFromCache(user.getDeptId());
         ServerHttpRequest host = null;
         host = exchange.getRequest()
                 .mutate()
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
+                .header("authShowIds",productNos)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
         return webFilterChain.filter(build);

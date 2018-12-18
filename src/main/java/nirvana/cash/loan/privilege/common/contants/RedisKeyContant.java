@@ -17,6 +17,8 @@ public class RedisKeyContant {
 
     public final static String yofishdk_msg_notice_config = "yofishdk_msg_notice_config";
 
+    public final static String yofishdk_auth_productnos_prefix = "yofishdk_auth_productnos_prefix_";
+
 
 
 }

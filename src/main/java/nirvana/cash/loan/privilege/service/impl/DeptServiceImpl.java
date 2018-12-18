@@ -1,12 +1,15 @@
 package nirvana.cash.loan.privilege.service.impl;
 
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
-import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
-import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.dao.UserMapper;
 import nirvana.cash.loan.privilege.domain.Dept;
+import nirvana.cash.loan.privilege.service.DeptProductService;
+import nirvana.cash.loan.privilege.service.DeptService;
+import nirvana.cash.loan.privilege.service.base.RedisService;
+import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -24,6 +28,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 
 	@Autowired
 	private UserMapper userMapper;
+	@Autowired
+	private DeptProductService deptProductService;
+	@Autowired
+	private RedisService redisService;
 
 	@Override
 	public Tree<Dept> getDeptTree() {
@@ -41,16 +49,13 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 
 	@Override
 	public List<Dept> findAllDepts(Dept dept) {
-		try {
-			Example example = new Example(Dept.class);
-			if(StringUtils.isNotBlank(dept.getDeptName())){
-				example.createCriteria().andCondition("dept_name=", dept.getDeptName());
-			}
-			example.setOrderByClause("dept_id");
-			return this.selectByExample(example);
-		} catch (Exception e) {
-			return new ArrayList<>();
+		Example example = new Example(Dept.class);
+		if(StringUtils.isNotBlank(dept.getDeptName())){
+			example.createCriteria().andCondition("dept_name=", dept.getDeptName());
 		}
+		example.setOrderByClause("dept_id");
+		List<Dept> deptList =  this.selectByExample(example);
+		return deptList;
 	}
 
 	@Override
@@ -74,28 +79,38 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 		dept.setDeptId(this.getSequence(Dept.SEQ));
 		dept.setCreateTime(new Date());
 		this.save(dept);
+
+		//添加部门产品关联信息
+		Long deptId = dept.getDeptId();
+		String productNos = dept.getProductNos();
+		deptProductService.insert(deptId,productNos);
 	}
 
 	@Override
 	@Transactional
 	public void deleteDepts(Long deptId) {
 		List<Dept> depts = this.findAllDepts(new Dept());
-		if(depts!=null && depts.size()>0){
-			//转换列表
-			List<FilterId> allList = new ArrayList<>();
-			depts.forEach(t -> {
-				FilterId filterId = new FilterId(t.getDeptId(), t.getParentId(), t.getDeptName());
-				allList.add(filterId);
-			});
-			//开始处理...
-			List<FilterId> filterIdList = FilterId.filterRemoveList(allList, deptId);
-			List<String> list =new ArrayList<>();
-			for(FilterId item:filterIdList){
-				list.add(item.getId()+"");
-			}
-			this.batchDelete(list, "deptId", Dept.class);
-			userMapper.setDeptIdNull(deptId);
+		//转换列表
+		List<FilterId> allList = new ArrayList<>();
+		depts.forEach(t -> {
+			FilterId filterId = new FilterId(t.getDeptId(), t.getParentId(), t.getDeptName());
+			allList.add(filterId);
+		});
+		//开始处理...
+		List<FilterId> filterIdList = FilterId.filterRemoveList(allList, deptId);
+		List<String> list =new ArrayList<>();
+		for(FilterId item:filterIdList){
+			list.add(item.getId()+"");
 		}
+		this.batchDelete(list, "deptId", Dept.class);
+		userMapper.setDeptIdNull(deptId);
+
+		//删除部门产品关联信息
+		deptProductService.delete(list);
+
+		//删除关联产品缓存
+		String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
+		redisService.delete(redisKey);
 	}
 
 	@Override
@@ -107,6 +122,15 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	@Transactional
 	public void updateDept(Dept dept) {
 		this.updateNotNull(dept);
+		//重新添加部门产品关联信息
+		Long deptId = dept.getDeptId();
+		String productNos = dept.getProductNos();
+		deptProductService.delete(deptId);
+		deptProductService.insert(deptId,productNos);
+
+		//删除关联产品缓存
+		String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
+		redisService.delete(redisKey);
 	}
 
 }

@@ -21,12 +21,13 @@
     <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
     <result column="is_delete" jdbcType="DECIMAL" property="isDelete" />
+	  <result column="SEAT_NUMBER" jdbcType="VARCHAR" property="seatNumber" />
   </resultMap>
   
   <select id="findUserWithDept" resultType="user" parameterType="user">
   		select
 			u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-			u.ssex,d.dept_name deptName,u.name,
+			u.ssex,d.dept_name deptName,u.name,u.seat_number seatNumber,
 		   ( select
 			  listagg(role_id,',') within group (order by role_id)  as  role_ids
 			  from tb_yofishdk_auth_user_role ur
