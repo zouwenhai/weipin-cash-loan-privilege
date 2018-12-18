@@ -8,6 +8,7 @@ import nirvana.cash.loan.privilege.common.enums.OrderStatusEnum;
 import nirvana.cash.loan.privilege.common.util.MsgModuleUtil;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
 import nirvana.cash.loan.privilege.mq.facade.OrderStatusChangeFacade;
+import nirvana.cash.loan.privilege.mq.message.OldMessageProcessor;
 import nirvana.cash.loan.privilege.service.UserService;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.ExchangeTypes;
@@ -40,6 +41,8 @@ public class OrderStatusChangeReceiver {
     private AmqpTemplate rabbitTemplate;
     @Autowired
     private UserService userService;
+    @Autowired
+    private OldMessageProcessor processor;
 
     /**
      * 接收订单状态变更，提取需要的消息，发送到消息中心的mq
@@ -57,8 +60,21 @@ public class OrderStatusChangeReceiver {
     public void receive(String msg) {
         log.info("接收到订单状态变更:msg={}", msg);
         OrderStatusChangeFacade facade = JSON.parseObject(msg, OrderStatusChangeFacade.class);
-        //消息通知模块
+
         OrderStatusEnum orderStatusEnum = OrderStatusEnum.getEnum(facade.getOrderStatus());
+        //对旧消息进行已读处理
+        processor.markAsRead(facade.getOrderId(), orderStatusEnum);
+
+        //如果同一订单重新机审仍然失败，不再重复发送通知，而是原通知保持未读
+        if (OrderStatusEnum.SysFailed == orderStatusEnum) {
+            boolean sysFailedAgain = processor.isSysFailedAgain(facade.getOrderId());
+            if (sysFailedAgain) {
+                log.info("重新机审失败，不再次发送新消息,orderId:{}", facade.getOrderId());
+                return;
+            }
+        }
+
+        //消息通知模块
         MsgModuleEnum msgModuleEnum = MsgModuleUtil.transOrderStatus2MsgModule(orderStatusEnum);
         if (msgModuleEnum == null) {
             log.info("未设置该消息通知模块或订单状态变更消息队列不处理此消息:uuid={}", facade.getUuid());

@@ -14,6 +14,7 @@ import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.domain.MsgList;
 import nirvana.cash.loan.privilege.domain.vo.MsgConfigDetailVo;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
+import nirvana.cash.loan.privilege.mq.message.MessageFilter;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import nirvana.cash.loan.privilege.service.UserService;
@@ -64,6 +65,8 @@ public class MessageReceiver {
     FreemarkerUtil freemarkerUtil;
     @Autowired
     private AmqpTemplate rabbitTemplate;
+    @Autowired
+    private MessageFilter messageFilter;
 
     final static String template_email_notice_msg = "email_notice_msg.ftl";
 
@@ -141,6 +144,9 @@ public class MessageReceiver {
         targetUserNames.forEach(n -> {
             Optional.ofNullable(userService.findByName(n)).ifPresent(u -> targetUsers.add(u.getUserId()));
         });
+
+        //TODO 过滤掉没有权限接收消息的用户
+
         return targetUsers;
     }
 

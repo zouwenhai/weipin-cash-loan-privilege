@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.enums.OrderStatusEnum;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.dao.MsgListMapper;
 import nirvana.cash.loan.privilege.domain.MsgList;
@@ -13,6 +14,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Administrator on 2018/11/5.
@@ -94,5 +96,16 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
                 .andEqualTo("status", 0)
                 .andEqualTo("isDelete", 0);
         return msgListMapper.selectByExample(example);
+    }
+
+    @Override
+    public void markAsRead(String orderId, Integer orderStatus) {
+        String orderStatusDesc = Optional.ofNullable(OrderStatusEnum.getEnum(orderStatus)).map(o -> o.getDesc()).orElseGet(() -> "订单状态未知");
+        msgListMapper.maskAsRead(orderId, orderStatusDesc);
+    }
+
+    @Override
+    public int selectCountByOrderIdAndStatus(String orderId, String orderStatus) {
+        return msgListMapper.selectCountByOrderIdAndStatus(orderId, orderStatus);
     }
 }
