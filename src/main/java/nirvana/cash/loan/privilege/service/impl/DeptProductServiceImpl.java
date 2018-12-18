@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.dao.DeptProductMapper;
 import nirvana.cash.loan.privilege.domain.DeptProduct;
@@ -10,6 +11,7 @@ import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,7 +40,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         if (!NewResponseUtil.SUCCESS.equals(responseUtil.getCode())) {
             return new ArrayList<>();
         }
-        return (List<CashLoanGetAllProductsFacade>) responseUtil.getData();
+        return JSON.parseArray(JSON.toJSONString(responseUtil.getData()),CashLoanGetAllProductsFacade.class);
     }
 
     @Override
