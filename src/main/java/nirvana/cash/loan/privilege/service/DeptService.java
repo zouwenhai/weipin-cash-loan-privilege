@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.service;
 import java.util.List;
 
 import nirvana.cash.loan.privilege.common.domain.Tree;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.base.IService;
 import nirvana.cash.loan.privilege.domain.Dept;
 
@@ -18,7 +19,7 @@ public interface DeptService extends IService<Dept> {
 	
 	void addDept(Dept dept);
 	
-	void updateDept(Dept dept);
+	void updateDept(Dept dept, User loginUser);
 
-	void deleteDepts(Long deptId);
+	void deleteDepts(Long deptId, User loginUser);
 }
