@@ -39,10 +39,10 @@ public class EmailTest extends BaseTest {
         List<String> toAddresList = new ArrayList<>();
         toAddresList.add("liuxiaowei@yofish.com");
         //邮件标题
-        String title = MsgModuleEnum.CHECK_COLL.getName()+"模块-有新订单需要您处理";
+        String title = MsgModuleEnum.LOAN_CHECK_PENDING.getName()+"模块-有新订单需要您处理";
         //邮件内容
         Map<String,String> msgmap=new HashMap();
-        msgmap.put("msgModule", MsgModuleEnum.CHECK_COLL.getName());
+        msgmap.put("msgModule", MsgModuleEnum.LOAN_CHECK_PENDING.getName());
         msgmap.put("orderId","20180929000015");
         msgmap.put("orderStatus", OrderStatusEnum.LoanFailed.getDesc());
         msgmap.put("time", DateUtil.getDateTime());

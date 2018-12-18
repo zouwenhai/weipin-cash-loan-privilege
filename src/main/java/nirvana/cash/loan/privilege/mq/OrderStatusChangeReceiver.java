@@ -81,7 +81,7 @@ public class OrderStatusChangeReceiver {
             return;
         }
 
-        //只有人工复审和待催收需要指定发个给某个具体的用户,待催收消息不在这里处理
+        //只有人工复审需要指定发个给某个具体的用户
         if (MsgModuleEnum.MANUAL_REVIEW != msgModuleEnum) {
             facade.setOrderUser(null);
         }

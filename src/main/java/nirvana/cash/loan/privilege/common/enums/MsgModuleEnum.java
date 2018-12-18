@@ -15,9 +15,7 @@ public enum MsgModuleEnum {
     // 3-放款失败
     LOAN_FAIL(3, "放款失败"),
     // 4-放款待审核
-    LOAN_CHECK_PENDING(4, "放款待审核"),
-    // 5-待催收
-    CHECK_COLL(5, "待催收");
+    LOAN_CHECK_PENDING(4, "放款待审核");
 
     private int code;
 

@@ -138,4 +138,15 @@ public class BaseTest {
         amqpTemplate.convertAndSend(mcExchange, mcRoutingKey, JSONObject.toJSONString(messageFacade));
     }
 
+    @Autowired
+    private MsgListService msgListService;
+
+    @Test
+    public void test8(){
+        OrderStatusEnum a = OrderStatusEnum.SysFailed;
+        int count = msgListService.selectCountByOrderIdAndStatus("1000000000", "已结清");
+        System.out.println(count);
+        msgListService.markAsRead("10086",a.getValue());
+    }
+
 }

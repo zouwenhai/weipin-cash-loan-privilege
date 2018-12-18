@@ -144,10 +144,8 @@ public class MessageReceiver {
         targetUserNames.forEach(n -> {
             Optional.ofNullable(userService.findByName(n)).ifPresent(u -> targetUsers.add(u.getUserId()));
         });
-
-        //TODO 过滤掉没有权限接收消息的用户
-
-        return targetUsers;
+        return targetUsers.stream().filter(u -> messageFilter.hasPrivilegeToReceive(u, facade))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -164,7 +162,6 @@ public class MessageReceiver {
         if (CollectionUtils.isEmpty(userIds)) {
             return;
         }
-
         //没有指定发送给谁，则发送给所配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {
             Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> Collections.emptyList()).forEach(u -> {
@@ -209,7 +206,6 @@ public class MessageReceiver {
         if (CollectionUtils.isEmpty(userIds)) {
             return;
         }
-
         //没有指定发送给谁，则发送给所有配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {
             List<String> toUsers = Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> new ArrayList<>())
