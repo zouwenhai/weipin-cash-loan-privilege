@@ -144,8 +144,13 @@ public class MessageReceiver {
         targetUserNames.forEach(n -> {
             Optional.ofNullable(userService.findByName(n)).ifPresent(u -> targetUsers.add(u.getUserId()));
         });
-        return targetUsers.stream().filter(u -> messageFilter.hasPrivilegeToReceive(u, facade))
-                .collect(Collectors.toSet());
+        return targetUsers.stream().filter(u -> {
+            boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(u, facade);
+            if (!hasPrivilege) {
+                log.info("用户：{}没有产品：{}的管理权限，不发送消息", u, facade.getProductId());
+            }
+            return hasPrivilege;
+        }).collect(Collectors.toSet());
     }
 
     /**
