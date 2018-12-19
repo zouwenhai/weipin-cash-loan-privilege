@@ -15,8 +15,6 @@ import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 @Table(name = "tb_yofishdk_auth_dept")
 public class Dept implements Serializable {
 
-	private static final long serialVersionUID = -7790334862410409053L;
-
 	public static final String SEQ = "seq_tb_yofishdk_auth_dept";
 
 	@Id
@@ -37,6 +35,9 @@ public class Dept implements Serializable {
 	@Column(name = "CREATE_TIME")
 	@ExportConfig(value = "创建时间", convert = "c:TimeConvert")
 	private Date createTime;
+
+	@Column(name = "IS_DELETE")
+	private Integer isDelete;
 
 	@Transient
 	private String productNos;

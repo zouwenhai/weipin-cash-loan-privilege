@@ -4,6 +4,7 @@ import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
+import nirvana.cash.loan.privilege.dao.DeptMapper;
 import nirvana.cash.loan.privilege.dao.UserMapper;
 import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.User;
@@ -36,6 +37,8 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	private RedisService redisService;
 	@Autowired
 	private LogoutUserService logoutUserService;
+	@Autowired
+	private DeptMapper deptMapper;
 
 	@Override
 	public Tree<Dept> getDeptTree() {
@@ -54,8 +57,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	@Override
 	public List<Dept> findAllDepts(Dept dept) {
 		Example example = new Example(Dept.class);
+		Example.Criteria criteria= example.createCriteria()
+				.andEqualTo("isDelete",0);
 		if(StringUtils.isNotBlank(dept.getDeptName())){
-			example.createCriteria().andCondition("dept_name=", dept.getDeptName());
+			criteria.andEqualTo("deptName",dept.getDeptName());
 		}
 		example.setOrderByClause("dept_id");
 		return  this.selectByExample(example);
@@ -64,7 +69,9 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	@Override
 	public Dept findByName(String deptName) {
 		Example example = new Example(Dept.class);
-		example.createCriteria().andCondition("lower(dept_name) =", deptName.toLowerCase());
+		example.createCriteria()
+				.andEqualTo("isDelete",0)
+				.andEqualTo("deptName",deptName);
 		List<Dept> list = this.selectByExample(example);
 		if (list.size() == 0) {
 			return null;
@@ -81,6 +88,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 			dept.setParentId(0L);
 		dept.setDeptId(this.getSequence(Dept.SEQ));
 		dept.setCreateTime(new Date());
+		dept.setIsDelete(0);
 		this.save(dept);
 
 		//添加部门产品关联信息
@@ -105,19 +113,21 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 		for(FilterId item:filterIdList){
 			list.add(item.getId()+"");
 		}
-		this.batchDelete(list, "deptId", Dept.class);
-
-		//删除部门产品关联信息
-		deptProductService.delete(list);
+		//更新为删除状态
+		Example exampleDept = new Example(Dept.class);
+		exampleDept.createCriteria().andIn("deptId",list);
+		Dept updateDept = new Dept();
+		updateDept.setIsDelete(1);
+		deptMapper.updateByExampleSelective(updateDept,exampleDept);
 
 		//删除关联产品缓存
 		String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
 		redisService.delete(redisKey);
 
 		//关联登录用户强制退出
-		Example example = new Example(User.class);
-		example.createCriteria().andIn("deptId",list);
-		List<User> userList =  userMapper.selectByExample(example);
+		Example exampleUser = new Example(User.class);
+		exampleUser.createCriteria().andIn("deptId",list);
+		List<User> userList =  userMapper.selectByExample(exampleUser);
 		List<Long> userIds = userList.stream().filter(t->t.getDeptId()!=null).filter(t->!t.getDeptId().equals(loginUser.getDeptId())).map(t->t.getUserId()).collect(Collectors.toList());
 		logoutUserService.batchLogoutUser(userIds);
 

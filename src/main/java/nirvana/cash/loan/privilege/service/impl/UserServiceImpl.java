@@ -66,14 +66,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
 	@Override
 	public List<User> findUserWithDept(User user) {
-		try {
-			if(StringUtils.isNotBlank(user.getUsername())){
-				user.setUsername(user.getUsername().toLowerCase());
-			}
-			return this.userMapper.findUserWithDept(user);
-		} catch (Exception e) {
-			return new ArrayList<>();
+		if(StringUtils.isNotBlank(user.getUsername())){
+			user.setUsername(user.getUsername().toLowerCase());
 		}
+		return this.userMapper.findUserWithDept(user);
 	}
 
 	@Override

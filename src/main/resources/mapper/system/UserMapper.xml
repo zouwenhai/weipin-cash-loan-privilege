@@ -34,8 +34,8 @@
 		 	 where ur.user_id = u.USER_ID
 		    )  roleIds2
 	    from tb_yofishdk_auth_user u
-  		left join tb_yofishdk_auth_dept d on(u.dept_id = d.dept_id)
-  		where is_delete = 0
+  		left join tb_yofishdk_auth_dept d on(u.dept_id = d.dept_id and d.is_delete = 0)
+  		where u.is_delete = 0
   		<if test="username != null and username != ''">
         	AND lower(u.username) = #{username}
 	    </if>

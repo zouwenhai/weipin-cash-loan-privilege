@@ -23,7 +23,7 @@ public class DeptServiceTest extends BaseTest {
         Dept dept = new Dept();
         dept.setDeptId(id);
         dept.setParentId(0L);
-        dept.setDeptName("v5-部门1");
+        dept.setDeptName("v5-部门2");
         dept.setProductNos("1,2,3");
         deptService.addDept(dept);
         System.err.println("done");
