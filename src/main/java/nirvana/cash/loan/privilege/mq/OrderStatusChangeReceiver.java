@@ -89,11 +89,11 @@ public class OrderStatusChangeReceiver {
         MessageFacade messageFacade = new MessageFacade();
         BeanUtils.copyProperties(facade, messageFacade);
         messageFacade.setMessageModule(msgModuleEnum.getCode());
+        messageFacade.setDetails(facade.getOrderRemark());
         Optional.ofNullable(facade.getOrderUser()).map(n -> userService.findByName(n)).ifPresent(u -> {
             List userIds = new ArrayList();
             userIds.add(u.getUserId());
             messageFacade.setUserIds(userIds);
-            messageFacade.setDetails(facade.getOrderRemark());
         });
         rabbitTemplate.convertAndSend(mcExchange, mcRoutingKey, JSONObject.toJSONString(messageFacade));
     }

@@ -168,8 +168,9 @@ public class BaseTest {
     public void test10() {
         OrderStatusChangeFacade orderStatusChangeFacade = new OrderStatusChangeFacade();
         orderStatusChangeFacade.setUuid(UUID.randomUUID().toString());
-        orderStatusChangeFacade.setOrderId("123456892");
+        orderStatusChangeFacade.setOrderId("132234545572121");
         orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.SysFailed.getValue());
+        orderStatusChangeFacade.setOrderRemark("<<<<<<<<<<<<>??????<>>>>>>>>>>>>");
         //1.
         //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.OrderExpire.getValue());
         //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.SysRefused.getValue());
