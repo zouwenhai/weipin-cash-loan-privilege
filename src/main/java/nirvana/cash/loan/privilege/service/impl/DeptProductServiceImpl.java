@@ -65,7 +65,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         if (StringUtils.isNotBlank(productNos)) {
             return productNos;
         }
-        //缓存未获取到，从数据库获取授权产品编号
+        //缓存未获取到，从数据库获取关联产品编号
         productNos = this.findProductNosByDeptId(deptId);
         if (StringUtils.isBlank(productNos)) {
             productNos = default_product_no;
