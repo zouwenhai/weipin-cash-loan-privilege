@@ -7,12 +7,14 @@ import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/privilige")
@@ -31,6 +33,13 @@ public class DeptController extends BaseController {
 			String productNos =  deptProductService.findProductNosByDeptId(t.getDeptId());
 			t.setProductNos(productNos);
 		});
+		String productNos = dept.getProductNos();
+		if(StringUtils.isNotBlank(dept.getProductNos())){
+			list=list.stream()
+					.filter(t->StringUtils.isNotBlank(t.getProductNos()))
+					.filter(t->t.getProductNos().contains(productNos))
+					.collect(Collectors.toList());
+		}
 		return ResResult.success(list);
 	}
 
