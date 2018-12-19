@@ -10,6 +10,7 @@
     <result column="DEPT_NAME" jdbcType="VARCHAR" property="deptName" />
     <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum" />
     <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="IS_DELETE" jdbcType="DECIMAL" property="isDelete" />
   </resultMap>
 
 </mapper>
