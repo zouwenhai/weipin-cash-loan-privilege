@@ -70,7 +70,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         if (StringUtils.isBlank(productNos)) {
             productNos = default_product_no;
         }
-        redisService.putWithExpireTime(redisKey, productNos, 60*6);
+        redisService.putWithExpireTime(redisKey, productNos, 60*60*6);
         return productNos;
     }
 
