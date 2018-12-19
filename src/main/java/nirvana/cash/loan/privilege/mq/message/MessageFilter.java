@@ -35,7 +35,7 @@ public class MessageFilter {
      * @return
      */
     public boolean hasPrivilegeToReceive(Long userId, MessageFacade messageFacade) {
-        Long productId = messageFacade.getProductId();
+        Long productId = messageFacade.getProductNo();
         if (productId == null) {
             return false;
         }

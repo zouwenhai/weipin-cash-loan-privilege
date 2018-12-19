@@ -49,6 +49,6 @@ public class MessageFacade {
     /**
      * 产品id
      */
-    private Long productId;
+    private Long productNo;
 
 }

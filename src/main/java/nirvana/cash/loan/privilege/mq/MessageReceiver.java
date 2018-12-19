@@ -167,7 +167,7 @@ public class MessageReceiver {
                 Long id = u.getUserId();
                 boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(id, facade);
                 if (!hasPrivilege) {
-                    log.info("用户：{}没有产品：{}的管理权限，不发送消息", id, facade.getProductId());
+                    log.info("用户：{}没有产品：{}的管理权限，不发送消息", id, facade.getProductNo());
                 }
                 return hasPrivilege;
             }).forEach(u -> {
@@ -188,7 +188,7 @@ public class MessageReceiver {
         targetUsers.stream().filter(id -> userIds.contains(id)).filter(id -> {
             boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(id, facade);
             if (!hasPrivilege) {
-                log.info("用户：{}没有产品：{}的管理权限，不发送消息", id, facade.getProductId());
+                log.info("用户：{}没有产品：{}的管理权限，不发送消息", id, facade.getProductNo());
             }
             return hasPrivilege;
         }).forEach(id -> {
@@ -224,7 +224,7 @@ public class MessageReceiver {
                     .stream().filter(u -> {
                         boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(u.getUserId(), facade);
                         if (!hasPrivilege) {
-                            log.info("用户：{}没有产品：{}的管理权限，不发送消息", u.getUserId(), facade.getProductId());
+                            log.info("用户：{}没有产品：{}的管理权限，不发送邮件", u.getUserId(), facade.getProductNo());
                         }
                         return hasPrivilege;
                     }).map(u -> u.getEmail()).collect(Collectors.toList());
@@ -236,7 +236,7 @@ public class MessageReceiver {
                 .filter(u -> {
                     boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(u.getUserId(), facade);
                     if (!hasPrivilege) {
-                        log.info("用户：{}没有产品：{}的管理权限，不发送消息", u.getUserId(), facade.getProductId());
+                        log.info("用户：{}没有产品：{}的管理权限，不发送邮件", u.getUserId(), facade.getProductNo());
                     }
                     return hasPrivilege;
                 }).map(u -> u.getEmail()).collect(Collectors.toList());

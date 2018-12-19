@@ -37,5 +37,5 @@ public class OrderStatusChangeFacade {
     /**
      * 产品id
      */
-    private Long productId;
+    private Long productNo;
 }
