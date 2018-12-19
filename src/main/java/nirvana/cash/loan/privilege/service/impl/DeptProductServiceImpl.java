@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.dao.DeptProductMapper;
 import nirvana.cash.loan.privilege.domain.DeptProduct;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DeptProductServiceImpl extends BaseService<DeptProduct> implements DeptProductService {
-    private static final String default_product_no = "0";
     @Autowired
     private FeginCashLoanApi feginCashLoanApi;
     @Autowired
@@ -57,7 +57,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
 
     public String findProductNosByDeptIdFromCache(Long deptId) {
         if (deptId == null) {
-            return default_product_no;
+            return CommonContants.default_product_no;
         }
         //从缓存获取关联产品编号
         String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
@@ -68,7 +68,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         //缓存未获取到，从数据库获取关联产品编号
         productNos = this.findProductNosByDeptId(deptId);
         if (StringUtils.isBlank(productNos)) {
-            productNos = default_product_no;
+            productNos = CommonContants.default_product_no;
         }
         redisService.putWithExpireTime(redisKey, productNos, 60*60*6);
         return productNos;
