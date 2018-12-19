@@ -34,7 +34,7 @@ public class DeptController extends BaseController {
 			t.setProductNos(productNos);
 		});
 		String productNos = dept.getProductNos();
-		if(StringUtils.isNotBlank(dept.getProductNos())){
+		if(StringUtils.isNotBlank(productNos)){
 			list=list.stream()
 					.filter(t->StringUtils.isNotBlank(t.getProductNos()))
 					.filter(t->t.getProductNos().contains(productNos))
