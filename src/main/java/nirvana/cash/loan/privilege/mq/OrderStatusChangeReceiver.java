@@ -93,6 +93,7 @@ public class OrderStatusChangeReceiver {
             List userIds = new ArrayList();
             userIds.add(u.getUserId());
             messageFacade.setUserIds(userIds);
+            messageFacade.setDetails(facade.getOrderRemark());
         });
         rabbitTemplate.convertAndSend(mcExchange, mcRoutingKey, JSONObject.toJSONString(messageFacade));
     }
