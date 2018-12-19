@@ -5,9 +5,11 @@ import nirvana.cash.loan.privilege.common.enums.MsgModuleEnum;
 import nirvana.cash.loan.privilege.common.enums.OrderStatusEnum;
 import nirvana.cash.loan.privilege.common.util.MsgModuleUtil;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.domain.UserWithRole;
 import nirvana.cash.loan.privilege.mq.OrderStatusChangeReceiver;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
 import nirvana.cash.loan.privilege.mq.facade.OrderStatusChangeFacade;
+import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import nirvana.cash.loan.privilege.service.UserService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
@@ -155,8 +157,7 @@ public class BaseTest {
         messageFacade.setUuid(UUID.randomUUID().toString());
         messageFacade.setMessageModule(1);
         messageFacade.setOrderStatus(OrderStatusEnum.SysFailed.getValue());
-        messageFacade.setDetails("机审失败原因是xxx");
-        messageFacade.setProductId(453L);
+        messageFacade.setProductNo(453L);
         amqpTemplate.convertAndSend(mcExchange, mcRoutingKey, JSONObject.toJSONString(messageFacade));
     }
 
@@ -167,10 +168,10 @@ public class BaseTest {
     public void test10() {
         OrderStatusChangeFacade orderStatusChangeFacade = new OrderStatusChangeFacade();
         orderStatusChangeFacade.setUuid(UUID.randomUUID().toString());
-        orderStatusChangeFacade.setOrderId("123456");
-
+        orderStatusChangeFacade.setOrderId("123456892");
+        orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.SysFailed.getValue());
         //1.
-        orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.OrderExpire.getValue());
+        //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.OrderExpire.getValue());
         //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.SysRefused.getValue());
         //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.ManuaReview.getValue());
         //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.SignGoing.getValue());
@@ -194,9 +195,20 @@ public class BaseTest {
         //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.Loaning.getValue());
         //orderStatusChangeFacade.setOrderStatus(OrderStatusEnum.LoanRefused.getValue());
 
-        orderStatusChangeFacade.setProductId(453L);
+        orderStatusChangeFacade.setProductNo(328L);
         String msg = JSONObject.toJSONString(orderStatusChangeFacade);
         receiver.receive(msg);
+    }
+
+    @Autowired
+    private DeptProductService deptProductService;
+
+    @Test
+    public void test11(){
+        UserWithRole byId = userService.findById(0L);
+        System.out.println(byId.getDeptId());
+        String productNosByDeptId = deptProductService.findProductNosByDeptId(byId.getDeptId());
+        System.out.println(productNosByDeptId);
     }
 
 }
