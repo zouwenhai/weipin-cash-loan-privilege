@@ -100,7 +100,7 @@ public class LoginController extends BaseController {
         Map<String,Object> otherMap = res.getOther();
         otherMap.put("roleIds",roleIds);
         otherMap.put("roleCodes",roleCodes);
-        otherMap.put("productNos",productNos);
+        otherMap.put("authShowIds",productNos);
         return res;
     }
 
