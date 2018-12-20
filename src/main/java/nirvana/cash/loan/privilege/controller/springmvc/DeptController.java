@@ -76,12 +76,12 @@ public class DeptController extends BaseController {
 		return ResResult.success();
 	}
 
-	//删除部门
-	@RequestMapping("dept/delete")
-	public ResResult deleteDept(ServerHttpRequest request,Long id) {
-		User loginUser = this.getLoginUser(request);
-		this.deptService.deleteDepts(id,loginUser);
-		return ResResult.success();
-	}
+//	//删除部门
+//	@RequestMapping("dept/delete")
+//	public ResResult deleteDept(ServerHttpRequest request,Long id) {
+//		User loginUser = this.getLoginUser(request);
+//		this.deptService.deleteDepts(id,loginUser);
+//		return ResResult.success();
+//	}
 
 }
