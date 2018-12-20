@@ -2,6 +2,7 @@ package nirvana.cash.loan.privilege.web.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
+import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
@@ -36,7 +37,8 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         URI uri = request.getURI();
-        log.info("privilege|request uri={}",uri);
+        String traceId = GeneratorId.guuid();
+        log.info("privilege|request traceId={},uri={}",traceId,uri);
         //check登录和权限
         ResResult checkResResult = requestCheck.check(request);
         if(!ResResult.SUCCESS.equals(checkResResult.getCode())){
@@ -63,6 +65,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         ServerHttpRequest host = null;
         host = exchange.getRequest()
                 .mutate()
+                .header(CommonContants.gateway_trace_id, traceId)
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
                 .header("authDeptName",URLUtil.encode(authDeptName, "utf-8"))
