@@ -6,7 +6,7 @@ public class CommonContants {
     public static final String default_product_no = "0";
 
     //内部团队，可见全部产品
-    public static final String default_all_product_no = "0000";
+    public static final String default_all_product_no = "";
 
     public static final String gateway_trace_id = "gateway_trace_id";
 
