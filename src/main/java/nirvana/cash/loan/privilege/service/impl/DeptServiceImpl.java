@@ -124,10 +124,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         }
         this.updateNotNull(dept);
 
-        //删除缓存的部门信息
-        String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
-        redisService.delete(rediskey);
-
         //重新添加部门产品关联信息
         if(dept.getViewRange() == 1){
             Long deptId = dept.getDeptId();
@@ -148,6 +144,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
                     .map(t -> t.getUserId())
                     .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
             logoutUserService.batchLogoutUser(userIds);
+
+            //删除缓存的部门信息
+            String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
+            redisService.delete(rediskey);
         }
 
     }
