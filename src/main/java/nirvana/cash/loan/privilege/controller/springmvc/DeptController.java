@@ -30,8 +30,10 @@ public class DeptController extends BaseController {
 	public ResResult deptList(Dept dept) {
 		List<Dept> list = this.deptService.findAllDepts(dept);
 		list.forEach(t->{
-			String productNos =  deptProductService.findProductNosByDeptId(t.getDeptId());
-			t.setProductNos(productNos);
+			if(t.getViewRange() == 1){
+				String productNos =  deptProductService.findProductNosByDeptId(t.getDeptId());
+				t.setProductNos(productNos);
+			}
 		});
 		String productNos = dept.getProductNos();
 		if(StringUtils.isNotBlank(productNos)){
