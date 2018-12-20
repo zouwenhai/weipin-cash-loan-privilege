@@ -108,10 +108,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             String productNos = dept.getProductNos();
             deptProductService.insert(deptId, productNos);
         }
-
-        //删除缓存的全量产品编号
-        String redisKey = RedisKeyContant.yofishdk_auth_all_productnos;
-        redisService.delete(redisKey);
     }
 
     @Override
@@ -158,9 +154,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
             redisService.delete(rediskey);
         }
-        //删除缓存的全量产品编号
-        String redisKey = RedisKeyContant.yofishdk_auth_all_productnos;
-        redisService.delete(redisKey);
     }
 
     @Override
@@ -182,14 +175,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             redisService.put(rediskey, JSON.toJSONString(dept));
         }
         //获取关联产品编号
-        String productNos = CommonContants.default_product_no;
+        String productNos = CommonContants.default_all_product_no;
         if(dept.getViewRange() == 1){
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
         }
-        else{
-            productNos = deptProductService.findAllProductNosByDeptIdFromCache();
-        }
-
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();
         vo.setDeptId(deptId);
         vo.setDeptName(dept.getDeptName());

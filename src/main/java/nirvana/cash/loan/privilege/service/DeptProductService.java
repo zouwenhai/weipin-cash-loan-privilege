@@ -33,13 +33,6 @@ public interface DeptProductService extends IService<DeptProduct> {
     String findProductNosByDeptIdFromCache(Long deptId);
 
     /**
-     * 从缓存查询部门关联的产品编号，多个使用逗号分隔
-     * 配置的全部产品
-     * @return
-     */
-    String findAllProductNosByDeptIdFromCache();
-
-    /**
      * 添加部门产品关联信息
      *
      * @param deptId

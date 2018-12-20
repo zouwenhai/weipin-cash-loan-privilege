@@ -74,24 +74,6 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         return productNos;
     }
 
-    @Override
-    public String findAllProductNosByDeptIdFromCache() {
-        //从缓存获取关联产品编号
-        String redisKey = RedisKeyContant.yofishdk_auth_all_productnos;
-        String productNos = redisService.get(redisKey, String.class);
-        if (StringUtils.isNotBlank(productNos)) {
-            return productNos;
-        }
-        //缓存未获取到，直接从贷款系统获取全部产品列表
-        List<CashLoanGetAllProductsFacade> list = this.findAllProductList();
-        List<String> productNoList = list.stream().map(x -> x.getShowId().toString()).collect(Collectors.toList());
-        if(ListUtil.isEmpty(productNoList)){
-            productNos = CommonContants.default_product_no;
-        }
-        productNos = StringUtils.join(productNoList, ",");
-        return productNos;
-    }
-
     @Transactional
     @Override
     public void insert(Long deptId, String productNos) {
