@@ -181,7 +181,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         }
         //获取关联产品编号
         String productNos = CommonContants.default_product_no;
-        if(dept.getViewRange()!=null && dept.getViewRange() == 1){
+        if(dept.getViewRange() == 1){
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
         }
         else{
