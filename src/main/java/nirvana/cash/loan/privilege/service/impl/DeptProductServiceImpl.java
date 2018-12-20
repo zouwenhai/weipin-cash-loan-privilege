@@ -82,6 +82,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         if (StringUtils.isNotBlank(productNos)) {
             return productNos;
         }
+        //缓存未获取到，直接从数据库获取
         List<DeptProduct> deptProducts = deptProductMapper.selectAll();
         List<String> productNoList = deptProducts.stream().map(x -> x.getProductNo()).collect(Collectors.toList());
         if(ListUtil.isEmpty(productNoList)){
