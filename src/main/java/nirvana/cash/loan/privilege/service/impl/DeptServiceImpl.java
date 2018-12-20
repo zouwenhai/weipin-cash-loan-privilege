@@ -89,10 +89,13 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     @Transactional
     public void addDept(Dept dept) {
         Long parentId = dept.getParentId();
-        if (parentId == null)
+        if (parentId == null){
             dept.setParentId(0L);
+        }
         if(StringUtils.isBlank(dept.getProductNos())){
             dept.setViewRange(0);
+        } else{
+            dept.setViewRange(1);
         }
         dept.setDeptId(this.getSequence(Dept.SEQ));
         dept.setCreateTime(new Date());
@@ -119,8 +122,14 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     @Override
     @Transactional
     public void updateDept(Dept dept, User loginUser) {
+        Long parentId = dept.getParentId();
+        if (parentId == null){
+            dept.setParentId(0L);
+        }
         if(StringUtils.isBlank(dept.getProductNos())){
             dept.setViewRange(0);
+        } else{
+            dept.setViewRange(1);
         }
         this.updateNotNull(dept);
 
