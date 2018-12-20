@@ -67,8 +67,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .mutate()
                 .header(CommonContants.gateway_trace_id, traceId)
                 .header("loginName", user.getUsername())
-                .header("userName", URLUtil.encode(user.getName(), "utf-8"))
-                .header("authDeptName",URLUtil.encode(authDeptName, "utf-8"))
                 .header("authShowIds",authShowIds)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
