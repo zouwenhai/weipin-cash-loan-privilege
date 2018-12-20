@@ -82,7 +82,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         if (StringUtils.isNotBlank(productNos)) {
             return productNos;
         }
-        //缓存未获取到，直接从数据库获取
+        //缓存未获取到，直接从贷款系统获取全部产品列表
         List<CashLoanGetAllProductsFacade> list = this.findAllProductList();
         List<String> productNoList = list.stream().map(x -> x.getShowId().toString()).collect(Collectors.toList());
         if(ListUtil.isEmpty(productNoList)){
