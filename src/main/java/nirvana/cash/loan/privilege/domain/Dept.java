@@ -39,6 +39,9 @@ public class Dept implements Serializable {
 	@Column(name = "IS_DELETE")
 	private Integer isDelete;
 
+	@Column(name = "VIEW_RANGE")
+	private Integer viewRange;
+
 	@Transient
 	private String productNos;
 
