@@ -8,7 +8,6 @@ import nirvana.cash.loan.privilege.service.UserService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.beans.Transient;
 import java.util.List;
 
 public class v5Test extends BaseTest {
