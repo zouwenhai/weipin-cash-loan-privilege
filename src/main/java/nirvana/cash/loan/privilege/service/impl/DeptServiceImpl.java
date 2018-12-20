@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
@@ -207,7 +208,13 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             redisService.put(rediskey, JSON.toJSONString(dept));
         }
         //获取关联产品编号
-        String productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
+        String productNos = CommonContants.default_product_no;
+        if(dept.getViewRange()!=null && dept.getViewRange() == 1){
+            productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
+        }
+        else{
+            productNos = deptProductService.findAllProductNosByDeptIdFromCache();
+        }
 
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();
         vo.setDeptId(deptId);
