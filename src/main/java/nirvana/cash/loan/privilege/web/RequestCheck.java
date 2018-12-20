@@ -45,6 +45,8 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
         //监控
         noLoginUrls.add("/actuator/info");
+        //其他
+        noLoginUrls.add("/favicon.ico");
     }
 
     private static String websocket_url="/privilege/notauth/webSocket/*";
