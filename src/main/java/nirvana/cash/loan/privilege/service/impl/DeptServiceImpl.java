@@ -137,7 +137,8 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         Example exampleUser = new Example(User.class);
         exampleUser.createCriteria().andIn("deptId", list);
         List<User> userList = userMapper.selectByExample(exampleUser);
-        List<Long> userIds = userList.stream().filter(t -> t.getDeptId() != null).filter(t -> !t.getDeptId().equals(loginUser.getDeptId())).map(t -> t.getUserId()).collect(Collectors.toList());
+        List<Long> userIds = userList.stream().filter(t -> t.getDeptId() != null).map(t -> t.getUserId())
+                .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
         logoutUserService.batchLogoutUser(userIds);
 
         //部门ID，重置为null
