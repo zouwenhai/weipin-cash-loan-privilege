@@ -24,7 +24,7 @@ public interface DeptProductService extends IService<DeptProduct> {
     String findProductNosByDeptId(Long deptId);
 
     /**
-     * 从缓存查询部门关联的产品编号，多个使用逗号分隔,缓存时间6个小时
+     * 从缓存查询部门关联的产品编号，多个使用逗号分隔
      * 若部门未配置产品编号，则返回产品编号"0"
      *
      * @param deptId

@@ -1,10 +1,12 @@
 package nirvana.cash.loan.privilege.web.filter;
 
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
-import nirvana.cash.loan.privilege.service.DeptProductService;
+import nirvana.cash.loan.privilege.domain.vo.AuthDeptProductInfoVo;
+import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -27,7 +29,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
     @Autowired
     private RequestCheck requestCheck;
     @Autowired
-    private DeptProductService deptProductService;
+    private DeptService deptService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain webFilterChain) {
@@ -46,14 +48,25 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         }
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
-        //产品编号
-        String productNos = deptProductService.findProductNosByDeptIdFromCache(user.getDeptId());
+
+        //从缓存获取运营团队权限信息
+        String authDeptName = "未配置";
+        String authShowIds = CommonContants.default_product_no;
+        if(user.getDeptId() != null){
+            AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(),user.getDeptId());
+            if(vo != null){
+                authDeptName = vo.getDeptName();
+                authShowIds =  vo.getProductNos();
+            }
+        }
+
         ServerHttpRequest host = null;
         host = exchange.getRequest()
                 .mutate()
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
-                .header("authShowIds",productNos)
+                .header("authDeptName",URLUtil.encode(authDeptName, "utf-8"))
+                .header("authShowIds",authShowIds)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
         return webFilterChain.filter(build);
