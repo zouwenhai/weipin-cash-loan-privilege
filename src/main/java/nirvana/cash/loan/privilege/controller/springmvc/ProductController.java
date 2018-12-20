@@ -1,8 +1,10 @@
 package nirvana.cash.loan.privilege.controller.springmvc;
 
 import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.fegin.facade.CashLoanGetAllProductsFacade;
 import nirvana.cash.loan.privilege.service.DeptProductService;
+import nirvana.cash.loan.privilege.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,8 @@ public class ProductController {
 
     @Autowired
     private DeptProductService deptProductService;
+    @Autowired
+    private DeptService deptService;
 
     /**
      * 查询全部产品列表
@@ -36,5 +40,12 @@ public class ProductController {
             listmap.add(item);
         });
         return ResResult.success(listmap);
+    }
+
+    //全部部门列表
+    @RequestMapping("notauth/allDept")
+    public ResResult deptList(Dept dept) {
+        List<Dept> list = deptService.findAllDepts(dept);
+        return ResResult.success(list);
     }
 }
