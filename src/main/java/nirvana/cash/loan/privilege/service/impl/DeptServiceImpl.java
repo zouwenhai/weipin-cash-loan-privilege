@@ -137,7 +137,9 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         Example exampleUser = new Example(User.class);
         exampleUser.createCriteria().andIn("deptId", list);
         List<User> userList = userMapper.selectByExample(exampleUser);
-        List<Long> userIds = userList.stream().filter(t -> t.getDeptId() != null).map(t -> t.getUserId())
+        List<Long> userIds = userList.stream()
+                .filter(t -> t.getDeptId() != null)
+                .map(t -> t.getUserId())
                 .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
         logoutUserService.batchLogoutUser(userIds);
 
@@ -173,7 +175,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("deptId", deptId);
         List<User> userList = userMapper.selectByExample(example);
-        List<Long> userIds = userList.stream().filter(t -> t.getDeptId() != null).filter(t -> !t.getDeptId().equals(loginUser.getDeptId())).map(t -> t.getUserId()).collect(Collectors.toList());
+        List<Long> userIds = userList.stream()
+                .filter(t -> t.getDeptId() != null)
+                .map(t -> t.getUserId())
+                .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
         logoutUserService.batchLogoutUser(userIds);
     }
 
