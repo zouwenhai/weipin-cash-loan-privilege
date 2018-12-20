@@ -12,7 +12,7 @@ public class GatewayHystrixCommandController {
 
     @RequestMapping("/notauth/gateway/hystrixTimeout")
     public ResResult hystrixTimeout() {
-        log.error("threadId={},权限管理路由转发系统|hystrixTimeout,请求超时!",Thread.currentThread().getId());
+        log.error("权限管理路由转发系统|hystrixTimeout,请求超时!");
         return ResResult.error("请求超时!");
     }
 
