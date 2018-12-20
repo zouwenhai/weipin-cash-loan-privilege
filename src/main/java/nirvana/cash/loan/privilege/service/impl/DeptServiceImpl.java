@@ -104,6 +104,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         Long deptId = dept.getDeptId();
         String productNos = dept.getProductNos();
         deptProductService.insert(deptId, productNos);
+
+        //删除缓存的全量产品编号
+        String redisKey = RedisKeyContant.yofishdk_auth_all_productnos;
+        redisService.delete(redisKey);
     }
 
     @Override
