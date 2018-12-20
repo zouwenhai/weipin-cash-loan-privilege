@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.service.impl;
 import com.alibaba.fastjson.JSON;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
+import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.dao.DeptProductMapper;
 import nirvana.cash.loan.privilege.domain.DeptProduct;
 import nirvana.cash.loan.privilege.fegin.FeginCashLoanApi;
@@ -12,7 +13,6 @@ import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -71,6 +71,23 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
             productNos = CommonContants.default_product_no;
         }
         redisService.put(redisKey, productNos);
+        return productNos;
+    }
+
+    @Override
+    public String findAllProductNosByDeptIdFromCache() {
+        //从缓存获取关联产品编号
+        String redisKey = RedisKeyContant.yofishdk_auth_all_productnos;
+        String productNos = redisService.get(redisKey, String.class);
+        if (StringUtils.isNotBlank(productNos)) {
+            return productNos;
+        }
+        List<DeptProduct> deptProducts = deptProductMapper.selectAll();
+        List<String> productNoList = deptProducts.stream().map(x -> x.getProductNo()).collect(Collectors.toList());
+        if(ListUtil.isEmpty(productNoList)){
+            productNos = CommonContants.default_product_no;
+        }
+        productNos = StringUtils.join(productNoList, ",");
         return productNos;
     }
 
