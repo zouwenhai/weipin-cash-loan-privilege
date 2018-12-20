@@ -91,7 +91,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         Long parentId = dept.getParentId();
         if (parentId == null)
             dept.setParentId(0L);
-        if(dept.getViewRange() == null){
+        if(StringUtils.isBlank(dept.getProductNos())){
             dept.setViewRange(0);
         }
         dept.setDeptId(this.getSequence(Dept.SEQ));
@@ -119,7 +119,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     @Override
     @Transactional
     public void updateDept(Dept dept, User loginUser) {
-        if(dept.getViewRange() == null){
+        if(StringUtils.isBlank(dept.getProductNos())){
             dept.setViewRange(0);
         }
         this.updateNotNull(dept);
