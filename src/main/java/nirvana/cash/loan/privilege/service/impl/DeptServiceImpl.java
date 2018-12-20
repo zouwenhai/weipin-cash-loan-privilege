@@ -158,7 +158,9 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
             redisService.delete(rediskey);
         }
-
+        //删除缓存的全量产品编号
+        String redisKey = RedisKeyContant.yofishdk_auth_all_productnos;
+        redisService.delete(redisKey);
     }
 
     @Override
