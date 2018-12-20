@@ -1,5 +1,7 @@
 package nirvana.cash.loan.privilege.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.FilterId;
@@ -178,15 +180,19 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     public AuthDeptProductInfoVo findAuthDeptProductInfoFromCache(Long userId,Long deptId) {
         log.info("从缓存获取运营团队权限信息:userId={},deptId={}",userId,deptId);
         //从缓存获取部门信息
+        Dept dept = null;
         String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + deptId;
-        Dept dept = redisService.get(rediskey, Dept.class);
-        if (dept == null) {
+        String deptStr = redisService.get(rediskey, String.class);
+        if(StringUtils.isNotBlank(deptStr)){
+            dept = JSONObject.parseObject(deptStr,Dept.class);
+        }
+        else{
             dept = this.findById(deptId);
             if (dept == null) {
                 log.error("部门信息不存在,建议检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
                 return null;
             }
-            redisService.put(rediskey, Dept.class);
+            redisService.put(rediskey, JSON.toJSONString(dept));
         }
         //获取关联产品编号
         String productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
