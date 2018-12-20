@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
-import nirvana.cash.loan.privilege.common.domain.FilterId;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.dao.DeptMapper;
@@ -113,51 +112,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     }
 
     @Override
-    @Transactional
-    public void deleteDepts(Long deptId, User loginUser) {
-        List<Dept> depts = this.findAllDepts(new Dept());
-        //转换列表
-        List<FilterId> allList = new ArrayList<>();
-        depts.forEach(t -> {
-            FilterId filterId = new FilterId(t.getDeptId(), t.getParentId(), t.getDeptName());
-            allList.add(filterId);
-        });
-        //开始处理...
-        List<FilterId> filterIdList = FilterId.filterRemoveList(allList, deptId);
-        List<String> list = new ArrayList<>();
-        for (FilterId item : filterIdList) {
-            list.add(item.getId() + "");
-        }
-        //更新为删除状态
-        Example exampleDept = new Example(Dept.class);
-        exampleDept.createCriteria().andIn("deptId", list);
-        Dept updateDept = new Dept();
-        updateDept.setIsDelete(1);
-        deptMapper.updateByExampleSelective(updateDept, exampleDept);
-
-        //删除缓存的部门信息
-        String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + deptId;
-        redisService.delete(rediskey);
-
-        //删除关联产品缓存
-        String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
-        redisService.delete(redisKey);
-
-        //关联登录用户强制退出
-        Example exampleUser = new Example(User.class);
-        exampleUser.createCriteria().andIn("deptId", list);
-        List<User> userList = userMapper.selectByExample(exampleUser);
-        List<Long> userIds = userList.stream()
-                .filter(t -> t.getDeptId() != null)
-                .map(t -> t.getUserId())
-                .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
-        logoutUserService.batchLogoutUser(userIds);
-
-        //部门ID，重置为null
-        userMapper.setDeptIdNull(deptId);
-    }
-
-    @Override
     public Dept findById(Long deptId) {
         return this.selectByKey(deptId);
     }
@@ -175,24 +129,27 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         redisService.delete(rediskey);
 
         //重新添加部门产品关联信息
-        Long deptId = dept.getDeptId();
-        String productNos = dept.getProductNos();
-        deptProductService.delete(deptId);
-        deptProductService.insert(deptId, productNos);
+        if(dept.getViewRange() == 1){
+            Long deptId = dept.getDeptId();
+            String productNos = dept.getProductNos();
+            deptProductService.delete(deptId);
+            deptProductService.insert(deptId, productNos);
 
-        //删除关联产品缓存
-        String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
-        redisService.delete(redisKey);
+            //删除关联产品缓存
+            String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
+            redisService.delete(redisKey);
 
-        //关联登录用户强制退出
-        Example example = new Example(User.class);
-        example.createCriteria().andEqualTo("deptId", deptId);
-        List<User> userList = userMapper.selectByExample(example);
-        List<Long> userIds = userList.stream()
-                .filter(t -> t.getDeptId() != null)
-                .map(t -> t.getUserId())
-                .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
-        logoutUserService.batchLogoutUser(userIds);
+            //关联登录用户强制退出
+            Example example = new Example(User.class);
+            example.createCriteria().andEqualTo("deptId", deptId);
+            List<User> userList = userMapper.selectByExample(example);
+            List<Long> userIds = userList.stream()
+                    .filter(t -> t.getDeptId() != null)
+                    .map(t -> t.getUserId())
+                    .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
+            logoutUserService.batchLogoutUser(userIds);
+        }
+
     }
 
     @Override
