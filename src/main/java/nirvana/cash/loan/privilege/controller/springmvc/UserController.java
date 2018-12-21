@@ -51,10 +51,10 @@ public class UserController extends BaseController {
                 Set<String> itemDeptNameSet = new HashSet<>();
                 String deptIds = t.getDeptId();
                 if (StringUtils.isNotBlank(deptIds)) {
-                    String deptName = Arrays.asList(deptIds.split(",")).stream()
+                    List<String> deptNameList = Arrays.asList(deptIds.split(",")).stream()
                             .map(x ->deptmap.get(x))
-                            .findAny().orElse("未知部门");
-                    itemDeptNameSet.add(deptName);
+                            .collect(Collectors.toList());
+                    itemDeptNameSet.addAll(deptNameList);
                 }
                 t.setDeptName(StringUtils.join(itemDeptNameSet, ","));
             });
