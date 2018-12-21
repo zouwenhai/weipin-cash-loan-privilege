@@ -7,6 +7,7 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.web.RequestCheck;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -59,7 +60,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
                 .header("authShowIds", CommonContants.default_all_product_no.equals(authShowIds) ? "" : authShowIds)
-                .header("authDeptId", user.getDeptId() != null ? user.getDeptId().toString() : CommonContants.default_dept_id)
+                .header("authDeptIds", StringUtils.isNotBlank(user.getDeptId()) ? user.getDeptId().toString() : CommonContants.default_dept_id)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
         return webFilterChain.filter(build);

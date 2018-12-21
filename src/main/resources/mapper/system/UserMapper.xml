@@ -21,7 +21,8 @@
     <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
     <result column="is_delete" jdbcType="DECIMAL" property="isDelete" />
-	  <result column="SEAT_NUMBER" jdbcType="VARCHAR" property="seatNumber" />
+    <result column="SEAT_NUMBER" jdbcType="VARCHAR" property="seatNumber" />
+    <result column="VIEW_RANGE" jdbcType="DECIMAL" property="viewRange" />
   </resultMap>
   
   <select id="findUserWithDept" resultType="user" parameterType="user">
@@ -30,6 +31,7 @@
 			u.ssex,u.seat_number seatNumber,
 	        u.name,
 	        u.dept_id deptId,
+	        u.view_range viewRange,
 		   ( select
 			  listagg(role_id,',') within group (order by role_id)  as  role_ids
 			  from tb_yofishdk_auth_user_role ur

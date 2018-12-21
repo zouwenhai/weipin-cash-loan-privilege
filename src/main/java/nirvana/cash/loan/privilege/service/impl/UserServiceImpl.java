@@ -75,6 +75,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Override
 	@Transactional
 	public ResResult addUser(User user, List<Long> roles, User loginUser) {
+		if(StringUtils.isBlank(user.getDeptId())){
+			user.setViewRange(0);
+		}
+		else{
+			user.setViewRange(1);
+		}
 		user.setUserId(this.getSequence(User.SEQ));
 		user.setCrateTime(new Date());
 		user.setTheme(User.DEFAULT_THEME);
@@ -141,6 +147,12 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	@Override
 	@Transactional
 	public void updateUser(User user, List<Long> roles, Long loginUserId, String username) {
+		if(StringUtils.isBlank(user.getDeptId())){
+			user.setViewRange(0);
+		}
+		else{
+			user.setViewRange(1);
+		}
 		List<String> oldRoleCodeList = userRoleService.findRoleCodeListByUserId(user.getUserId().intValue());
 		List<String> newRoleCodeList = roleMapper.findRoleCodeListByRoleIds(roles);
 		User oldUser=this.userMapper.selectByPrimaryKey(user.getUserId());
