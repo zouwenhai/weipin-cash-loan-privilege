@@ -50,7 +50,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         }
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
-
+        log.info("当前请求:traceId={},用户ID:{},部门ID:{}",traceId,user.getUserId(),user.getDeptId());
         //从缓存获取运营团队权限信息
         String authDeptName = "未配置";
         String authShowIds = CommonContants.default_product_no;
@@ -61,7 +61,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 authShowIds =  vo.getProductNos();
             }
         }
-        log.info("当前请求:traceId={},用户ID:{},部门ID:{}",traceId,user.getUserId(),user.getDeptId());
         ServerHttpRequest host = null;
         host = exchange.getRequest()
                 .mutate()
