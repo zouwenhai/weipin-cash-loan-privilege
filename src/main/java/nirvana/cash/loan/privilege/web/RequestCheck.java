@@ -136,8 +136,8 @@ public class RequestCheck {
         }
         //其他团队，可以管理部门关联的产品
         Set<String> set = new HashSet<>();
-        for (String item : deptIds) {
-            AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(), Long.valueOf(item));
+        for (String deptId : deptIds) {
+            AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(), Long.valueOf(deptId));
             if (vo != null && !CommonContants.default_product_no.equals(vo.getProductNos())) {
                 authShowIds += vo.getProductNos();
                 Set<String> itemSet = new HashSet<>(Arrays.asList(authShowIds.split(",")));
