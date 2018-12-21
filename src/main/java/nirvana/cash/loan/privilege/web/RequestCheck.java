@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -134,14 +135,16 @@ public class RequestCheck {
             }
         }
         //其他团队，可以管理部门关联的产品
+        Set<String> set = new HashSet<>();
         for (String item : deptIds) {
             AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(), Long.valueOf(item));
             if (vo != null && !CommonContants.default_product_no.equals(vo.getProductNos())) {
                 authShowIds += vo.getProductNos();
+                Set<String> itemSet = new HashSet<>(Arrays.asList(authShowIds.split(",")));
+                set.addAll(itemSet);
             }
         }
-        if (StringUtils.isNotBlank(authShowIds)) {
-            Set<String> set = new HashSet<>(Arrays.asList(authShowIds.split(",")));
+        if (!CollectionUtils.isEmpty(set)) {
             authShowIds = StringUtils.join(set, ",");
         }
         resmap.put("authShowIds", authShowIds);
