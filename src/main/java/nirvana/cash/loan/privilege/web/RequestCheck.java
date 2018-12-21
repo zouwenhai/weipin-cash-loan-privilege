@@ -118,6 +118,7 @@ public class RequestCheck {
     public Map<String, String> findDeptAndProductAuth(User user) {
         Map resmap = new HashMap();
         String authShowIds = CommonContants.default_product_no;
+        //登录用户未配置所属部门
         if(StringUtils.isBlank(user.getDeptId())){
             resmap.put("authShowIds", authShowIds);
             return resmap;
