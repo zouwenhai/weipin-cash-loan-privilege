@@ -143,10 +143,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 
             //关联登录用户强制退出
             Example example = new Example(User.class);
-            example.createCriteria().andEqualTo("deptId", deptId);
+            example.createCriteria().andLike("deptId", "%" + deptId + "%");
             List<User> userList = userMapper.selectByExample(example);
             List<Long> userIds = userList.stream()
-                    .filter(t -> t.getDeptId() != null)
+                    .filter(t -> StringUtils.isNotBlank(t.getDeptId()))
                     .map(t -> t.getUserId())
                     .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
             logoutUserService.batchLogoutUser(userIds);
@@ -180,12 +180,12 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         if(dept.getViewRange() == 1){
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
         }
-        else{
-            List<String> productNoList =deptProductService.findAllProductList().stream().map(t->t.getShowId().toString()).collect(Collectors.toList());
-            if(ListUtil.isNotEmpty(productNoList)){
-                productNos =  StringUtils.join(productNoList,",");
-            }
-        }
+//        else{
+//            List<String> productNoList =deptProductService.findAllProductList().stream().map(t->t.getShowId().toString()).collect(Collectors.toList());
+//            if(ListUtil.isNotEmpty(productNoList)){
+//                productNos =  StringUtils.join(productNoList,",");
+//            }
+//        }
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();
         vo.setDeptId(deptId);
         vo.setDeptName(dept.getDeptName());
