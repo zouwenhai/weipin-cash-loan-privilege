@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.domain.UserWithRole;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
 import nirvana.cash.loan.privilege.service.DeptProductService;
-import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,9 +18,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class MessageFilter {
-
-    @Autowired
-    private DeptService deptService;
+    
     @Autowired
     private UserService userService;
     @Autowired
@@ -44,16 +41,20 @@ public class MessageFilter {
         if (user == null) {
             return false;
         }
-        Long deptId = user.getDeptId();
-        if (deptId != null) {
-            String productNos = deptProductService.findProductNosByDeptId(deptId);
-            if (!StringUtils.hasText(productNos)) {
-                return false;
-            }
-            String productIdStr = String.valueOf(productId), regex = ",";
-            for (String productNo : productNos.split(regex)) {
-                if (Objects.equals(productNo, productIdStr)) {
-                    return true;
+        String deptIdStr = user.getDeptId();
+        if (StringUtils.hasText(deptIdStr)) {
+            String regex = ",";
+            String[] deptIds = deptIdStr.split(regex);
+            for (String deptId : deptIds) {
+                String productNos = deptProductService.findProductNosByDeptId(Long.valueOf(deptId));
+                if (!StringUtils.hasText(productNos)) {
+                    continue;
+                }
+                String productIdStr = String.valueOf(productId);
+                for (String productNo : productNos.split(regex)) {
+                    if (Objects.equals(productNo, productIdStr)) {
+                        return true;
+                    }
                 }
             }
         }
