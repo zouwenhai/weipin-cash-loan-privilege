@@ -50,7 +50,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         //获取运营团队权限信息
         Map<String, String> deptAndProductAuth = requestCheck.findDeptAndProductAuth(user);
         String authShowIds = deptAndProductAuth.get("authShowIds");
-        log.info("当前请求:traceId={},用户ID:{},部门ID:{},管理的产品showId", traceId, user.getUserId(), user.getDeptId(),authShowIds);
+        log.info("当前请求:traceId={},用户ID:{},部门ID:{},管理的产品showId={}", traceId, user.getUserId(), user.getDeptId(),authShowIds);
 
         ServerHttpRequest host = null;
         host = exchange.getRequest()
