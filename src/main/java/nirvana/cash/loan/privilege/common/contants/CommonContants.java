@@ -8,9 +8,6 @@ public class CommonContants {
     //未配置所属团队时，获取到默认值
     public static final String default_dept_id = "0";
 
-    //内部团队，可见全部产品
-    public static final String default_all_product_no = "";
-
     public static final String gateway_trace_id = "gateway_trace_id";
 
     public CommonContants() {

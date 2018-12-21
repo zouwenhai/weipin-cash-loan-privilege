@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.Tree;
+import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.dao.DeptMapper;
 import nirvana.cash.loan.privilege.dao.UserMapper;
@@ -175,9 +176,15 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             redisService.put(rediskey, JSON.toJSONString(dept));
         }
         //获取关联产品编号
-        String productNos = CommonContants.default_all_product_no;
+        String productNos = CommonContants.default_product_no;
         if(dept.getViewRange() == 1){
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
+        }
+        else{
+            List<String> productNoList =deptProductService.findAllProductList().stream().map(t->t.getShowId().toString()).collect(Collectors.toList());
+            if(ListUtil.isNotEmpty(productNoList)){
+                productNos =  StringUtils.join(productNoList,",");
+            }
         }
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();
         vo.setDeptId(deptId);
