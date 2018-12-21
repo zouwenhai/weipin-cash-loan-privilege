@@ -50,15 +50,12 @@ public class UserController extends BaseController {
             userList.forEach(t -> {
                 Set<String> itemDeptNameSet = new HashSet<>();
                 String deptIds = t.getDeptId();
-                logger.info(deptIds);
                 if (StringUtils.isNotBlank(deptIds)) {
                     String deptName = Arrays.asList(deptIds.split(",")).stream()
                             .map(x ->deptmap.get(x))
                             .findAny().orElse("未知部门");
                     itemDeptNameSet.add(deptName);
-                    logger.info(deptName);
                 }
-                logger.info(deptIds);
                 t.setDeptName(StringUtils.join(itemDeptNameSet, ","));
             });
         }
