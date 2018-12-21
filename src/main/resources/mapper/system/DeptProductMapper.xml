@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nirvana.cash.loan.privilege.dao.DeptProductMapper">
+    <resultMap id="BaseResultMap" type="nirvana.cash.loan.privilege.domain.DeptProduct">
+        <id column="ID" jdbcType="DECIMAL" property="id" />
+        <result column="DEPT_ID" jdbcType="DECIMAL" property="deptId" />
+        <result column="PRODUCT_NO" jdbcType="VARCHAR" property="productNo" />
+    </resultMap>
+
+</mapper>

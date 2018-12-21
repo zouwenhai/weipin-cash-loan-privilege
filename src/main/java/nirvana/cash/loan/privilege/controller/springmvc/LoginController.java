@@ -10,6 +10,7 @@ import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Menu;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.facade.LoginFacade;
+import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.MenuService;
 import nirvana.cash.loan.privilege.service.UserService;
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +32,8 @@ public class LoginController extends BaseController {
     private UserService userService;
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private DeptProductService deptProductService;
 
     //登录
     @RequestMapping("/notauth/login")
@@ -86,6 +89,9 @@ public class LoginController extends BaseController {
         String userPermissionsKey = RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername();
         redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*6L);
 
+        //查询d登录用户,授权产品编号
+        String productNos = deptProductService.findProductNosByDeptIdFromCache(user.getDeptId());
+
         //更新登录时间
         this.userService.updateLoginTime(username);
         //密码不输出至前端
@@ -94,6 +100,7 @@ public class LoginController extends BaseController {
         Map<String,Object> otherMap = res.getOther();
         otherMap.put("roleIds",roleIds);
         otherMap.put("roleCodes",roleCodes);
+        otherMap.put("authShowIds",productNos);
         return res;
     }
 

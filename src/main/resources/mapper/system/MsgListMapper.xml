@@ -20,4 +20,14 @@
     where IS_DELETE = 0 and USER_ID = #{userId} order by ID desc
   </select>
 
+  <update id="maskAsRead">
+    UPDATE TB_YOFISHDK_AUTH_MSG_LIST SET STATUS = 1
+    WHERE CONTENT LIKE '%"orderId":"'||#{orderId}||'"%' AND CONTENT LIKE '%"orderStatus":"'||#{orderStatus}||'"%' AND IS_DELETE = 0
+  </update>
+
+  <select id="selectCountByOrderIdAndStatus" resultType="int">
+    SELECT count(1) FROM TB_YOFISHDK_AUTH_MSG_LIST
+    WHERE CONTENT LIKE '%"orderId":"'||#{orderId}||'"%' AND CONTENT LIKE '%"orderStatus":"'||#{orderStatus}||'"%'
+  </select>
+
 </mapper>

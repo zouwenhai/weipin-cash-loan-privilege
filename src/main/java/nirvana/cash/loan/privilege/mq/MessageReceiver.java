@@ -14,6 +14,7 @@ import nirvana.cash.loan.privilege.domain.MessageConfig;
 import nirvana.cash.loan.privilege.domain.MsgList;
 import nirvana.cash.loan.privilege.domain.vo.MsgConfigDetailVo;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
+import nirvana.cash.loan.privilege.mq.message.MessageFilter;
 import nirvana.cash.loan.privilege.service.MessageConfigService;
 import nirvana.cash.loan.privilege.service.MsgListService;
 import nirvana.cash.loan.privilege.service.UserService;
@@ -64,6 +65,8 @@ public class MessageReceiver {
     FreemarkerUtil freemarkerUtil;
     @Autowired
     private AmqpTemplate rabbitTemplate;
+    @Autowired
+    private MessageFilter messageFilter;
 
     final static String template_email_notice_msg = "email_notice_msg.ftl";
 
@@ -126,11 +129,11 @@ public class MessageReceiver {
         //1:站内信通知
         configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_web_socket.getValue() == t.getMsgChannel())
-                .forEach(t -> processWebSocketMessage(t, messageMap, messageModuleEnum, targetUsers));
+                .forEach(t -> processWebSocketMessage(t, messageMap, messageModuleEnum, targetUsers, facade));
         //2:邮件通知
         configDetailVoList.stream()
                 .filter(t -> MsgChannelEnum.channel_email.getValue() == t.getMsgChannel())
-                .forEach(t -> processEmailMessage(t, messageMap, messageModuleEnum, targetUsers));
+                .forEach(t -> processEmailMessage(t, messageMap, messageModuleEnum, targetUsers, facade));
     }
 
     private Set<Long> getTargetUsers(MessageFacade facade) {
@@ -152,16 +155,22 @@ public class MessageReceiver {
      * @param msgModuleEnum  通知模块
      * @param targetUsers    需要发送给哪些用户
      */
-    private void processWebSocketMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, Set<Long> targetUsers) {
+    private void processWebSocketMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, Set<Long> targetUsers, MessageFacade facade) {
         log.info("站内信处理:uuid={}", messageContent.get("uuid"));
         Set<Long> userIds = getUserIdsFromMessageConfig(messageConfig);
         if (CollectionUtils.isEmpty(userIds)) {
             return;
         }
-
         //没有指定发送给谁，则发送给所配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {
-            Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> Collections.emptyList()).forEach(u -> {
+            Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> Collections.emptyList()).stream().filter(u -> {
+                Long id = u.getUserId();
+                boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(id, facade);
+                if (!hasPrivilege) {
+                    log.info("用户：{}没有产品：{}的管理权限，不发送消息", id, facade.getProductNo());
+                }
+                return hasPrivilege;
+            }).forEach(u -> {
                 try {
                     Long id = u.getUserId();
                     Integer unreadCount = msgListService.countUnReadMsg(id);
@@ -176,7 +185,13 @@ public class MessageReceiver {
             return;
         }
         //只发送给目标用户
-        targetUsers.stream().filter(id -> userIds.contains(id)).forEach(id -> {
+        targetUsers.stream().filter(id -> userIds.contains(id)).filter(id -> {
+            boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(id, facade);
+            if (!hasPrivilege) {
+                log.info("用户：{}没有产品：{}的管理权限，不发送消息", id, facade.getProductNo());
+            }
+            return hasPrivilege;
+        }).forEach(id -> {
             Integer unreadCount = msgListService.countUnReadMsg(id);
             Optional.ofNullable(userService.findById(id)).ifPresent(s -> messageContent.put("userName", s.getName()));
             MsgList msgList = saveMessage(id, msgModuleEnum.getCode(), JSONObject.toJSONString(messageContent));
@@ -193,7 +208,7 @@ public class MessageReceiver {
      * @param msgModuleEnum  通知模块
      * @param targetUsers    需要发送给哪些用户
      */
-    private void processEmailMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, Set<Long> targetUsers) {
+    private void processEmailMessage(MsgConfigDetailVo messageConfig, Map<String, String> messageContent, MsgModuleEnum msgModuleEnum, Set<Long> targetUsers, MessageFacade facade) {
         log.info("邮件消息处理:uuid={}", messageContent.get("uuid"));
         //不在邮件通知设置的时间范围内，不发邮件
         if (!DateUtil.isTimeSpecifiedInTimeBucket(LocalTime.now(), messageConfig.getStartTime(), messageConfig.getEndTime())) {
@@ -203,17 +218,28 @@ public class MessageReceiver {
         if (CollectionUtils.isEmpty(userIds)) {
             return;
         }
-
         //没有指定发送给谁，则发送给所有配置的用户
         if (CollectionUtils.isEmpty(targetUsers)) {
             List<String> toUsers = Optional.ofNullable(userService.findByIds(userIds)).orElseGet(() -> new ArrayList<>())
-                    .stream().map(u -> u.getEmail()).collect(Collectors.toList());
+                    .stream().filter(u -> {
+                        boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(u.getUserId(), facade);
+                        if (!hasPrivilege) {
+                            log.info("用户：{}没有产品：{}的管理权限，不发送邮件", u.getUserId(), facade.getProductNo());
+                        }
+                        return hasPrivilege;
+                    }).map(u -> u.getEmail()).collect(Collectors.toList());
             sendEmail(msgModuleEnum.getName() + "模块-有新订单需要您处理", messageContent, toUsers);
             return;
         }
         //只发送给目标的用户
         List<String> toUsers = targetUsers.stream().filter(id -> userIds.contains(id)).map(id -> userService.findById(id))
-                .map(u -> u.getEmail()).collect(Collectors.toList());
+                .filter(u -> {
+                    boolean hasPrivilege = messageFilter.hasPrivilegeToReceive(u.getUserId(), facade);
+                    if (!hasPrivilege) {
+                        log.info("用户：{}没有产品：{}的管理权限，不发送邮件", u.getUserId(), facade.getProductNo());
+                    }
+                    return hasPrivilege;
+                }).map(u -> u.getEmail()).collect(Collectors.toList());
         sendEmail(msgModuleEnum.getName() + "模块-有新订单需要您处理", messageContent, toUsers);
     }
 

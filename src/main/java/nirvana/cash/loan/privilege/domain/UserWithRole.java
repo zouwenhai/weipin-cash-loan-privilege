@@ -1,7 +1,10 @@
 package nirvana.cash.loan.privilege.domain;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class UserWithRole extends User{
 	
 	private static final long serialVersionUID = -5680235862276163462L;
@@ -10,20 +13,4 @@ public class UserWithRole extends User{
 	
 	private List<Long> roleIds;
 
-	public Long getRoleId() {
-		return RoleId;
-	}
-
-	public void setRoleId(Long roleId) {
-		RoleId = roleId;
-	}
-
-	public List<Long> getRoleIds() {
-		return roleIds;
-	}
-
-	public void setRoleIds(List<Long> roleIds) {
-		this.roleIds = roleIds;
-	}
-	
 }

@@ -21,20 +21,21 @@
     <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
     <result column="is_delete" jdbcType="DECIMAL" property="isDelete" />
+	  <result column="SEAT_NUMBER" jdbcType="VARCHAR" property="seatNumber" />
   </resultMap>
   
   <select id="findUserWithDept" resultType="user" parameterType="user">
   		select
 			u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-			u.ssex,d.dept_name deptName,u.name,
+			u.ssex,d.dept_name deptName,u.name,u.seat_number seatNumber,
 		   ( select
 			  listagg(role_id,',') within group (order by role_id)  as  role_ids
 			  from tb_yofishdk_auth_user_role ur
 		 	 where ur.user_id = u.USER_ID
 		    )  roleIds2
 	    from tb_yofishdk_auth_user u
-  		left join tb_yofishdk_auth_dept d on(u.dept_id = d.dept_id)
-  		where is_delete = 0
+  		left join tb_yofishdk_auth_dept d on(u.dept_id = d.dept_id and d.is_delete = 0)
+  		where u.is_delete = 0
   		<if test="username != null and username != ''">
         	AND lower(u.username) = #{username}
 	    </if>
@@ -53,7 +54,7 @@
     
   <select id="findUserWithRole" resultType="userWithRole">
 		select u.user_id userId,u.username,u.dept_id deptId,u.email,u.mobile,
-		u.status,u.ssex,ur.role_id roleId,u.name
+		u.status,u.ssex,ur.role_id roleId,u.name,u.seat_number seatNumber
 		from tb_yofishdk_auth_user u
 		left join tb_yofishdk_auth_user_role ur on (u.user_id = ur.user_id)
 		where u.user_id = #{userId}

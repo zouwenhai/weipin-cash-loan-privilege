@@ -4,12 +4,17 @@ import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
+import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/privilige")
@@ -17,11 +22,26 @@ public class DeptController extends BaseController {
 
 	@Autowired
 	private DeptService deptService;
+	@Autowired
+	private DeptProductService deptProductService;
 
 	//部门列表
 	@RequestMapping("dept/list")
 	public ResResult deptList(Dept dept) {
-		List<Dept> list = this.deptService.findAllDepts(dept);;
+		List<Dept> list = this.deptService.findAllDepts(dept);
+		list.forEach(t->{
+			if(t.getViewRange() == 1){
+				String productNos =  deptProductService.findProductNosByDeptId(t.getDeptId());
+				t.setProductNos(productNos);
+			}
+		});
+		String productNos = dept.getProductNos();
+		if(StringUtils.isNotBlank(productNos)){
+			list=list.stream()
+					.filter(t->StringUtils.isNotBlank(t.getProductNos()))
+					.filter(t->t.getProductNos().contains(productNos))
+					.collect(Collectors.toList());
+		}
 		return ResResult.success(list);
 	}
 
@@ -52,15 +72,9 @@ public class DeptController extends BaseController {
 
 	//修改部门
 	@RequestMapping("dept/update")
-	public ResResult updateRole(Dept dept) {
-		this.deptService.updateDept(dept);
-		return ResResult.success();
-	}
-
-	//删除部门
-	@RequestMapping("dept/delete")
-	public ResResult deleteDept(Long id) {
-		this.deptService.deleteDepts(id);
+	public ResResult updateRole(ServerHttpRequest request,Dept dept) {
+		User loginUser = this.getLoginUser(request);
+		this.deptService.updateDept(dept,loginUser);
 		return ResResult.success();
 	}
 

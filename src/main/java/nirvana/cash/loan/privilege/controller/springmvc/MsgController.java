@@ -28,16 +28,11 @@ public class MsgController extends BaseController{
     @RequestMapping(value = "/notauth/msg/isWebsocketUser")
     public ResResult isWebsocketUser(ServerHttpRequest request) {
         Map<String,Object> resMap = new HashMap();
-        resMap.put("count",0);
-        resMap.put("flag",0);
         User user = this.getLoginUser(request);
         Long userId = user.getUserId();
-        boolean flag = messageConfigService.isTargtUser(userId);
-        if(flag){
-            Integer count = msgListService.countUnReadMsg(userId);
-            resMap.put("count",count);
-            resMap.put("flag",1);
-        }
+        Integer count = msgListService.countUnReadMsg(userId);
+        resMap.put("count",count);
+        resMap.put("flag",1);
         return ResResult.success(resMap);
     }
 }

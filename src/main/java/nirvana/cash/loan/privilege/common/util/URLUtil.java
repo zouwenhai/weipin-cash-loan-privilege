@@ -17,7 +17,7 @@ import java.util.List;
 public class URLUtil {
 
     //queryString: a=1&b=2&c=3
-    public static String getValue(String queryString, String paramName) {
+    public static String getFirst(String queryString, String paramName) {
         if(StringUtils.isBlank(queryString)){
             return null;
         }
