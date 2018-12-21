@@ -118,7 +118,7 @@ public class RequestCheck {
     /**
      * 获取运营团队权限信息
      * 1.登录用户未配置部门，用户不管理任何产品， authShowIds = "0"
-     * 2.登录用户配置了部门，且关联的部门viewRange=0.则可以管理所有产品， authShowIds = ""
+     * 2.登录用户配置了部门，且关联的部门viewRange=0.则可以管理所有产品， authShowIds = "all"
      * 3.其他，以登录用户所关联的部门配置的产品为准。关联的产品即为登录用户可管理的产品
      * @param user
      * @return
