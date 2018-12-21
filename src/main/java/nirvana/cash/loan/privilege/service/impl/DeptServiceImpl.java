@@ -121,6 +121,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     @Transactional
     public void updateDept(Dept dept, User loginUser) {
         Long parentId = dept.getParentId();
+        Long deptId = dept.getDeptId();
         if (parentId == null){
             dept.setParentId(0L);
         }
@@ -130,32 +131,28 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             dept.setViewRange(1);
         }
         this.updateNotNull(dept);
-
         //重新添加部门产品关联信息
+        deptProductService.delete(deptId);
         if(dept.getViewRange() == 1){
-            Long deptId = dept.getDeptId();
             String productNos = dept.getProductNos();
-            deptProductService.delete(deptId);
             deptProductService.insert(deptId, productNos);
-
-            //删除关联产品缓存
-            String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
-            redisService.delete(redisKey);
-
-            //关联登录用户强制退出
-            Example example = new Example(User.class);
-            example.createCriteria().andLike("deptId", "%" + deptId + "%");
-            List<User> userList = userMapper.selectByExample(example);
-            List<Long> userIds = userList.stream()
-                    .filter(t -> StringUtils.isNotBlank(t.getDeptId()))
-                    .map(t -> t.getUserId())
-                    .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
-            logoutUserService.batchLogoutUser(userIds);
-
-            //删除缓存的部门信息
-            String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
-            redisService.delete(rediskey);
         }
+        //关联登录用户强制退出
+        Example example = new Example(User.class);
+        example.createCriteria().andLike("deptId", "%" + deptId + "%");
+        List<User> userList = userMapper.selectByExample(example);
+        List<Long> userIds = userList.stream()
+                .filter(t -> StringUtils.isNotBlank(t.getDeptId()))
+                .map(t -> t.getUserId())
+                .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
+        logoutUserService.batchLogoutUser(userIds);
+
+        //删除关联产品缓存
+        String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
+        redisService.delete(redisKey);
+        //删除缓存的部门信息
+        String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
+        redisService.delete(rediskey);
     }
 
     @Override
