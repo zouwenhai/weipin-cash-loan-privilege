@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +27,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BizException.class)
     @ResponseBody
     public ResResult jsonErrorHandler(ServerHttpRequest request, BizException e) {
-        log.error("[exception]:request==>{},message==>{},e==>{}",
-                request.getURI(), e.getMessage(), e);
+        log.error("[exception]:traceId={},uri==>{},message==>{},e==>{}",
+                request.getHeaders().getFirst(CommonContants.gateway_trace_id),request.getURI(), e.getMessage(), e);
         return ResResult.error(e.getDesc(), e.getCode());
     }
 
     @ExceptionHandler(value = LoginSesstionTimeOutException.class)
     @ResponseBody
     public ResResult jsonErrorHandler(ServerHttpRequest request, LoginSesstionTimeOutException e) {
-        log.info("[exception]:request==>{},message==>{}", request.getURI(), e.getMessage());
+        log.info("[exception]:traceId={},uri==>{},message==>{}",
+                request.getHeaders().getFirst(CommonContants.gateway_trace_id), request.getURI(), e.getMessage());
         return ResResult.error(e.getDesc(), e.getCode());
     }
 
