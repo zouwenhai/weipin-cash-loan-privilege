@@ -132,7 +132,7 @@ public class RequestCheck {
                 return resmap;
             }
         }
-        //其他，可以管理部门关联的产品
+        //其他团队，可以管理部门关联的产品
         for (String item : deptIds) {
             AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(), Long.valueOf(item));
             if (vo != null && !CommonContants.default_product_no.equals(vo.getProductNos())) {
