@@ -1,14 +1,16 @@
 package nirvana.cash.loan.privilege.mq.message;
 
 import lombok.extern.slf4j.Slf4j;
-import nirvana.cash.loan.privilege.domain.UserWithRole;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.mq.facade.MessageFacade;
-import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.UserService;
+import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -18,11 +20,11 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class MessageFilter {
-    
+
     @Autowired
     private UserService userService;
     @Autowired
-    private DeptProductService deptProductService;
+    private RequestCheck requestCheck;
 
     /**
      * 判断用户是否有权限接收该消息
@@ -37,24 +39,30 @@ public class MessageFilter {
             return false;
         }
         //获取用户所有的部门，得到部门下的管理的产品的集合
-        UserWithRole user = userService.findById(userId);
+        User user = userService.selectByKey(userId);
         if (user == null) {
             return false;
         }
-        String deptIdStr = user.getDeptId();
-        if (StringUtils.hasText(deptIdStr)) {
+        Map<String, String> deptAndProductAuth = requestCheck.findDeptAndProductAuth(user);
+        String authShowIds = deptAndProductAuth.get("authShowIds");
+        System.out.println(authShowIds);
+        //拥有任何产品的权限
+        if (Objects.equals(CommonContants.default_all_product_no, authShowIds)) {
+            return true;
+        }
+
+        //没有任何产品的权限
+        if (Objects.equals(CommonContants.default_product_no, authShowIds)) {
+            return false;
+        }
+
+        //拥有部分产品的权限
+        if (StringUtils.hasText(authShowIds)) {
             String regex = ",";
-            String[] deptIds = deptIdStr.split(regex);
-            for (String deptId : deptIds) {
-                String productNos = deptProductService.findProductNosByDeptId(Long.valueOf(deptId));
-                if (!StringUtils.hasText(productNos)) {
-                    continue;
-                }
-                String productIdStr = String.valueOf(productId);
-                for (String productNo : productNos.split(regex)) {
-                    if (Objects.equals(productNo, productIdStr)) {
-                        return true;
-                    }
+            String[] showIds = authShowIds.split(regex);
+            for (String showId : showIds) {
+                if (Objects.equals(showId, String.valueOf(productId))) {
+                    return true;
                 }
             }
         }
