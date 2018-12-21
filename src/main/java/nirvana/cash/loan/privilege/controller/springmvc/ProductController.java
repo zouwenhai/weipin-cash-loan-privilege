@@ -1,12 +1,16 @@
 package nirvana.cash.loan.privilege.controller.springmvc;
 
 import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.fegin.facade.CashLoanGetAllProductsFacade;
 import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,10 +18,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/privilige")
-public class ProductController {
+public class ProductController extends BaseController {
 
     @Autowired
     private DeptProductService deptProductService;
@@ -44,8 +49,16 @@ public class ProductController {
 
     //全部部门列表
     @RequestMapping("notauth/allDept")
-    public ResResult deptList(Dept dept) {
-        List<Dept> list = deptService.findAllDepts(dept);
+    public ResResult deptList(ServerHttpRequest request, @RequestHeader String authDeptId) {
+        User user = this.getLoginUser(request);
+        if(user.getDeptId() == null || "0".equals(authDeptId)){
+            return ResResult.success(new ArrayList<>());
+        }
+        Dept dept =deptService.findById(Long.valueOf(authDeptId));
+        List<Dept> list = deptService.findAllDepts(new Dept());
+        if(dept.getViewRange() == 1){
+            list = list.stream().filter(t->t.getDeptId().equals(authDeptId)).collect(Collectors.toList());
+        }
         return ResResult.success(list);
     }
 }
