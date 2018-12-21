@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

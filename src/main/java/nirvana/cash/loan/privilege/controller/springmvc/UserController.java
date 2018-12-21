@@ -5,19 +5,20 @@ import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
+import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.RoleService;
 import nirvana.cash.loan.privilege.service.UserService;
-import nirvana.cash.loan.privilege.common.exception.BizException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,12 +31,34 @@ public class UserController extends BaseController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private DeptService deptService;
+
     //用户列表
     @RequestMapping("user/list")
     public ResResult userList(QueryRequest request, User user) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
-        List<User> list = this.userService.findUserWithDept(user);
-        PageInfo<User> pageInfo = new PageInfo<>(list);
+        List<User> userList = userService.findUserWithDept(user);
+        PageInfo<User> pageInfo = new PageInfo<>(userList);
+        //所属部门名称
+        if (!CollectionUtils.isEmpty(pageInfo.getList())) {
+            List<Dept> deptList = deptService.findAllDepts(new Dept());
+            if (CollectionUtils.isEmpty(deptList)) {
+                return ResResult.success(getDataTable(pageInfo));
+            }
+            Map<String, String> deptmap = deptList.stream().collect(Collectors.toMap(i -> i.getDeptId().toString(), i -> i.getDeptName()));
+            userList.forEach(t -> {
+                Set<String> itemDeptNameSet = new HashSet<>();
+                String deptIds = t.getDeptId();
+                if (StringUtils.isNotBlank(deptIds)) {
+                    List<String> deptNameList = Arrays.asList(deptIds.split(",")).stream()
+                            .map(x ->deptmap.get(x))
+                            .collect(Collectors.toList());
+                    itemDeptNameSet.addAll(deptNameList);
+                }
+                t.setDeptName(StringUtils.join(itemDeptNameSet, ","));
+            });
+        }
         return ResResult.success(getDataTable(pageInfo));
     }
 
@@ -58,10 +81,10 @@ public class UserController extends BaseController {
     @RequestMapping("user/add")
     public ResResult addUser(User user, ServerHttpRequest request) {
         String rolesSelect = user.getRoleIds2();
-        if(StringUtils.isBlank(rolesSelect)){
+        if (StringUtils.isBlank(rolesSelect)) {
             return ResResult.error("请选择用户角色！");
         }
-        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
+        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t -> Long.valueOf(t))
                 .collect(Collectors.toList());
         user.setUsername(user.getUsername().trim());
         User oldUser = this.userService.findByName(user.getUsername());
@@ -76,15 +99,15 @@ public class UserController extends BaseController {
     @RequestMapping("user/update")
     public ResResult updateUser(User user, ServerHttpRequest request) {
         String rolesSelect = user.getRoleIds2();
-        if(StringUtils.isBlank(rolesSelect)){
+        if (StringUtils.isBlank(rolesSelect)) {
             return ResResult.error("请选择用户角色！");
         }
-        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t->Long.valueOf(t))
+        List<Long> roleIdList = Arrays.asList(rolesSelect.split(",")).stream().map(t -> Long.valueOf(t))
                 .collect(Collectors.toList());
         User loginUser = this.getLoginUser(request);
-        Long loginUserId= loginUser.getUserId();
+        Long loginUserId = loginUser.getUserId();
         String username = loginUser.getUsername();
-        this.userService.updateUser(user,roleIdList,loginUserId, username);
+        this.userService.updateUser(user, roleIdList, loginUserId, username);
         return ResResult.success();
     }
 
@@ -97,7 +120,7 @@ public class UserController extends BaseController {
 
     //修改密码
     @RequestMapping("user/updatePassword")
-    public ResResult updatePassword(String newpassword,Long userId) {
+    public ResResult updatePassword(String newpassword, Long userId) {
         User user = new User();
         user.setUserId(userId);
         this.userService.updatePassword(newpassword, userId);

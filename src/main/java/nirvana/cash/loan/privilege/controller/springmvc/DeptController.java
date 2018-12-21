@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.controller.springmvc;
 
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
@@ -10,6 +11,7 @@ import nirvana.cash.loan.privilege.service.DeptService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -76,6 +78,21 @@ public class DeptController extends BaseController {
 		User loginUser = this.getLoginUser(request);
 		this.deptService.updateDept(dept,loginUser);
 		return ResResult.success();
+	}
+
+	//查询所属运营团队下拉框
+	@RequestMapping("notauth/dept/findAuthDeptList")
+	public ResResult findAuthDeptList(ServerHttpRequest request,@RequestHeader String authDeptIds) {
+		if(CommonContants.default_dept_id.equals(authDeptIds)){
+			return ResResult.error("当前登录账号未配置所属部门");
+		}
+		User user = this.getLoginUser(request);
+		List<Dept> deptList =  deptService.findAllDepts(new Dept());
+		if(user.getViewRange() == 0){
+			return ResResult.success(deptList);
+		}
+		deptList=deptList.stream().filter(t->authDeptIds.equals(t)).collect(Collectors.toList());
+		return ResResult.success(deptList);
 	}
 
 }

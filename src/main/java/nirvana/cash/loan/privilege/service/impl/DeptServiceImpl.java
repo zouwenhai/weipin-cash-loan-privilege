@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.Tree;
+import nirvana.cash.loan.privilege.common.exception.BizException;
 import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.dao.DeptMapper;
@@ -120,6 +121,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     @Transactional
     public void updateDept(Dept dept, User loginUser) {
         Long parentId = dept.getParentId();
+        Long deptId = dept.getDeptId();
         if (parentId == null){
             dept.setParentId(0L);
         }
@@ -129,32 +131,28 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             dept.setViewRange(1);
         }
         this.updateNotNull(dept);
-
         //重新添加部门产品关联信息
+        deptProductService.delete(deptId);
         if(dept.getViewRange() == 1){
-            Long deptId = dept.getDeptId();
             String productNos = dept.getProductNos();
-            deptProductService.delete(deptId);
             deptProductService.insert(deptId, productNos);
-
-            //删除关联产品缓存
-            String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
-            redisService.delete(redisKey);
-
-            //关联登录用户强制退出
-            Example example = new Example(User.class);
-            example.createCriteria().andEqualTo("deptId", deptId);
-            List<User> userList = userMapper.selectByExample(example);
-            List<Long> userIds = userList.stream()
-                    .filter(t -> t.getDeptId() != null)
-                    .map(t -> t.getUserId())
-                    .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
-            logoutUserService.batchLogoutUser(userIds);
-
-            //删除缓存的部门信息
-            String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
-            redisService.delete(rediskey);
         }
+        //关联登录用户强制退出
+        Example example = new Example(User.class);
+        example.createCriteria().andLike("deptId", "%" + deptId + "%");
+        List<User> userList = userMapper.selectByExample(example);
+        List<Long> userIds = userList.stream()
+                .filter(t -> StringUtils.isNotBlank(t.getDeptId()))
+                .map(t -> t.getUserId())
+                .filter(t -> !t.equals(loginUser.getUserId())).collect(Collectors.toList());
+        logoutUserService.batchLogoutUser(userIds);
+
+        //删除关联产品缓存
+        String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
+        redisService.delete(redisKey);
+        //删除缓存的部门信息
+        String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + dept.getDeptId();
+        redisService.delete(rediskey);
     }
 
     @Override
@@ -170,8 +168,8 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         else{
             dept = this.findById(deptId);
             if (dept == null) {
-                log.error("部门信息不存在,建议检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
-                return null;
+                log.error("部门信息不存在,请检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
+                BizException.newInstance("部门信息不存在,请检查用户所属部门配置！");
             }
             redisService.put(rediskey, JSON.toJSONString(dept));
         }
@@ -181,14 +179,16 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
         }
         else{
-            List<String> productNoList =deptProductService.findAllProductList().stream().map(t->t.getShowId().toString()).collect(Collectors.toList());
-            if(ListUtil.isNotEmpty(productNoList)){
-                productNos =  StringUtils.join(productNoList,",");
-            }
+            productNos = CommonContants.default_all_product_no;
         }
+//        else{
+//            List<String> productNoList =deptProductService.findAllProductList().stream().map(t->t.getShowId().toString()).collect(Collectors.toList());
+//            if(ListUtil.isNotEmpty(productNoList)){
+//                productNos =  StringUtils.join(productNoList,",");
+//            }
+//        }
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();
         vo.setDeptId(deptId);
-        vo.setDeptName(dept.getDeptName());
         vo.setProductNos(productNos);
         return vo;
     }
