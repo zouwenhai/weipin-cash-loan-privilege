@@ -112,4 +112,7 @@ public class User implements Serializable {
 	@Column(name = "SEAT_NUMBER")
 	private String seatNumber;
 
+	@Column(name = "VIEW_RANGE")
+	private Integer viewRange;
+
 }
