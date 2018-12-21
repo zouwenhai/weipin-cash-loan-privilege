@@ -90,7 +90,7 @@ public class LoginController extends BaseController {
         redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*6L);
 
         //查询d登录用户,授权产品编号
-        String productNos = deptProductService.findProductNosByDeptIdFromCache(user.getDeptId());
+        Map<String, String>  deptAndProductAuth= requestCheck.findDeptAndProductAuth(user);
 
         //更新登录时间
         this.userService.updateLoginTime(username);
@@ -100,7 +100,7 @@ public class LoginController extends BaseController {
         Map<String,Object> otherMap = res.getOther();
         otherMap.put("roleIds",roleIds);
         otherMap.put("roleCodes",roleCodes);
-        otherMap.put("authShowIds",productNos);
+        otherMap.put("authShowIds",deptAndProductAuth.get("authShowIds"));
         return res;
     }
 
