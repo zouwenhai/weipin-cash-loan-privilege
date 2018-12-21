@@ -61,7 +61,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 authShowIds =  vo.getProductNos();
             }
         }
-
+        log.info("当前请求:traceId={},用户ID:{},部门ID:{}",traceId,user.getUserId(),user.getDeptId());
         ServerHttpRequest host = null;
         host = exchange.getRequest()
                 .mutate()
