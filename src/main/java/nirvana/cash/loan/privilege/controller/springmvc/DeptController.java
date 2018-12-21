@@ -88,7 +88,7 @@ public class DeptController extends BaseController {
 		}
 		List<Dept> deptList =  deptService.findAllDepts(new Dept());
 		deptList=deptList.stream().filter(t->authDeptIds.equals(t)).collect(Collectors.toList());
-		return ResResult.success();
+		return ResResult.success(deptList);
 	}
 
 }
