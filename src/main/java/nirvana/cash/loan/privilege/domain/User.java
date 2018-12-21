@@ -55,8 +55,11 @@ public class User implements Serializable {
 	@Column(name = "PASSWORD")
 	private String password;
 
+	/**
+	 * 多个部门ID，使用逗号分隔
+	 */
 	@Column(name = "DEPT_ID")
-	private Long deptId;
+	private String deptId;
 
 	@Transient
 	@ExportConfig(value = "部门")

@@ -48,17 +48,4 @@ public class ProductController extends BaseController {
         return ResResult.success(listmap);
     }
 
-    //全部部门列表
-    @RequestMapping("notauth/allDept")
-    public ResResult deptList(@RequestHeader String authDeptId) {
-        if(CommonContants.default_dept_id.equals(authDeptId)){
-            return ResResult.error("当前登录用户,未配置所属团队！");
-        }
-        Dept dept =deptService.findById(Long.valueOf(authDeptId));
-        List<Dept> list = deptService.findAllDepts(new Dept());
-        if(dept.getViewRange() == 1){
-            list = list.stream().filter(t->t.getDeptId().equals(authDeptId)).collect(Collectors.toList());
-        }
-        return ResResult.success(list);
-    }
 }

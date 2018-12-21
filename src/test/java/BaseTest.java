@@ -200,16 +200,5 @@ public class BaseTest {
         String msg = JSONObject.toJSONString(orderStatusChangeFacade);
         receiver.receive(msg);
     }
-
-    @Autowired
-    private DeptProductService deptProductService;
-
-    @Test
-    public void test11(){
-        UserWithRole byId = userService.findById(0L);
-        System.out.println(byId.getDeptId());
-        String productNosByDeptId = deptProductService.findProductNosByDeptId(byId.getDeptId());
-        System.out.println(productNosByDeptId);
-    }
-
+    
 }
