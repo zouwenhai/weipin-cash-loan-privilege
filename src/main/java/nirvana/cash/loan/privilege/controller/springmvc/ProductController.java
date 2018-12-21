@@ -52,7 +52,7 @@ public class ProductController extends BaseController {
     @RequestMapping("notauth/allDept")
     public ResResult deptList(@RequestHeader String authDeptId) {
         if(CommonContants.default_dept_id.equals(authDeptId)){
-            return ResResult.success(new ArrayList<>());
+            return ResResult.error("当前登录用户,未配置所属团队！");
         }
         Dept dept =deptService.findById(Long.valueOf(authDeptId));
         List<Dept> list = deptService.findAllDepts(new Dept());
