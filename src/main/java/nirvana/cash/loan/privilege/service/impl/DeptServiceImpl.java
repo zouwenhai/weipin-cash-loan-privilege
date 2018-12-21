@@ -159,7 +159,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 
     @Override
     public AuthDeptProductInfoVo findAuthDeptProductInfoFromCache(Long userId,Long deptId) {
-        log.info("从缓存获取运营团队权限信息:userId={},deptId={}",userId,deptId);
+        log.info("获取运营团队权限信息请求参数:userId={},deptId={}",userId,deptId);
         //从缓存获取部门信息
         Dept dept = null;
         String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + deptId;
