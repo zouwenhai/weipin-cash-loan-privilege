@@ -5,12 +5,8 @@ import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
-import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.User;
-import nirvana.cash.loan.privilege.domain.vo.AuthDeptProductInfoVo;
-import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.web.RequestCheck;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -21,10 +17,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 系统本身权限(包括登录)校验
@@ -42,22 +35,23 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         ServerHttpResponse response = exchange.getResponse();
         URI uri = request.getURI();
         String traceId = GeneratorId.guuid();
-        log.info("privilege|request traceId={},uri={}",traceId,uri);
+        log.info("privilege|request traceId={},uri={}", traceId, uri);
         //check登录和权限
         ResResult checkResResult = requestCheck.check(request);
-        if(!ResResult.SUCCESS.equals(checkResResult.getCode())){
-            return requestCheck.failResBody(response,checkResResult);
+        if (!ResResult.SUCCESS.equals(checkResResult.getCode())) {
+            return requestCheck.failResBody(response, checkResResult);
         }
         //无需登录接口，执行继续
-        if(checkResResult.getData() == null){
+        if (checkResResult.getData() == null) {
             return webFilterChain.filter(exchange);
         }
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
-        log.info("当前请求:traceId={},用户ID:{},部门ID:{}",traceId,user.getUserId(),user.getDeptId());
+        log.info("当前请求:traceId={},用户ID:{},部门ID:{}", traceId, user.getUserId(), user.getDeptId());
 
         //获取运营团队权限信息
-        Map<String,String> deptAndProductAuth = requestCheck.findDeptAndProductAuth(user);
+        Map<String, String> deptAndProductAuth = requestCheck.findDeptAndProductAuth(user);
+        String authShowIds = deptAndProductAuth.get("authShowIds");
 
         ServerHttpRequest host = null;
         host = exchange.getRequest()
@@ -65,8 +59,8 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header(CommonContants.gateway_trace_id, traceId)
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
-                .header("authShowIds",deptAndProductAuth.get("authShowIds"))
-                .header("authDeptId",user.getDeptId()!=null?user.getDeptId().toString():CommonContants.default_dept_id)
+                .header("authShowIds", CommonContants.default_all_product_no.equals(authShowIds) ? "" : authShowIds)
+                .header("authDeptId", user.getDeptId() != null ? user.getDeptId().toString() : CommonContants.default_dept_id)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
         return webFilterChain.filter(build);

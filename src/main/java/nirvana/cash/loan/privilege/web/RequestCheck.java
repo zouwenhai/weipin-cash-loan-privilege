@@ -131,21 +131,18 @@ public class RequestCheck {
             resmap.put("authShowIds", authShowIds);
             return resmap;
         }
+        //用户配置了部门
         String[] deptIds = user.getDeptId().split(",");
-        if (deptIds.length == 1) {
-            Dept dept = deptService.selectByKey(user.getDeptId());
-            //登录用户可以查看，管理全部产品
-            if (dept.getViewRange() == 0) {
-                authShowIds = "";
-                resmap.put("authShowIds", authShowIds);
-                return resmap;
-            }
-        }
-        //其他团队，可以管理部门关联的产品
         Set<String> set = new HashSet<>();
         for (String deptId : deptIds) {
             AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(), Long.valueOf(deptId));
-            if (vo != null && !CommonContants.default_product_no.equals(vo.getProductNos())) {
+            //用户可以管理所有产品，方法直接返回！
+            if(CommonContants.default_all_product_no.equals(vo.getProductNos())){
+                resmap.put("authShowIds", CommonContants.default_all_product_no);
+                return resmap;
+            }
+            //用户可以管理部分产品，汇总用户可管理的产品
+            if (!CommonContants.default_product_no.equals(vo.getProductNos())) {
                 authShowIds += vo.getProductNos();
                 Set<String> itemSet = new HashSet<>(Arrays.asList(authShowIds.split(",")));
                 set.addAll(itemSet);

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.Tree;
+import nirvana.cash.loan.privilege.common.exception.BizException;
 import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.dao.DeptMapper;
@@ -170,8 +171,8 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         else{
             dept = this.findById(deptId);
             if (dept == null) {
-                log.error("部门信息不存在,建议检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
-                return null;
+                log.error("部门信息不存在,请检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
+                BizException.newInstance("部门信息不存在,请检查用户所属部门配置！");
             }
             redisService.put(rediskey, JSON.toJSONString(dept));
         }
@@ -179,6 +180,9 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         String productNos = CommonContants.default_product_no;
         if(dept.getViewRange() == 1){
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
+        }
+        else{
+            productNos = CommonContants.default_all_product_no;
         }
 //        else{
 //            List<String> productNoList =deptProductService.findAllProductList().stream().map(t->t.getShowId().toString()).collect(Collectors.toList());
