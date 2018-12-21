@@ -188,7 +188,6 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 //        }
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();
         vo.setDeptId(deptId);
-        vo.setDeptName(dept.getDeptName());
         vo.setProductNos(productNos);
         return vo;
     }
