@@ -50,9 +50,8 @@ public class ProductController extends BaseController {
 
     //全部部门列表
     @RequestMapping("notauth/allDept")
-    public ResResult deptList(ServerHttpRequest request, @RequestHeader String authDeptId) {
-        User user = this.getLoginUser(request);
-        if(user.getDeptId() == null || CommonContants.default_dept_id.equals(authDeptId)){
+    public ResResult deptList(@RequestHeader String authDeptId) {
+        if(CommonContants.default_dept_id.equals(authDeptId)){
             return ResResult.success(new ArrayList<>());
         }
         Dept dept =deptService.findById(Long.valueOf(authDeptId));
