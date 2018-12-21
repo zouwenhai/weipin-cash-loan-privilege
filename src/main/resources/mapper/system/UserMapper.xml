@@ -27,7 +27,9 @@
   <select id="findUserWithDept" resultType="user" parameterType="user">
   		select
 			u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-			u.ssex,u.seat_number seatNumber,u.dept_id deptId,
+			u.ssex,u.seat_number seatNumber,
+	        u.name,
+	        u.dept_id deptId,
 		   ( select
 			  listagg(role_id,',') within group (order by role_id)  as  role_ids
 			  from tb_yofishdk_auth_user_role ur
