@@ -32,5 +32,10 @@ public class OrderStatusChangeFacade {
     /**
      * 消息详细描述
      */
-    private String details;
+    private String orderRemark;
+
+    /**
+     * 产品id
+     */
+    private Long productNo;
 }

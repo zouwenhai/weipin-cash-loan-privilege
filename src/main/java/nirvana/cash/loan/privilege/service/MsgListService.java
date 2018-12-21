@@ -1,6 +1,5 @@
 package nirvana.cash.loan.privilege.service;
 
-import nirvana.cash.loan.privilege.common.domain.QueryRequest;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.domain.MsgList;
 import nirvana.cash.loan.privilege.domain.User;
@@ -20,26 +19,45 @@ public interface MsgListService extends IService<MsgList> {
     ResResult saveMsg(MsgList msgList);
 
     //消息删除
-    void msgDelete(List<Long> idList,User user);
+    void msgDelete(List<Long> idList, User user);
 
     //更新阅读状态
-    void updateStatus(List<Long> idList,Integer status,User user);
+    void updateStatus(List<Long> idList, Integer status, User user);
 
     //查询用户未读消息数量
     Integer countUnReadMsg(Long userId);
 
     /**
      * 更新消息状态
-     * @param uuid  消息的uuid
+     *
+     * @param uuid   消息的uuid
      * @param status 消息的状态 0:未读 1;已读
-     * @param user  操作用户
+     * @param user   操作用户
      */
-    void updateMessageStatus(String uuid,Integer status,User user);
+    void updateMessageStatus(String uuid, Integer status, User user);
 
     /**
      * 查询指定用户的未读消息
+     *
      * @param userId 用户id
      * @return
      */
     List<MsgList> queryUnreadMessage(Long userId);
+
+    /**
+     * 对指定订单的某个状态的消息标记为已读
+     *
+     * @param orderId     订单号
+     * @param orderStatus 订单状态
+     */
+    void markAsRead(String orderId, Integer orderStatus);
+
+    /**
+     * 查询指定订单的某个状态下的消息总数
+     *
+     * @param orderId     订单号
+     * @param orderStatus 订单状态
+     * @return
+     */
+    int selectCountByOrderIdAndStatus(String orderId, String orderStatus);
 }

@@ -46,4 +46,9 @@ public class MessageFacade {
      */
     private String details;
 
+    /**
+     * 产品id
+     */
+    private Long productNo;
+
 }

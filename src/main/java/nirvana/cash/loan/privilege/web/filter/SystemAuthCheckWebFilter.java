@@ -1,9 +1,13 @@
 package nirvana.cash.loan.privilege.web.filter;
 
 import lombok.extern.slf4j.Slf4j;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
+import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.domain.vo.AuthDeptProductInfoVo;
+import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -25,13 +29,16 @@ public class SystemAuthCheckWebFilter implements WebFilter {
 
     @Autowired
     private RequestCheck requestCheck;
+    @Autowired
+    private DeptService deptService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain webFilterChain) {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         URI uri = request.getURI();
-        log.info("privilege|request uri={}",uri);
+        String traceId = GeneratorId.guuid();
+        log.info("privilege|request traceId={},uri={}",traceId,uri);
         //check登录和权限
         ResResult checkResResult = requestCheck.check(request);
         if(!ResResult.SUCCESS.equals(checkResResult.getCode())){
@@ -43,11 +50,26 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         }
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
+        log.info("当前请求:traceId={},用户ID:{},部门ID:{}",traceId,user.getUserId(),user.getDeptId());
+        //从缓存获取运营团队权限信息
+        String authDeptName = "未配置";
+        String authShowIds = CommonContants.default_product_no;
+        if(user.getDeptId() != null){
+            AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(),user.getDeptId());
+            if(vo != null){
+                authDeptName = vo.getDeptName();
+                authShowIds =  vo.getProductNos();
+            }
+        }
         ServerHttpRequest host = null;
         host = exchange.getRequest()
                 .mutate()
+                .header(CommonContants.gateway_trace_id, traceId)
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
+                .header("authShowIds",authShowIds)
+                .header("authDeptId",user.getDeptId()!=null?user.getDeptId().toString():CommonContants.default_dept_id)
+                .header("authDeptName",URLUtil.encode(authDeptName,"utf-8"))
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
         return webFilterChain.filter(build);
