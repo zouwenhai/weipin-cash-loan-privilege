@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.controller.springmvc;
 
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
@@ -51,7 +52,7 @@ public class ProductController extends BaseController {
     @RequestMapping("notauth/allDept")
     public ResResult deptList(ServerHttpRequest request, @RequestHeader String authDeptId) {
         User user = this.getLoginUser(request);
-        if(user.getDeptId() == null || "0".equals(authDeptId)){
+        if(user.getDeptId() == null || CommonContants.default_dept_id.equals(authDeptId)){
             return ResResult.success(new ArrayList<>());
         }
         Dept dept =deptService.findById(Long.valueOf(authDeptId));

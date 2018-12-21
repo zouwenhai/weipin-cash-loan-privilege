@@ -69,7 +69,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
                 .header("authShowIds",authShowIds)
-                .header("authDeptId",user.getDeptId()!=null?user.getDeptId().toString():"0")
+                .header("authDeptId",user.getDeptId()!=null?user.getDeptId().toString():CommonContants.default_dept_id)
                 .header("authDeptName",URLUtil.encode(authDeptName,"utf-8"))
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
