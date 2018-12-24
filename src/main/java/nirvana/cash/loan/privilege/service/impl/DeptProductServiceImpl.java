@@ -57,7 +57,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
 
     public String findProductNosByDeptIdFromCache(Long deptId) {
         if (deptId == null) {
-            return CommonContants.default_product_no;
+            return CommonContants.none_product_no;
         }
         //从缓存获取关联产品编号
         String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
@@ -68,7 +68,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         //缓存未获取到，从数据库获取关联产品编号
         productNos = this.findProductNosByDeptId(deptId);
         if (StringUtils.isBlank(productNos)) {
-            productNos = CommonContants.default_product_no;
+            productNos = CommonContants.none_product_no;
         }
         redisService.put(redisKey, productNos);
         return productNos;

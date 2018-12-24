@@ -47,12 +47,12 @@ public class MessageFilter {
         String authShowIds = deptAndProductAuth.get("authShowIds");
         System.out.println(authShowIds);
         //拥有任何产品的权限
-        if (Objects.equals(CommonContants.default_all_product_no, authShowIds)) {
+        if (Objects.equals(CommonContants.all_product_no, authShowIds)) {
             return true;
         }
 
         //没有任何产品的权限
-        if (Objects.equals(CommonContants.default_product_no, authShowIds)) {
+        if (Objects.equals(CommonContants.none_product_no, authShowIds)) {
             return false;
         }
 
