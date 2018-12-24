@@ -49,7 +49,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
 
-        String authDeptIds = StringUtils.isNotBlank(user.getDeptId())?user.getDeptId():"";
+        String authDeptIds = StringUtils.isNotBlank(user.getDeptId())?user.getDeptId():CommonContants.none_dept_id;
         if(user.getViewRange() == 0){
             authDeptIds = CommonContants.all_product_no;
         }
