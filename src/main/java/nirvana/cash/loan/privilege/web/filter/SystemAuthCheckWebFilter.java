@@ -48,6 +48,12 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         }
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
+
+        String authDeptIds = StringUtils.isNotBlank(user.getDeptId())?user.getDeptId():"";
+        if(user.getViewRange() == 0){
+            authDeptIds = CommonContants.all_product_no;
+        }
+
         //获取运营团队权限信息
         Map<String, String> deptAndProductAuth = requestCheck.findDeptAndProductAuth(user);
         String authShowIds = deptAndProductAuth.get("authShowIds");
@@ -60,7 +66,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header("loginName", user.getUsername())
                 .header("userName", URLUtil.encode(user.getName(), "utf-8"))
                 .header("authShowIds", CommonContants.all_product_no.equals(authShowIds) ? "" : authShowIds)
-                .header("authDeptIds", StringUtils.isNotBlank(user.getDeptId()) ? user.getDeptId().toString() : CommonContants.default_dept_id)
+                .header("authDeptIds", authDeptIds)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
         return webFilterChain.filter(build);

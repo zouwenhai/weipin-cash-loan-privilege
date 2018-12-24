@@ -2,13 +2,17 @@ package nirvana.cash.loan.privilege.common.contants;
 
 public class CommonContants {
 
-    //外部团队，默认可见产品编号为0，即所有产品不可见
+    //不管理任何产品
     public static final String none_product_no = "0";
 
+    //管理所有产品
     public static final String all_product_no = "all";
 
-    //未配置所属团队时，获取到默认值
-    public static final String default_dept_id = "0";
+    //不管理任何部门
+    public static final String none_dept_id = "0";
+
+    //管理所有部门
+    public static final String all_dept_id = "all";
 
     public static final String gateway_trace_id = "gateway_trace_id";
 

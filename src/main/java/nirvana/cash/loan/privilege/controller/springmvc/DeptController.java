@@ -83,13 +83,13 @@ public class DeptController extends BaseController {
 	//查询所属运营团队下拉框
 	@RequestMapping("notauth/dept/findAuthDeptList")
 	public ResResult findAuthDeptList(ServerHttpRequest request,@RequestHeader String authDeptIds) {
-		if(CommonContants.default_dept_id.equals(authDeptIds)){
-			return ResResult.error("当前登录账号未配置所属部门");
-		}
 		User user = this.getLoginUser(request);
 		List<Dept> deptList =  deptService.findAllDepts(new Dept());
 		if(user.getViewRange() == 0){
 			return ResResult.success(deptList);
+		}
+		if(StringUtils.isBlank(authDeptIds)){
+			return ResResult.error("当前登录用户未配置所属运营团队！");
 		}
 		deptList=deptList.stream().filter(t->authDeptIds.equals(t)).collect(Collectors.toList());
 		return ResResult.success(deptList);
