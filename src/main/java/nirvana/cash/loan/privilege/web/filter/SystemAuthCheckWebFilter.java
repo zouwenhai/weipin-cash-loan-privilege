@@ -51,7 +51,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
 
         String authDeptIds = StringUtils.isNotBlank(user.getDeptId())?user.getDeptId():CommonContants.none_dept_id;
         if(user.getViewRange() == 0){
-            authDeptIds = CommonContants.all_product_no;
+            authDeptIds = CommonContants.all_dept_id;
         }
 
         //获取运营团队权限信息
