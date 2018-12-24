@@ -88,9 +88,6 @@ public class DeptController extends BaseController {
 		if(user.getViewRange() == 0){
 			return ResResult.success(deptList);
 		}
-		if(CommonContants.none_dept_id.equals(authDeptIds)){
-			return ResResult.error("当前登录用户未配置所属运营团队！");
-		}
 		deptList=deptList.stream().filter(t->authDeptIds.equals(t)).collect(Collectors.toList());
 		return ResResult.success(deptList);
 	}
