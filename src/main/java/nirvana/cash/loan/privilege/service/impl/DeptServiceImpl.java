@@ -174,19 +174,10 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
             redisService.put(rediskey, JSON.toJSONString(dept));
         }
         //获取关联产品编号
-        String productNos = CommonContants.default_product_no;
+        String productNos = CommonContants.all_product_no;
         if(dept.getViewRange() == 1){
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
         }
-        else{
-            productNos = CommonContants.default_all_product_no;
-        }
-//        else{
-//            List<String> productNoList =deptProductService.findAllProductList().stream().map(t->t.getShowId().toString()).collect(Collectors.toList());
-//            if(ListUtil.isNotEmpty(productNoList)){
-//                productNos =  StringUtils.join(productNoList,",");
-//            }
-//        }
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();
         vo.setDeptId(deptId);
         vo.setProductNos(productNos);
