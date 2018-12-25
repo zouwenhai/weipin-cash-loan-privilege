@@ -125,9 +125,12 @@ public class RequestCheck {
      */
     public Map<String, String> findDeptAndProductAuth(User user) {
         Map resmap = new HashMap();
-        //登录用户未配置所属部门,不管理产品
+        if(user.getViewRange() == 0){
+            resmap.put("authShowIds", CommonContants.all_product_no);
+            return resmap;
+        }
         if(StringUtils.isBlank(user.getDeptId())){
-            resmap.put("authShowIds", CommonContants.default_product_no);
+            resmap.put("authShowIds", CommonContants.none_product_no);
             return resmap;
         }
         //用户配置了部门
@@ -137,12 +140,12 @@ public class RequestCheck {
         for (String deptId : deptIds) {
             AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(), Long.valueOf(deptId));
             //用户可以管理所有产品，方法直接返回！
-            if(CommonContants.default_all_product_no.equals(vo.getProductNos())){
-                resmap.put("authShowIds", CommonContants.default_all_product_no);
+            if(CommonContants.all_product_no.equals(vo.getProductNos())){
+                resmap.put("authShowIds", CommonContants.all_product_no);
                 return resmap;
             }
             //用户可以管理部分产品，汇总用户可管理的产品
-            if (!CommonContants.default_product_no.equals(vo.getProductNos())) {
+            if (!CommonContants.none_product_no.equals(vo.getProductNos())) {
                 authShowIds += vo.getProductNos();
                 Set<String> itemSet = new HashSet<>(Arrays.asList(authShowIds.split(",")));
                 set.addAll(itemSet);
@@ -152,7 +155,7 @@ public class RequestCheck {
             authShowIds = StringUtils.join(set, ",");
         }
         else{
-            authShowIds = CommonContants.default_product_no;
+            authShowIds = CommonContants.none_product_no;
         }
         resmap.put("authShowIds", authShowIds);
         return resmap;

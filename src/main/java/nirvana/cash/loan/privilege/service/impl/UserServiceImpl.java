@@ -56,12 +56,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 	public User findByName(String userName) {
 		Example example = new Example(User.class);
 		example.createCriteria().andCondition("lower(username)=", userName.toLowerCase());
-		List<User> list = this.selectByExample(example);
-		if (list.size() == 0) {
-			return null;
-		} else {
-			return list.get(0);
-		}
+		return this.selectOneByExample(example);
 	}
 
 	@Override
