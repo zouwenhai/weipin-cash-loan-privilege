@@ -146,4 +146,14 @@ public class UserController extends BaseController {
         return ResResult.success(getDataTable(pageInfo));
     }
 
+    //根据用户ID，查询指定用户信息
+    @RequestMapping("/user/findByLoginName")
+    public ResResult findByLoginName(String loginName) {
+        User user = userService.findByName(loginName);
+        if(user != null){
+            return ResResult.success(user);
+        }
+        return ResResult.error("用户不存在");
+    }
+
 }
