@@ -50,6 +50,7 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/user/findByLoginName");
         //监控
         noLoginUrls.add("/actuator/info");
+        noLoginUrls.add("/actuator/health");
     }
 
     private static String websocket_url = "/privilege/notauth/webSocket/*";
