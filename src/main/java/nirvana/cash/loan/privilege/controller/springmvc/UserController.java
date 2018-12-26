@@ -149,6 +149,9 @@ public class UserController extends BaseController {
     //根据用户ID，查询指定用户信息
     @RequestMapping("/user/findByLoginName")
     public ResResult findByLoginName(String loginName) {
+        if(StringUtils.isBlank(loginName)){
+            return ResResult.error("登录名不能为空");
+        }
         User user = userService.findByName(loginName);
         if(user != null){
             return ResResult.success(user);
