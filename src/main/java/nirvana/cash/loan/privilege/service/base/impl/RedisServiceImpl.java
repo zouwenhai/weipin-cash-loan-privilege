@@ -70,7 +70,6 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public <T> boolean putListWithExpireTime(String key, List<T> objList,
                                              final long expireTime) {
-        this.delete(key);
         final byte[] bkey = key.getBytes();
         final byte[] bvalue = ProtoStuffSerializerUtil.serializeList(objList);
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
