@@ -47,6 +47,7 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/notauth/isLogin");
         noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
+        noLoginUrls.add("/privilige/user/findByLoginName");
         //监控
         noLoginUrls.add("/actuator/info");
     }
