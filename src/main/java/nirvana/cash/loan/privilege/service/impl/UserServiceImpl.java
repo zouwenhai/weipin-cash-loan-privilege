@@ -209,7 +209,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             facade.setRoleType(oldRiskRoleCodes.get(0));
             facade.setUserStatus("0");
         } else if (newRiskRoleCodes.size() > 1) {
-            throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
+            throw  BizException.newInstance("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
         } else {
             //更新风控用户角色
             String newRoleCode = newRiskRoleCodes.get(0);
@@ -221,7 +221,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             logger.info("修改风控用户:" + JSONObject.toJSONString(facade));
             NewResponseUtil result = feginRiskApi.updateOrderUser(facade);
             if(!NewResponseUtil.SUCCESS.equals(result.getCode())) {
-                throw new BizException(result.getDesc());
+                throw  BizException.newInstance(result.getDesc());
             }
         } catch (Exception e) {
             logger.error("修改风控用户失败:{}", e.getMessage());
