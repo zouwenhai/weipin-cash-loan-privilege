@@ -197,6 +197,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		}
 
         //风控
+		List<String> oldRiskRoleCodes = filterRoleCodeList(oldRoleCodeList,"risk");
         List<String> newRiskRoleCodes = filterRoleCodeList(newRoleCodeList, "risk");
 		RiskUserUpdateApiFacade facade = new RiskUserUpdateApiFacade();
 		facade.setMobile(user.getMobile());
@@ -205,6 +206,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		if (CollectionUtils.isEmpty(newRiskRoleCodes)) {
             //删除风控用户
             logger.info("删除风控用户:{}",user.getUsername());
+            facade.setRoleType(oldRiskRoleCodes.get(0));
             facade.setUserStatus("0");
         } else if (newRiskRoleCodes.size() > 1) {
             throw new BizException("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
