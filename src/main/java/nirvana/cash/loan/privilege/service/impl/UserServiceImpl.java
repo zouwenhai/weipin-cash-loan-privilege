@@ -203,28 +203,33 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		facade.setMobile(user.getMobile());
 		facade.setLoginName(user.getUsername());
 		facade.setUserName(user.getName());
+		//撤销用户风控角色
 		if (!CollectionUtils.isEmpty(oldCollRoleCodeList) &&CollectionUtils.isEmpty(newRiskRoleCodes)) {
             //删除风控用户
             logger.info("删除风控用户:{}",user.getUsername());
             facade.setRoleType(oldRiskRoleCodes.get(0));
             facade.setUserStatus("0");
-        } else if (newRiskRoleCodes.size() > 1) {
+        }
+        //设置用户风控角色，但角色数量大于1，不允许
+		if (!CollectionUtils.isEmpty(newRiskRoleCodes) && newRiskRoleCodes.size() > 1) {
             throw  BizException.newInstance("修改风控用户失败:一个风控登录帐号只能拥有一个风控角色");
-        } else {
+        }
+        //设置用户风控角色，且风控角色数量等于1
+        if(!CollectionUtils.isEmpty(newRiskRoleCodes)) {
             //更新风控用户角色
             String newRoleCode = newRiskRoleCodes.get(0);
             logger.info("更新风控用户：{} 的角色为：{}", user.getUsername(), newRoleCode);
             facade.setRoleType(newRoleCode);
             facade.setUserStatus("1");
-        }
-        try {
-            logger.info("修改风控用户:" + JSONObject.toJSONString(facade));
-            NewResponseUtil result = feginRiskApi.updateOrderUser(facade);
-            if(!NewResponseUtil.SUCCESS.equals(result.getCode())) {
-                throw  BizException.newInstance(result.getDesc());
-            }
-        } catch (Exception e) {
-            logger.error("修改风控用户失败:{}", e.getMessage());
+			try {
+				logger.info("修改风控用户:" + JSONObject.toJSONString(facade));
+				NewResponseUtil result = feginRiskApi.updateOrderUser(facade);
+				if(!NewResponseUtil.SUCCESS.equals(result.getCode())) {
+					throw  BizException.newInstance(result.getDesc());
+				}
+			} catch (Exception e) {
+				logger.error("修改风控用户失败:{}", e.getMessage());
+			}
         }
 	}
 
