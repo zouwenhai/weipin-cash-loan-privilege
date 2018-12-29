@@ -204,7 +204,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		facade.setLoginName(user.getUsername());
 		facade.setUserName(user.getName());
 		//撤销用户风控角色
-		if (!CollectionUtils.isEmpty(oldCollRoleCodeList) &&CollectionUtils.isEmpty(newRiskRoleCodes)) {
+		if (!CollectionUtils.isEmpty(oldRiskRoleCodes) &&CollectionUtils.isEmpty(newRiskRoleCodes)) {
             //删除风控用户
             logger.info("删除风控用户:{}",user.getUsername());
             facade.setRoleType(oldRiskRoleCodes.get(0));
