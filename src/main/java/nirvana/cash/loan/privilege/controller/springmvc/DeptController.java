@@ -88,7 +88,7 @@ public class DeptController extends BaseController {
 		if(user.getViewRange() == 0){
 			return ResResult.success(deptList);
 		}
-		deptList=deptList.stream().filter(t->authDeptIds.equals(t)).collect(Collectors.toList());
+		deptList=deptList.stream().filter(t->authDeptIds.contains(t.getDeptId().toString())).collect(Collectors.toList());
 		return ResResult.success(deptList);
 	}
 
