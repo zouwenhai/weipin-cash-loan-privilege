@@ -107,7 +107,6 @@ public class LoginController extends BaseController {
         if (StringUtils.isNotBlank(jsessionid)) {
             redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
             response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID, null, 0));
-
         }
     }
 
