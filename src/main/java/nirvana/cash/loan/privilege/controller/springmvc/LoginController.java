@@ -108,7 +108,7 @@ public class LoginController extends BaseController {
             return ;
         }
         redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
-        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,"",0));
+        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,null,0));
     }
 
     //是否处于登录状态
