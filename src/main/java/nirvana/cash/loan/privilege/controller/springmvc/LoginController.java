@@ -104,11 +104,11 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/notauth/logout")
     public void logout(ServerHttpRequest request,ServerHttpResponse response) {
         String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
-        if (jsessionid == null || jsessionid.trim().length() == 0) {
-            return ;
+        if (StringUtils.isNotBlank(jsessionid)) {
+            redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
+            response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID, null, 0));
+
         }
-        redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
-        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,null,0));
     }
 
     //是否处于登录状态
