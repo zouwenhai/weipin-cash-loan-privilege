@@ -48,7 +48,7 @@ public class LoginController extends BaseController {
         if(StringUtils.isBlank(verifyId)){
             return ResResult.error("验证码已失效！");
         }
-        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,"",0));
+        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,null,0));
         String sessionCode = redisService.get(verifyId,String.class);
         redisService.delete(verifyId);
         if (!code.toLowerCase().equals(sessionCode)) {
@@ -104,11 +104,10 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/notauth/logout")
     public void logout(ServerHttpRequest request,ServerHttpResponse response) {
         String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
-        if (jsessionid == null || jsessionid.trim().length() == 0) {
-            return ;
+        if (StringUtils.isNotBlank(jsessionid)) {
+            redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
+            response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID, null, 0));
         }
-        redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
-        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,"",0));
     }
 
     //是否处于登录状态
