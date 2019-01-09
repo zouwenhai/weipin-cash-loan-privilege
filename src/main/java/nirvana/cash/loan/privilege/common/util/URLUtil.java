@@ -36,9 +36,6 @@ public class URLUtil {
 
     public static String encode(String str, String enc) {
         try {
-            if(StringUtils.isBlank(str)){
-                return str;
-            }
             return URLEncoder.encode(str, enc);
         } catch (UnsupportedEncodingException e) {
             log.info("参数编码格式错误:str={},enc={}", str, enc);
@@ -48,9 +45,6 @@ public class URLUtil {
 
     public static String decode(String str, String enc) {
         try {
-            if(StringUtils.isBlank(str)){
-                return str;
-            }
             return URLDecoder.decode(str, enc);
         } catch (UnsupportedEncodingException e) {
             log.info("参数编码格式错误:str={},enc={}", str, enc);
