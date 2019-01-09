@@ -48,7 +48,7 @@ public class LoginController extends BaseController {
         if(StringUtils.isBlank(verifyId)){
             return ResResult.error("验证码已失效！");
         }
-        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,null,0));
+        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,"",0));
         String sessionCode = redisService.get(verifyId,String.class);
         redisService.delete(verifyId);
         if (!code.toLowerCase().equals(sessionCode)) {
@@ -106,7 +106,7 @@ public class LoginController extends BaseController {
         String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
         if (StringUtils.isNotBlank(jsessionid)) {
             redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
-            response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID, null, 0));
+            response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID, "", 0));
         }
     }
 
