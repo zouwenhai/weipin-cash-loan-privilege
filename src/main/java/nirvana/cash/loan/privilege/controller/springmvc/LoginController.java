@@ -41,19 +41,19 @@ public class LoginController extends BaseController {
         User user=null;
         String roleIds=null;
         String roleCodes=null;
-//        if (StringUtils.isBlank(code)) {
-//            return ResResult.error("验证码不能为空！");
-//        }
-//        String verifyId =  CookieUtil.getCookieValue(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
-//        if(StringUtils.isBlank(verifyId)){
-//            return ResResult.error("验证码已失效！");
-//        }
-//        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,"",0));
-//        String sessionCode = redisService.get(verifyId,String.class);
-//        redisService.delete(verifyId);
-//        if (!code.toLowerCase().equals(sessionCode)) {
-//            return ResResult.error("验证码错误！");
-//        }
+        if (StringUtils.isBlank(code)) {
+            return ResResult.error("验证码不能为空！");
+        }
+        String verifyId =  CookieUtil.getCookieValue(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
+        if(StringUtils.isBlank(verifyId)){
+            return ResResult.error("验证码已失效！");
+        }
+        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,"",0));
+        String sessionCode = redisService.get(verifyId,String.class);
+        redisService.delete(verifyId);
+        if (!code.toLowerCase().equals(sessionCode)) {
+            return ResResult.error("验证码错误！");
+        }
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             return ResResult.error("用户名或密码错误！");
         }
