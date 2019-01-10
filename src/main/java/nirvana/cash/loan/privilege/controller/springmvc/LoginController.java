@@ -2,10 +2,7 @@ package nirvana.cash.loan.privilege.controller.springmvc;
 
 import com.alibaba.fastjson.JSON;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
-import nirvana.cash.loan.privilege.common.util.CookieUtil;
-import nirvana.cash.loan.privilege.common.util.GeneratorId;
-import nirvana.cash.loan.privilege.common.util.MD5Utils;
-import nirvana.cash.loan.privilege.common.util.ResResult;
+import nirvana.cash.loan.privilege.common.util.*;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Menu;
 import nirvana.cash.loan.privilege.domain.User;
@@ -44,7 +41,8 @@ public class LoginController extends BaseController {
         if (StringUtils.isBlank(code)) {
             return ResResult.error("验证码不能为空！");
         }
-        String verifyId =  CookieUtil.getCookieValue(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
+//        String verifyId =  CookieUtil.getCookieValue(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
+        String verifyId =  URLUtil.getHeader(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
         if(StringUtils.isBlank(verifyId)){
             return ResResult.error("验证码已失效！");
         }
@@ -103,7 +101,8 @@ public class LoginController extends BaseController {
     //注销
     @RequestMapping(value = "/notauth/logout")
     public void logout(ServerHttpRequest request,ServerHttpResponse response) {
-        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+        //String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+        String jsessionid = URLUtil.getHeader(request,RedisKeyContant.JSESSIONID);
         if (StringUtils.isNotBlank(jsessionid)) {
             redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
             response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID, "", 0));

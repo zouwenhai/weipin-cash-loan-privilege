@@ -93,7 +93,8 @@ public class RequestCheck {
     }
 
     public User getLoginUser(ServerHttpRequest request) {
-        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+//        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
+        String jsessionid = URLUtil.getHeader(request,RedisKeyContant.JSESSIONID);
         if (StringUtils.isBlank(jsessionid)) {
             return null;
         }

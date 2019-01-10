@@ -2,6 +2,7 @@ package nirvana.cash.loan.privilege.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -70,5 +71,9 @@ public class URLUtil {
     public static boolean isWebsocketUrl(String websocketUrl,String url) {
         PathMatcher pathMatcher = new AntPathMatcher();
         return pathMatcher.match(websocketUrl, url);
+    }
+
+    public static String getHeader(ServerHttpRequest request,String name){
+        return  request.getHeaders().getFirst(name);
     }
 }
