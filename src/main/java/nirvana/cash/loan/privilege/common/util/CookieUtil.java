@@ -33,7 +33,7 @@ public class CookieUtil {
     //maxAge = 60*60 过期时间为1小时
     public static ResponseCookie buildCookie(String cookieName,String cookieValue,long maxAge){
         return ResponseCookie.from(cookieName, URLUtil.encode(cookieValue,"utf-8"))
-                .domain("caiyi.com ,youyuwo.com")
+                .domain(".caiyi.com")
                 .path("/")
                 .maxAge(maxAge)
                 .httpOnly(true)
