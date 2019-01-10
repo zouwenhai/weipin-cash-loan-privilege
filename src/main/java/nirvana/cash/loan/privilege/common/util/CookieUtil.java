@@ -35,7 +35,7 @@ public class CookieUtil {
         return ResponseCookie.from(cookieName, URLUtil.encode(cookieValue,"utf-8"))
                 .path("/")
                 .maxAge(maxAge)
-                .httpOnly(true)
+//                .httpOnly(true)
                 .build();
     }
 }
