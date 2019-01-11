@@ -36,7 +36,9 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         ServerHttpResponse response = exchange.getResponse();
         URI uri = request.getURI();
         String traceId = GeneratorId.guuid();
-        log.info("privilege|request traceId={},uri={}", traceId, uri);
+        if(!uri.toString().contains("password")){
+            log.info("privilege|request traceId={},uri={}", traceId, uri);
+        }
         //check登录和权限
         ResResult checkResResult = requestCheck.check(request);
         if (!ResResult.SUCCESS.equals(checkResResult.getCode())) {
