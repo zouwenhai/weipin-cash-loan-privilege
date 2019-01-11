@@ -107,7 +107,6 @@ public class RequestCheck {
             if (StringUtils.isBlank(data)) {
                 return null;
             }
-            throw BizException.newInstance2("测试权限加强");//TODO
         }catch (Exception ex){
             log.error("从缓存获取登录信息失败:{}",ex);
             //从数据库直接获取一次

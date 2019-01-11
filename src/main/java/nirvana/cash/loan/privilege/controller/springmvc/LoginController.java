@@ -72,7 +72,6 @@ public class LoginController extends BaseController {
         String jsessionid = user.getUserId()+ CommonContants.split_char+GeneratorId.guuid();
         try{
             redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*6L);
-            throw BizException.newInstance2("测试权限加强");//TODO
         }catch (Exception ex){
             log.error("缓存登录用户信息发生异常:{}",ex);
         } finally {
@@ -92,7 +91,6 @@ public class LoginController extends BaseController {
             redisService.putWithExpireTime(userPermissionsKey,JSON.toJSONString(permissionList),60*60*6L);
         }catch (Exception ex){
             log.error("缓存用户权限集发生异常:{}",ex);
-            throw BizException.newInstance2("测试权限加强");//TODO
         }
         //密码不输出至前端
         user.setPassword(null);
