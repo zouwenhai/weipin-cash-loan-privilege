@@ -74,6 +74,10 @@ public class URLUtil {
     }
 
     public static String getHeader(ServerHttpRequest request,String name){
-        return  request.getHeaders().getFirst(name);
+        String head =  request.getHeaders().getFirst(name);
+        if(StringUtils.isNotBlank(head)){
+            return head;
+        }
+        return request.getQueryParams().getFirst(name);
     }
 }
