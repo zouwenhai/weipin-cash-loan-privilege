@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.service.impl;
 
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.LogoutUserService;
@@ -51,7 +52,7 @@ public class LogoutUserServiceImpl implements LogoutUserService {
             Iterator<String> it = jsessionids.iterator();
             while (it.hasNext()) {
                 String jessionId = it.next();
-                if (jessionId.split("#")[0].equals(userId.toString())) {
+                if (jessionId.split(CommonContants.split_char)[0].equals(userId.toString())) {
                     res = jessionId;
                     break;
                 }

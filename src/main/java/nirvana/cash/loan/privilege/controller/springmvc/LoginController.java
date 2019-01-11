@@ -1,6 +1,7 @@
 package nirvana.cash.loan.privilege.controller.springmvc;
 
 import com.alibaba.fastjson.JSON;
+import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.util.*;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
@@ -76,7 +77,7 @@ public class LoginController extends BaseController {
         }
 
         //缓存6小时，登录信息，"#"分割符在其他地方有使用到,不要替换为其他的。
-        String jsessionid = user.getUserId()+"#"+GeneratorId.guuid();
+        String jsessionid = user.getUserId()+ CommonContants.split_char+GeneratorId.guuid();
         redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*6L);
 
         //设置登录sessionId,存入cookies
