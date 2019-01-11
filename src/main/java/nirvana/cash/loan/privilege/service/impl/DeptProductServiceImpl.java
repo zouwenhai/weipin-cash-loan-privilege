@@ -1,9 +1,9 @@
 package nirvana.cash.loan.privilege.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
-import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.dao.DeptProductMapper;
 import nirvana.cash.loan.privilege.domain.DeptProduct;
 import nirvana.cash.loan.privilege.fegin.FeginCashLoanApi;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DeptProductServiceImpl extends BaseService<DeptProduct> implements DeptProductService {
@@ -59,18 +60,25 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         if (deptId == null) {
             return CommonContants.none_product_no;
         }
-        //从缓存获取关联产品编号
-        String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
-        String productNos = redisService.get(redisKey, String.class);
-        if (StringUtils.isNotBlank(productNos)) {
-            return productNos;
+        String productNos = CommonContants.none_product_no;
+        try{
+            //从缓存获取关联产品编号
+            String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
+            productNos = redisService.get(redisKey, String.class);
+            if (StringUtils.isNotBlank(productNos)) {
+                return productNos;
+            }
+            //缓存未获取到，从数据库获取关联产品编号
+            productNos = this.findProductNosByDeptId(deptId);
+            if (StringUtils.isBlank(productNos)) {
+                productNos = CommonContants.none_product_no;
+            }
+            redisService.put(redisKey, productNos);
+        }catch (Exception ex){
+            log.error("获取运营产品队权限信息发生异常:{}",ex);
+            //直接从数据库获取一次
+            productNos = this.findProductNosByDeptId(deptId);
         }
-        //缓存未获取到，从数据库获取关联产品编号
-        productNos = this.findProductNosByDeptId(deptId);
-        if (StringUtils.isBlank(productNos)) {
-            productNos = CommonContants.none_product_no;
-        }
-        redisService.put(redisKey, productNos);
         return productNos;
     }
 

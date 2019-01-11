@@ -7,7 +7,6 @@ import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.exception.BizException;
-import nirvana.cash.loan.privilege.common.util.ListUtil;
 import nirvana.cash.loan.privilege.common.util.TreeUtils;
 import nirvana.cash.loan.privilege.dao.DeptMapper;
 import nirvana.cash.loan.privilege.dao.UserMapper;
@@ -160,19 +159,26 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
         log.info("获取运营团队权限信息请求参数:userId={},deptId={}",userId,deptId);
         //从缓存获取部门信息
         Dept dept = null;
-        String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + deptId;
-        String deptStr = redisService.get(rediskey, String.class);
-        if(StringUtils.isNotBlank(deptStr)){
-            dept = JSONObject.parseObject(deptStr,Dept.class);
-        }
-        else{
-            dept = this.findById(deptId);
-            if (dept == null) {
-                log.error("部门信息不存在,请检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
-                BizException.newInstance("部门信息不存在,请检查用户所属部门配置！");
+        try{
+            String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + deptId;
+            String deptStr = redisService.get(rediskey, String.class);
+            if(StringUtils.isNotBlank(deptStr)){
+                dept = JSONObject.parseObject(deptStr,Dept.class);
             }
-            redisService.put(rediskey, JSON.toJSONString(dept));
+            else{
+                dept = this.findById(deptId);
+                if (dept == null) {
+                    log.error("部门信息不存在,请检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
+                    BizException.newInstance("部门信息不存在,请检查用户所属部门配置！");
+                }
+                redisService.put(rediskey, JSON.toJSONString(dept));
+            }
+        }catch (Exception ex){
+            log.error("获取运营团队权限信息发生异常:{}",ex);
+            //直接从数据库获取一次
+            dept = this.findById(deptId);
         }
+
         //获取关联产品编号
         String productNos = CommonContants.all_product_no;
         if(dept.getViewRange() == 1){
