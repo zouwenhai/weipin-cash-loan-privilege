@@ -5,10 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
-import nirvana.cash.loan.privilege.common.util.CookieUtil;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
-import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Menu;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.AuthDeptProductInfoVo;
@@ -93,7 +91,6 @@ public class RequestCheck {
     }
 
     public User getLoginUser(ServerHttpRequest request) {
-//        String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
         String jsessionid = URLUtil.getHeader(request,RedisKeyContant.JSESSIONID);
         if (StringUtils.isBlank(jsessionid)) {
             return null;

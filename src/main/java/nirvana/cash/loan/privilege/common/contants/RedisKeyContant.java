@@ -5,7 +5,7 @@ package nirvana.cash.loan.privilege.common.contants;
  */
 public class RedisKeyContant {
 
-    public final static String JSESSIONID = "JSESSIONID";
+    public final static String JSESSIONID = "jsessionid";
 
     public final static String YOFISHDK_LOGIN_USER_PREFIX = "yofishdk_login_user_prefix_";
 

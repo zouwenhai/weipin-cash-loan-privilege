@@ -35,24 +35,10 @@ public class LoginController extends BaseController {
 
     //登录
     @RequestMapping("/notauth/login")
-    public ResResult login(ServerHttpRequest request, ServerHttpResponse response,  String username, String password,String code) {
+    public ResResult login(ServerHttpRequest request, ServerHttpResponse response,  String username, String password) {
         User user=null;
         String roleIds=null;
         String roleCodes=null;
-        if (StringUtils.isBlank(code)) {
-            return ResResult.error("验证码不能为空！");
-        }
-//        String verifyId =  CookieUtil.getCookieValue(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
-        String verifyId =  URLUtil.getHeader(request,RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE);
-        if(StringUtils.isBlank(verifyId)){
-            return ResResult.error("验证码已失效！");
-        }
-        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,"",0));
-        String sessionCode = redisService.get(verifyId,String.class);
-        redisService.delete(verifyId);
-        if (!code.toLowerCase().equals(sessionCode)) {
-            return ResResult.error("验证码错误！");
-        }
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             return ResResult.error("用户名或密码错误！");
         }
@@ -76,12 +62,9 @@ public class LoginController extends BaseController {
             roleCodes=userService.findUserRoldCodes(roleIds);
         }
 
-        //缓存6小时，登录信息，"#"分割符在其他地方有使用到,不要替换为其他的。
+        //缓存6小时，登录信息，split_char分割符在其他地方有使用到,不要替换为其他的。
         String jsessionid = user.getUserId()+ CommonContants.split_char+GeneratorId.guuid();
         redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,JSON.toJSONString(user),60*60*6L);
-
-        //设置登录sessionId,存入cookies
-        response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID,jsessionid));
 
         // 缓存6小时，用户权限集,主要作用:“按钮显示”
         List<Menu> permissionList = menuService.findUserPermissions(username);
@@ -96,17 +79,16 @@ public class LoginController extends BaseController {
         Map<String,Object> otherMap = res.getOther();
         otherMap.put("roleIds",roleIds);
         otherMap.put("roleCodes",roleCodes);
+        otherMap.put(RedisKeyContant.JSESSIONID,jsessionid);
         return res;
     }
 
     //注销
     @RequestMapping(value = "/notauth/logout")
     public void logout(ServerHttpRequest request,ServerHttpResponse response) {
-        //String jsessionid = CookieUtil.getCookieValue(request, RedisKeyContant.JSESSIONID);
         String jsessionid = URLUtil.getHeader(request,RedisKeyContant.JSESSIONID);
         if (StringUtils.isNotBlank(jsessionid)) {
             redisService.delete(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid);
-            response.addCookie(CookieUtil.buildCookie(RedisKeyContant.JSESSIONID, "", 0));
         }
     }
 
