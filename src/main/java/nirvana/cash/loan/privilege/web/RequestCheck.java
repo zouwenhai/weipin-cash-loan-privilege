@@ -100,7 +100,7 @@ public class RequestCheck {
         if (StringUtils.isBlank(jsessionid)) {
             return null;
         }
-        String data = "{}";
+        String data = "";
         try{
             //从缓存获取登陆信息
             data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid, String.class);
