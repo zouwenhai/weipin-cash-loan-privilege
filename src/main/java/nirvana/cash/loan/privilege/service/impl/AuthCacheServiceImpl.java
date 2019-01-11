@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,5 +46,17 @@ public class AuthCacheServiceImpl extends BaseService<CacheDto> implements AuthC
         dto.setREMARK(remark);
         dto.setCreateTime(new Date());
         cacheMapper.insertSelective(dto);
+    }
+
+    @Override
+    public void deleteAuthCache() throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String datestr = dateFormat.format(calendar.getTime());
+        Date date = dateFormat.parse(datestr);
+        log.info("删除前一日用户登录缓存信息:LessThan date={}",date);
+        Example example = new Example(CacheDto.class);
+        example.createCriteria().andLessThan("createTime",date);
+        cacheMapper.deleteByExample(example);
     }
 }
