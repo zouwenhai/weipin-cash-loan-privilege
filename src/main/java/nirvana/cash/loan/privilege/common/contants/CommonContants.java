@@ -16,6 +16,8 @@ public class CommonContants {
 
     public static final String gateway_trace_id = "gateway_trace_id";
 
+    public static final String split_char="yofishdk";
+
     public CommonContants() {
     }
 }
