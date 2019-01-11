@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.domain.Tree;
 import nirvana.cash.loan.privilege.common.util.ResResult;
@@ -18,6 +19,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/privilige")
 public class MenuController extends BaseController {
@@ -100,7 +102,7 @@ public class MenuController extends BaseController {
             List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
             return ResResult.success(permissionList);
         }catch (Exception ex){
-            logger.error("获取权限集发生异常:{}",ex);
+            log.error("获取权限集发生异常:{}",ex);
             //直接从数据库获取一次
             List<Menu> permissionList = menuService.findUserPermissions(username);
             return ResResult.success(permissionList);
