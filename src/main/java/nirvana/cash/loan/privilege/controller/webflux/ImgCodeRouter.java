@@ -1,9 +1,7 @@
 package nirvana.cash.loan.privilege.controller.webflux;
 
 import lombok.extern.slf4j.Slf4j;
-import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.common.util.CodeImageUtil;
-import nirvana.cash.loan.privilege.common.util.CookieUtil;
 import nirvana.cash.loan.privilege.common.util.GeneratorId;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +46,7 @@ public class ImgCodeRouter {
             DataBuffer buffer = new DefaultDataBufferFactory().wrap(imageBytes);
             return ServerResponse
                             .ok()
-                            .cookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,verifyId))
+                            //.cookie(CookieUtil.buildCookie(RedisKeyContant.YOFISHDK_LOGIN_VERIFY_CODE,verifyId))
                             .contentType(MediaType.IMAGE_PNG)
                             .body(BodyInserters.fromDataBuffers(Flux.just(buffer)));
                 }

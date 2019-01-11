@@ -49,12 +49,13 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         //添加请求头信息，执行继续
         User user = (User) checkResResult.getData();
 
+        //获取运营团队权限信息
         String authDeptIds = StringUtils.isNotBlank(user.getDeptId())?user.getDeptId():CommonContants.none_dept_id;
         if(user.getViewRange() == 0){
             authDeptIds = CommonContants.all_dept_id;
         }
 
-        //获取运营团队权限信息
+        //获取运营产品权限信息
         Map<String, String> deptAndProductAuth = requestCheck.findDeptAndProductAuth(user);
         String authShowIds = deptAndProductAuth.get("authShowIds");
         log.info("当前请求:traceId={},用户ID:{},部门ID:{},管理的产品showId={}", traceId, user.getUserId(), authDeptIds,authShowIds);

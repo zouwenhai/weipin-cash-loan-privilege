@@ -2,6 +2,7 @@ package nirvana.cash.loan.privilege.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -36,9 +37,6 @@ public class URLUtil {
 
     public static String encode(String str, String enc) {
         try {
-            if(StringUtils.isBlank(str)){
-                return str;
-            }
             return URLEncoder.encode(str, enc);
         } catch (UnsupportedEncodingException e) {
             log.info("参数编码格式错误:str={},enc={}", str, enc);
@@ -48,9 +46,6 @@ public class URLUtil {
 
     public static String decode(String str, String enc) {
         try {
-            if(StringUtils.isBlank(str)){
-                return str;
-            }
             return URLDecoder.decode(str, enc);
         } catch (UnsupportedEncodingException e) {
             log.info("参数编码格式错误:str={},enc={}", str, enc);
@@ -76,5 +71,9 @@ public class URLUtil {
     public static boolean isWebsocketUrl(String websocketUrl,String url) {
         PathMatcher pathMatcher = new AntPathMatcher();
         return pathMatcher.match(websocketUrl, url);
+    }
+
+    public static String getHeader(ServerHttpRequest request,String name){
+        return  request.getHeaders().getFirst(name);
     }
 }

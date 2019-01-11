@@ -25,9 +25,6 @@ public class LoginTest extends BaseTest {
 
     @Test
     public void findAllLoginJsessionid() {
-//        String jsessionid = "1000"+"#"+ GeneratorId.guuid();
-//        redisService.putWithExpireTime(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX+jsessionid,"XXX",60*60*2L);
-
         Set<String> keys = logoutUserService.findAllLoginJsessionid();
         System.err.println(JSON.toJSONString(keys));
         System.err.println("done");
