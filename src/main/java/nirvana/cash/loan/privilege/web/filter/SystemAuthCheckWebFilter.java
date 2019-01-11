@@ -38,6 +38,8 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         String traceId = GeneratorId.guuid();
         if(!uri.toString().contains("password")){
             log.info("privilege|request traceId={},uri={}", traceId, uri);
+        } else{
+            log.info("privilege|request traceId={},path={}", traceId, uri.getPath());
         }
         //check登录和权限
         ResResult checkResResult = requestCheck.check(request);
