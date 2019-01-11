@@ -94,9 +94,17 @@ public class MenuController extends BaseController {
         if(user == null){
             return ResResult.error("登录超时!",ResResult.LOGIN_SESSION_TIMEOUT);
         }
-        String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(),String.class);
-        List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
-        return ResResult.success(permissionList);
+        String username = user.getUsername();
+        try{
+            String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + username,String.class);
+            List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
+            return ResResult.success(permissionList);
+        }catch (Exception ex){
+            logger.error("获取权限集发生异常:{}",ex);
+            //直接从数据库获取一次
+            List<Menu> permissionList = menuService.findUserPermissions(username);
+            return ResResult.success(permissionList);
+        }
     }
 
     //查询左侧菜单列表

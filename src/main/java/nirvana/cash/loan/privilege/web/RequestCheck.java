@@ -5,11 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.contants.CommonContants;
 import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
+import nirvana.cash.loan.privilege.common.exception.BizException;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
+import nirvana.cash.loan.privilege.domain.CacheDto;
 import nirvana.cash.loan.privilege.domain.Menu;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.AuthDeptProductInfoVo;
+import nirvana.cash.loan.privilege.service.AuthCacheService;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +38,8 @@ public class RequestCheck {
     private RedisService redisService;
     @Autowired
     private DeptService deptService;
+    @Autowired
+    private AuthCacheService authCacheService;
 
     //白名单的url,无需登录
     private static final List<String> noLoginUrls = new ArrayList<>();
@@ -95,9 +100,21 @@ public class RequestCheck {
         if (StringUtils.isBlank(jsessionid)) {
             return null;
         }
-        String data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid, String.class);
-        if (StringUtils.isBlank(data)) {
-            return null;
+        String data = "{}";
+        try{
+            //从缓存获取登陆信息
+            data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid, String.class);
+            if (StringUtils.isBlank(data)) {
+                return null;
+            }
+            throw BizException.newInstance2("测试权限加强");//TODO
+        }catch (Exception ex){
+            log.error("从缓存获取登录信息失败:{}",ex);
+            //从数据库直接获取一次
+            CacheDto cacheDto = authCacheService.findOne(jsessionid);
+            if(cacheDto != null){
+                data = cacheDto.getValue();
+            }
         }
         return JSON.parseObject(data, User.class);
     }

@@ -33,5 +33,9 @@ public class BizException extends RuntimeException {
         super(message);
     }
 
+    public static BizException newInstance2(String desc) {
+        return new BizException(ResResult.ERROR, desc);
+    }
+
 }
 

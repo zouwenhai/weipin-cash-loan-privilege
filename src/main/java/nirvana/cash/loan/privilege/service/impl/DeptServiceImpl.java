@@ -173,6 +173,7 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
                 }
                 redisService.put(rediskey, JSON.toJSONString(dept));
             }
+            throw BizException.newInstance2("测试权限加强");//TODO
         }catch (Exception ex){
             log.error("获取运营团队权限信息发生异常:{}",ex);
             //直接从数据库获取一次
