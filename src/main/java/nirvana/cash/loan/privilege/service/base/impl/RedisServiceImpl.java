@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.service.base.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import nirvana.cash.loan.privilege.common.util.ProtoStuffSerializerUtil;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class RedisServiceImpl implements RedisService {
 
@@ -115,7 +117,11 @@ public class RedisServiceImpl implements RedisService {
      */
     @Override
     public void delete(String key) {
-        redisTemplate.delete(key);
+        try{
+            redisTemplate.delete(key);
+        }catch (Exception ex){
+            log.error("redis删除发生异常:{}",ex);
+        }
     }
 
     /**
