@@ -14,6 +14,7 @@ import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.AuthDeptProductInfoVo;
 import nirvana.cash.loan.privilege.service.AuthCacheService;
 import nirvana.cash.loan.privilege.service.DeptService;
+import nirvana.cash.loan.privilege.service.MenuService;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class RequestCheck {
     private DeptService deptService;
     @Autowired
     private AuthCacheService authCacheService;
+    @Autowired
+    private MenuService menuService;
 
     //白名单的url,无需登录
     private static final List<String> noLoginUrls = new ArrayList<>();
@@ -79,11 +82,19 @@ public class RequestCheck {
             //匹配路径:notauth,无需授权可访问
             return ResResult.success(user);
         }
-        String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(), String.class);
-        if (StringUtils.isBlank(userPermissions)) {
-            return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
+        List<Menu> permissionList = null;
+        try{
+            String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(), String.class);
+            if (StringUtils.isBlank(userPermissions)) {
+                return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
+            }
+            permissionList = JSONObject.parseArray(userPermissions, Menu.class);
+        }catch (Exception ex){
+            log.error("获取权限集发生异常:{}",ex);
+            //从数据库直接获取一次
+            String username = user.getUsername();
+            permissionList = menuService.findUserPermissions(username);
         }
-        List<Menu> permissionList = JSONObject.parseArray(userPermissions, Menu.class);
         //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
         long count = permissionList.stream()
                 .filter(t -> StringUtils.isNotBlank(t.getPerms()))
