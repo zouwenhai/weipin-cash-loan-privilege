@@ -30,6 +30,7 @@ public class AuthCacheServiceImpl extends BaseService<CacheDto> implements AuthC
     @Override
     public CacheDto findOne(String key) {
         Example example = new Example(CacheDto.class);
+        example.createCriteria().andEqualTo("key",key);
         List<CacheDto> list = cacheMapper.selectByExample(example);
         if (ListUtil.isEmpty(list)) {
             return null;
