@@ -31,4 +31,6 @@ public interface UserService extends IService<User> {
     String findUserRoldCodes(String roleIds);
 
 	List<User> findByIds(Set<Long> userIdSet);
+
+	List<User> findAllLikeDeptId(Long deptId);
 }

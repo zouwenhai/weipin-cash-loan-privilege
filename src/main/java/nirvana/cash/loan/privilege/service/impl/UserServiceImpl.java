@@ -341,4 +341,16 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 		example.createCriteria().andIn("userId",userIdSet);
 		return userMapper.selectByExample(example);
 	}
+
+	@Override
+	public List<User> findAllLikeDeptId(Long deptId) {
+		Example example = new Example(User.class);
+		Example.Criteria criteria = example.createCriteria()
+				.andEqualTo("isDelete",0);
+		if(deptId != null){
+			criteria.andLike("deptId","%" + deptId + "%");
+		}
+		return userMapper.selectByExample(example);
+	}
+
 }

@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController
@@ -157,6 +160,34 @@ public class UserController extends BaseController {
             return ResResult.success(user);
         }
         return ResResult.error("用户不存在");
+    }
+
+    //用户下拉列表
+    @RequestMapping("notauth/user/deptUserSelect")
+    public ResResult deptUserSelect(ServerHttpRequest request) {
+        User user=this.getLoginUser(request);
+        String deptIds =  user.getDeptId();
+
+        List<User> reslist = new ArrayList<>();
+
+        if(StringUtils.isBlank(deptIds)){
+            reslist = userService.findAllLikeDeptId(null);
+            return ResResult.success(reslist);
+        }
+
+        String [] array = deptIds.split(",");
+        for(int i = 0; i< array.length;i++){
+            List<User> userList =  userService.findAllLikeDeptId(Long.valueOf(array[i]));
+            reslist.addAll(userList);
+        }
+        reslist = reslist.stream().filter(distinctByKey(t->t.getUserId()))
+                .collect(Collectors.toList());
+        return ResResult.success(reslist);
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
 }
