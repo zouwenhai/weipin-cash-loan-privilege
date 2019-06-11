@@ -95,7 +95,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
             logDto.setParams(request.getQueryParams().toString());
             logDto.setUsername(URLUtil.decode(user.getName(), "utf-8"));
             logDto.setOptionIp(request.getRemoteAddress().toString());
-
+            log.info("进入日志记录阶段！！！");
             String desc = "";
             if (uri.toString().contains("/privilige/user/updatePassword")) {
                 desc = user.getName() + "修改了密码";
@@ -124,6 +124,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
             }
             logDto.setOptionDesc(URLUtil.decode(desc, "utf-8"));
             String collLog = JSONObject.toJSONString(logDto);
+            log.info("需要发送Mq的内容={}", collLog);
             rabbitMqSender.send(collLogExchange, collLogRoutingkey, collLog);
         } catch (Exception e) {
             log.error("权限系统日志记录失败!!!", e);
