@@ -97,7 +97,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
             logDto.setOptionIp(request.getRemoteAddress().toString());
 
             String desc = "";
-            if (uri.toString().contains("/privilige/user/user/updatePassword")) {
+            if (uri.toString().contains("/privilige/user/updatePassword")) {
                 desc = user.getName() + "修改了密码";
             } else if (uri.toString().contains("/privilige/user/add")) {
                 desc = user.getName() + "新增用户";
