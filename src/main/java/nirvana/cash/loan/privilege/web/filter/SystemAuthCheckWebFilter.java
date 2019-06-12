@@ -114,8 +114,10 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 logDto.setParams(JSONObject.toJSONString(request.getQueryParams()));
                 log.info("保存请求参数1 params={}", request.getQueryParams().toString());
                 log.info("保存请求参数2 params={}", JSONObject.toJSONString(request.getBody()));
+                log.info("保存请求参数3 params={}", JSONObject.toJSONString(exchange.getFormData()));
+                log.info("保存请求参数4 params={}", JSONObject.toJSONString(exchange.getAttributes()));
 
-                request.getBody();
+
 
                 if (StringUtils.isEmpty(user.getName())) {
                     logDto.setUsername(URLUtil.decode("用户名未获取到", "utf-8"));
