@@ -111,7 +111,9 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 TbYofishdkOptionLogDto logDto = new TbYofishdkOptionLogDto();
                 logDto.setOptionUrl(uri.toString());
                 logDto.setCreateTime(new Date());
-                logDto.setParams(request.getQueryParams().toString());
+                logDto.setParams(JSONObject.toJSONString(request.getQueryParams()));
+                log.info("保存请求参数1 params={}", request.getQueryParams().toString());
+                log.info("保存请求参数2 params={}", JSONObject.toJSONString(request.getQueryParams()));
                 if (StringUtils.isEmpty(user.getName())) {
                     logDto.setUsername(URLUtil.decode("用户名未获取到", "utf-8"));
                 } else {
