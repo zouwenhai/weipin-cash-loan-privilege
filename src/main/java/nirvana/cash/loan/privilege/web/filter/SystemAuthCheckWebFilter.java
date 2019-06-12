@@ -88,44 +88,71 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
 
+
         try {
-            TbYofishdkOptionLogDto logDto = new TbYofishdkOptionLogDto();
-            logDto.setOptionUrl(uri.toString());
-            logDto.setCreateTime(new Date());
-            logDto.setParams(request.getQueryParams().toString());
-            logDto.setUsername(URLUtil.decode(user.getName(), "utf-8"));
-            logDto.setOptionIp(request.getRemoteAddress().toString());
-            log.info("进入日志记录阶段！！！");
-            String desc = "";
-            if (uri.toString().contains("/privilige/user/updatePassword")) {
-                desc = user.getName() + "修改了密码";
-            } else if (uri.toString().contains("/privilige/user/add")) {
-                desc = user.getName() + "新增用户";
-            } else if (uri.toString().contains("/privilige/user/delete")) {
-                desc = user.getName() + "删除用户";
-            } else if (uri.toString().contains("/privilige/user/update")) {
-                desc = user.getName() + "修改用户";
-            } else if (uri.toString().contains("/privilige/role/add")) {
-                desc = user.getName() + "新增角色";
-            } else if (uri.toString().contains("/privilige/role/update")) {
-                desc = user.getName() + "修改角色";
-            } else if (uri.toString().contains("/privilige/role/delete")) {
-                desc = user.getName() + "删除角色";
-            } else if (uri.toString().contains("/privilige/dept/add")) {
-                desc = user.getName() + "新增部门";
-            } else if (uri.toString().contains("/privilige/dept/update")) {
-                desc = user.getName() + "修改部门";
-            } else if (uri.toString().contains("/privilige/menu/add")) {
-                desc = user.getName() + "新增菜单或按钮";
-            } else if (uri.toString().contains("/privilige/menu/update")) {
-                desc = user.getName() + "更新菜单";
-            } else if (uri.toString().contains("/privilige/menu/delete")) {
-                desc = user.getName() + "删除菜单";
+
+            if (uri.toString().contains("/privilige/user/updatePassword") ||
+                    uri.toString().contains("/privilige/user/add") ||
+                    uri.toString().contains("/privilige/user/delete") ||
+                    uri.toString().contains("/privilige/user/update") ||
+                    uri.toString().contains("/privilige/role/add") ||
+                    uri.toString().contains("/privilige/role/update") ||
+                    uri.toString().contains("/privilige/role/delete") ||
+                    uri.toString().contains("/privilige/dept/add") ||
+                    uri.toString().contains("/privilige/dept/update") ||
+                    uri.toString().contains("/privilige/menu/add") ||
+                    uri.toString().contains("/privilige/menu/update") ||
+                    uri.toString().contains("/privilige/menu/delete") ||
+                    uri.toString().contains("/web/collection/call/realPhone")
+//                    uri.toString().contains("/privilige/user/updatePassword") ||
+//                    uri.toString().contains("/privilige/user/updatePassword") ||
+
+            ) {
+                TbYofishdkOptionLogDto logDto = new TbYofishdkOptionLogDto();
+                logDto.setOptionUrl(uri.toString());
+                logDto.setCreateTime(new Date());
+                logDto.setParams(request.getQueryParams().toString());
+                if (StringUtils.isEmpty(user.getName())) {
+                    logDto.setUsername(URLUtil.decode("用户名未获取到", "utf-8"));
+                } else {
+                    logDto.setUsername(URLUtil.decode(user.getName(), "utf-8"));
+                }
+                logDto.setOptionIp(request.getRemoteAddress().toString());
+                log.info("进入日志记录阶段！！！");
+                String desc = "";
+                if (uri.toString().contains("/privilige/user/updatePassword")) {
+                    desc = user.getName() + "修改了密码";
+                } else if (uri.toString().contains("/privilige/user/add")) {
+                    desc = user.getName() + "新增用户";
+                } else if (uri.toString().contains("/privilige/user/delete")) {
+                    desc = user.getName() + "删除用户";
+                } else if (uri.toString().contains("/privilige/user/update")) {
+                    desc = user.getName() + "修改用户";
+                } else if (uri.toString().contains("/privilige/role/add")) {
+                    desc = user.getName() + "新增角色";
+                } else if (uri.toString().contains("/privilige/role/update")) {
+                    desc = user.getName() + "修改角色";
+                } else if (uri.toString().contains("/privilige/role/delete")) {
+                    desc = user.getName() + "删除角色";
+                } else if (uri.toString().contains("/privilige/dept/add")) {
+                    desc = user.getName() + "新增部门";
+                } else if (uri.toString().contains("/privilige/dept/update")) {
+                    desc = user.getName() + "修改部门";
+                } else if (uri.toString().contains("/privilige/menu/add")) {
+                    desc = user.getName() + "新增菜单或按钮";
+                } else if (uri.toString().contains("/privilige/menu/update")) {
+                    desc = user.getName() + "更新菜单";
+                } else if (uri.toString().contains("/privilige/menu/delete")) {
+                    desc = user.getName() + "删除菜单";
+                } else if (uri.toString().contains("/web/collection/call/realPhone")) {
+                    desc = user.getName() + "获取了真实号码";
+                }
+                logDto.setOptionDesc(URLUtil.decode(desc, "utf-8"));
+                String collLog = JSONObject.toJSONString(logDto);
+                log.info("需要发送Mq的内容={}", collLog);
+
+                rabbitMqSender.send(collLogExchange, collLogRoutingkey, collLog);
             }
-            logDto.setOptionDesc(URLUtil.decode(desc, "utf-8"));
-            String collLog = JSONObject.toJSONString(logDto);
-            log.info("需要发送Mq的内容={}", collLog);
-            rabbitMqSender.send(collLogExchange, collLogRoutingkey, collLog);
         } catch (Exception e) {
             log.error("权限系统日志记录失败!!!", e);
         }
