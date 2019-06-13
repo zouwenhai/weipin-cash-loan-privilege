@@ -117,7 +117,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 log.info("保存请求参数2 params={}", JSONObject.toJSONString(request.getBody()));
                 log.info("保存请求参数3 params={}", JSONObject.toJSONString(exchange.getFormData()));
                 log.info("保存请求参数4 params={}", JSONObject.toJSONString(exchange.getAttributes()));
-                log.info("保存请求参数5 params={}", JSONObject.toJSONString(exchange));
 
 
 
