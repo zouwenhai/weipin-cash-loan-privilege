@@ -8,7 +8,7 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.TbYofishdkOptionLogDto;
-import nirvana.cash.loan.privilege.fegin.FeginCashloanWeb;
+import nirvana.cash.loan.privilege.fegin.FeginCashLoanApi;
 import nirvana.cash.loan.privilege.fegin.NewResponseUtil;
 import nirvana.cash.loan.privilege.mq.message.RabbitMqSender;
 import nirvana.cash.loan.privilege.web.RequestCheck;
@@ -47,7 +47,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
     RabbitMqSender rabbitMqSender;
 
     @Autowired
-    FeginCashloanWeb feginCashloanWeb;
+    FeginCashLoanApi feginCashLoanApi;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain webFilterChain) {
@@ -156,9 +156,15 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                     String idStr = uri.toString().substring(uri.toString().indexOf("id="));
                     long id = Long.valueOf(idStr);
 
-                    NewResponseUtil mobile = feginCashloanWeb.realNo(id);
+                    NewResponseUtil mobile = feginCashLoanApi.realNo(id);
                     log.info("获取通讯录电话号码={}", mobile.getData());
-                    desc = user.getName() + ":获取真实电话号码:" + mobile.getData().toString();
+
+                    String mobileNo = JSONObject.parseObject(mobile.getData().toString()).getString("data");
+                    if (StringUtils.isNotEmpty(mobileNo)) {
+                        desc = user.getName() + ":获取真实电话号码:" + mobile.getData().toString();
+                    } else {
+                        desc = user.getName() + ":获取真实电话号码:";
+                    }
                 }
                 logDto.setOptionDesc(URLUtil.decode(desc, "utf-8"));
                 String collLog = JSONObject.toJSONString(logDto);
