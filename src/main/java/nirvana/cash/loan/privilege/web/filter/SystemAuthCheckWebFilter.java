@@ -158,7 +158,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
 
                     NewResponseUtil mobile = feginCashloanWeb.realNo(id);
                     log.info("获取通讯录电话号码={}", mobile.getData());
-                    desc = user.getName() + ":获取真实电话号码:" + mobile;
+                    desc = user.getName() + ":获取真实电话号码:" + mobile.getData().toString();
                 }
                 logDto.setOptionDesc(URLUtil.decode(desc, "utf-8"));
                 String collLog = JSONObject.toJSONString(logDto);
