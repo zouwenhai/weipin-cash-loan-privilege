@@ -95,7 +95,8 @@ public class SystemAuthCheckWebFilter implements WebFilter {
 
 
         try {
-
+            log.info("url地址={}", uri.toString());
+            log.info("urlContain={}",uri.toString().contains("/realNo"));
             if (uri.toString().contains("/privilige/user/updatePassword") ||
                     uri.toString().contains("/privilige/user/add") ||
                     uri.toString().contains("/privilige/user/delete") ||
@@ -108,7 +109,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                     uri.toString().contains("/privilige/menu/add") ||
                     uri.toString().contains("/privilige/menu/update") ||
                     uri.toString().contains("/privilige/menu/delete") ||
-                    uri.toString().contains("/web/customerInfo/realNo")
+                    uri.toString().contains("/realNo")
             ) {
                 TbYofishdkOptionLogDto logDto = new TbYofishdkOptionLogDto();
                 logDto.setOptionUrl(uri.toString());
@@ -152,7 +153,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                     desc = user.getName() + "更新菜单";
                 } else if (uri.toString().contains("/privilige/menu/delete")) {
                     desc = user.getName() + "删除菜单";
-                } else if (uri.toString().contains("/web/customerInfo/realNo")) {
+                } else if (uri.toString().contains("/realNo")) {
                     String idStr = uri.toString().substring(uri.toString().indexOf("id="));
                     long id = Long.valueOf(idStr);
 
