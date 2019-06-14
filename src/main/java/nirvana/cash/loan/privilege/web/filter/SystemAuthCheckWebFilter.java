@@ -96,7 +96,7 @@ public class SystemAuthCheckWebFilter implements WebFilter {
 
         try {
             log.info("url地址={}", uri.toString());
-            log.info("urlContain={}",uri.toString().contains("/realNo"));
+            log.info("urlContain={}", uri.toString().contains("/realNo"));
             if (uri.toString().contains("/privilige/user/updatePassword") ||
                     uri.toString().contains("/privilige/user/add") ||
                     uri.toString().contains("/privilige/user/delete") ||
@@ -154,9 +154,13 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 } else if (uri.toString().contains("/privilige/menu/delete")) {
                     desc = user.getName() + "删除菜单";
                 } else if (uri.toString().contains("/realNo")) {
-                    String idStr = uri.toString().substring(uri.toString().indexOf("id="));
-                    long id = Long.valueOf(idStr);
+//                    String idStr = uri.toString().substring(uri.toString().indexOf("id="));
 
+
+                    String idStr = JSONObject.parseObject(JSONObject.toJSONString(request.getQueryParams())).getString("id");
+                    log.info("获取idStr={}", idStr);
+                    long id = Long.valueOf(idStr);
+                    log.info("获取idLong={}", id);
                     NewResponseUtil mobile = feginCashLoanApi.realNo(id);
                     log.info("获取通讯录电话号码={}", mobile.getData());
 
