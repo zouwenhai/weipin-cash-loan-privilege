@@ -1,3 +1,4 @@
+import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.Application;
 import nirvana.cash.loan.privilege.fegin.FeginCashLoanApi;
 import nirvana.cash.loan.privilege.fegin.NewResponseUtil;
@@ -25,6 +26,20 @@ public class MobileNoTest {
         long id = 7852903;
         NewResponseUtil mobile = feginCashLoanApi.realNo(id);
         NewResponseUtil mobile1 = feginCashLoanApi.realNo(id);
+    }
+
+    public static void main(String[] args) {
+        String U = "{\"id\":[\"7852943\"]}";
+        String uri = "http://10.0.33.14:13002/yofishdk/cash-loan-web/web/customerInfo/realNo?id=7852943";
+
+        String idStr = uri.toString().substring(uri.toString().indexOf("id=")+3);
+//        String idStr = JSONObject.parseObject(U).getString("id");
+//        String idStr = JSONObject.parseObject(U).getString("id");
+//        idStr.replace(/[^0-9]/g, "")
+        String idSt1r = JSONObject.parseObject(U).getString("id");
+    }
+    public void Test() {
+
     }
 
 
