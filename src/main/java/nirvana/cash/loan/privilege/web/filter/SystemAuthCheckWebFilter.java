@@ -8,6 +8,8 @@ import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.common.util.URLUtil;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.vo.TbYofishdkOptionLogDto;
+import nirvana.cash.loan.privilege.fegin.FeginCashloanWeb;
+import nirvana.cash.loan.privilege.fegin.NewResponseUtil;
 import nirvana.cash.loan.privilege.mq.message.RabbitMqSender;
 import nirvana.cash.loan.privilege.web.RequestCheck;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +45,9 @@ public class SystemAuthCheckWebFilter implements WebFilter {
 
     @Autowired
     RabbitMqSender rabbitMqSender;
+
+    @Autowired
+    FeginCashloanWeb feginCashloanWeb;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain webFilterChain) {
@@ -102,7 +107,8 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                     uri.toString().contains("/privilige/dept/update") ||
                     uri.toString().contains("/privilige/menu/add") ||
                     uri.toString().contains("/privilige/menu/update") ||
-                    uri.toString().contains("/privilige/menu/delete")
+                    uri.toString().contains("/privilige/menu/delete") ||
+                    uri.toString().contains("/web/customerInfo/realNo")
             ) {
                 TbYofishdkOptionLogDto logDto = new TbYofishdkOptionLogDto();
                 logDto.setOptionUrl(uri.toString());
@@ -146,6 +152,13 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                     desc = user.getName() + "更新菜单";
                 } else if (uri.toString().contains("/privilige/menu/delete")) {
                     desc = user.getName() + "删除菜单";
+                } else if (uri.toString().contains("/web/customerInfo/realNo")) {
+                    String idStr = uri.toString().substring(uri.toString().indexOf("id="));
+                    long id = Long.valueOf(idStr);
+
+                    NewResponseUtil mobile = feginCashloanWeb.realNo(id);
+                    log.info("获取通讯录电话号码={}", mobile.getData());
+                    desc = user.getName() + ":获取真实电话号码:" + mobile;
                 }
                 logDto.setOptionDesc(URLUtil.decode(desc, "utf-8"));
                 String collLog = JSONObject.toJSONString(logDto);
