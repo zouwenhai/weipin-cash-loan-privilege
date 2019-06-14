@@ -102,25 +102,18 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                     uri.toString().contains("/privilige/dept/update") ||
                     uri.toString().contains("/privilige/menu/add") ||
                     uri.toString().contains("/privilige/menu/update") ||
-                    uri.toString().contains("/privilige/menu/delete") ||
-                    uri.toString().contains("/web/collection/call/realPhone")
-//                    uri.toString().contains("/privilige/user/updatePassword") ||
-//                    uri.toString().contains("/privilige/user/updatePassword") ||
-
+                    uri.toString().contains("/privilige/menu/delete")
             ) {
                 TbYofishdkOptionLogDto logDto = new TbYofishdkOptionLogDto();
                 logDto.setOptionUrl(uri.toString());
                 logDto.setCreateTime(new Date());
                 logDto.setParams(JSONObject.toJSONString(request.getQueryParams()));
-
                 log.info("保存请求参数0 params={}", JSONObject.toJSONString(request.getQueryParams()));
-                log.info("保存请求参数1 params={}", request.getQueryParams().toString());
-                log.info("保存请求参数2 params={}", JSONObject.toJSONString(request.getBody()));
-                log.info("保存请求参数3 params={}", JSONObject.toJSONString(exchange.getFormData()));
-                log.info("保存请求参数4 params={}", JSONObject.toJSONString(exchange.getAttributes()));
-                log.info("保存请求参数5 params={}", request.getBody().toString());
-
-
+//                log.info("保存请求参数1 params={}", request.getQueryParams().toString());
+//                log.info("保存请求参数2 params={}", JSONObject.toJSONString(request.getBody()));
+//                log.info("保存请求参数3 params={}", JSONObject.toJSONString(exchange.getFormData()));
+//                log.info("保存请求参数4 params={}", JSONObject.toJSONString(exchange.getAttributes()));
+//                log.info("保存请求参数5 params={}", request.getBody().toString());
                 if (StringUtils.isEmpty(user.getName())) {
                     logDto.setUsername(URLUtil.decode("用户名未获取到", "utf-8"));
                 } else {
@@ -131,16 +124,16 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 String desc = "";
                 if (uri.toString().contains("/privilige/user/updatePassword")) {
                     desc = user.getName() + "修改了密码";
-                } else if (uri.toString().contains("/privilige/user/add")) {
-                    desc = user.getName() + "新增用户";
+//                } else if (uri.toString().contains("/privilige/user/add")) {
+//                    desc = user.getName() + "新增用户";
                 } else if (uri.toString().contains("/privilige/user/delete")) {
                     desc = user.getName() + "删除用户";
-                } else if (uri.toString().contains("/privilige/user/update")) {
-                    desc = user.getName() + "修改用户";
-                } else if (uri.toString().contains("/privilige/role/add")) {
-                    desc = user.getName() + "新增角色";
-                } else if (uri.toString().contains("/privilige/role/update")) {
-                    desc = user.getName() + "修改角色";
+//                } else if (uri.toString().contains("/privilige/user/update")) {
+//                    desc = user.getName() + "修改用户";
+//                } else if (uri.toString().contains("/privilige/role/add")) {
+//                    desc = user.getName() + "新增角色";
+//                } else if (uri.toString().contains("/privilige/role/update")) {
+//                    desc = user.getName() + "修改角色";
                 } else if (uri.toString().contains("/privilige/role/delete")) {
                     desc = user.getName() + "删除角色";
                 } else if (uri.toString().contains("/privilige/dept/add")) {
@@ -153,8 +146,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                     desc = user.getName() + "更新菜单";
                 } else if (uri.toString().contains("/privilige/menu/delete")) {
                     desc = user.getName() + "删除菜单";
-                } else if (uri.toString().contains("/web/collection/call/realPhone")) {
-                    desc = user.getName() + "获取了真实号码";
                 }
                 logDto.setOptionDesc(URLUtil.decode(desc, "utf-8"));
                 String collLog = JSONObject.toJSONString(logDto);
