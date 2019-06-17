@@ -1,6 +1,6 @@
 FROM registry.gs.youyuwo.com/base/docker-java-base:jdk_8
 
-COPY target/yofishdk-cash-loan-privilege-1.0-SNAPSHOT.jar app.jar
+COPY target/weipin-cash-loan-privilege-1.0-SNAPSHOT.jar app.jar
 
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 VOLUME "/opt/export"

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: yofishdk-cash-loan-privilege
+    name: weipin-cash-loan-privilege
   http:
     encoding:
       charset: UTF-8

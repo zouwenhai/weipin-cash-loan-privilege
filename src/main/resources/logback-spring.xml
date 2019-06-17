@@ -23,7 +23,7 @@
           name="LOGSTASH_SOCKET">
             <destination>pre-logstash.gs.9188.com:51005</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-                <customFields>{"index":"yofishdk-cash-loan-privilege","type":"logback"}
+                <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}
                 </customFields>
             </encoder>
         </appender>
@@ -37,7 +37,7 @@
           name="LOGSTASH_SOCKET">
             <destination>172.20.20.115:9250</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-                <customFields>{"index":"yofishdk-cash-loan-privilege","type":"logback"}
+                <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}
                 </customFields>
             </encoder>
         </appender>
