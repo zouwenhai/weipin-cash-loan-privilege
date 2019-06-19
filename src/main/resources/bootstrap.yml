@@ -1,5 +1,5 @@
 server:
-    port: 8080
+  port: 8080
 
 spring:
   application:
@@ -41,6 +41,17 @@ ribbon:
   ServerListRefreshInterval: 5000
   ReadTimeout: 120000
   ConnectTimeout: 120000
+
+eureka:
+  client:
+    serviceUrl.defaultZone: http://test.lb.gs.youyuwo.com:18888/eureka/,http://test.lb.gs.youyuwo.com:18889/eureka/,http://test.lb.gs.youyuwo.com:18890/eureka/
+    register-with-eureka: false
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
 ---
 eureka:
   client:
