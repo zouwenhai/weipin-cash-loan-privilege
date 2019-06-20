@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * 催收系统API调用
  * Created by Administrator on 2018/8/2.
  */
-@FeignClient(value = "yofishdk-cash-loan-collection-web", fallback = HystrixCollectionApi.class)
+@FeignClient(value = "weipin-cash-loan-collection-web", fallback = HystrixCollectionApi.class)
 public interface FeginCollectionApi {
 
     @RequestMapping(value = "/api/user/addUser", method = RequestMethod.POST, consumes = "application/json")
