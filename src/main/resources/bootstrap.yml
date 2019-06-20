@@ -93,7 +93,7 @@ spring:
 ---
 eureka:
   client:
-    serviceUrl.defaultZone: http://test.lb.gs.youyuwo.com:18888/eureka/,http://test.lb.gs.youyuwo.com:18889/eureka/,http://test.lb.gs.youyuwo.com:18890/eureka/
+    serviceUrl.defaultZone: http://prod.lb.gs.youyuwo.com:18888/eureka/,http://prod.lb.gs.youyuwo.com:18889/eureka/,http://prod.lb.gs.youyuwo.com:18890/eureka/
     register-with-eureka: true
     registry-fetch-interval-seconds: 5
   instance:
