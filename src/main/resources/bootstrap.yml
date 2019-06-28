@@ -46,7 +46,7 @@ eureka:
   client:
     serviceUrl.defaultZone: http://test.lb.gs.youyuwo.com:18888/eureka/,http://test.lb.gs.youyuwo.com:18889/eureka/,http://test.lb.gs.youyuwo.com:18890/eureka/
     register-with-eureka: false
-    registry-fetch-interval-seconds: 5
+#    registry-fetch-interval-seconds: 5
 
 
 ---
@@ -54,7 +54,7 @@ eureka:
   client:
     serviceUrl.defaultZone: http://test.lb.gs.youyuwo.com:18888/eureka/,http://test.lb.gs.youyuwo.com:18889/eureka/,http://test.lb.gs.youyuwo.com:18890/eureka/
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
+#    registry-fetch-interval-seconds: 5
   instance:
     instance-id: ${HOST}:${PORT0:${PORT}}
     lease-renewal-interval-in-seconds: 5
@@ -74,7 +74,7 @@ eureka:
   client:
     serviceUrl.defaultZone: http://pre.lb.gs.youyuwo.com:18888/eureka/,http://pre.lb.gs.youyuwo.com:18889/eureka/,http://pre.lb.gs.youyuwo.com:18890/eureka/
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
+#    registry-fetch-interval-seconds: 5
   instance:
     prefer-ip-address: true
 
@@ -95,7 +95,7 @@ eureka:
   client:
     serviceUrl.defaultZone: http://172.20.20.103:18888/eureka/,http://172.20.20.103:18889/eureka/,http://172.20.20.103:18890/eureka/
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
+#    registry-fetch-interval-seconds: 5
   instance:
     prefer-ip-address: true
 spring:
