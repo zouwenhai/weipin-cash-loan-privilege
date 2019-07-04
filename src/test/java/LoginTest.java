@@ -1,4 +1,5 @@
 import com.alibaba.fastjson.JSON;
+import nirvana.cash.loan.privilege.common.contants.RedisKeyContant;
 import nirvana.cash.loan.privilege.service.base.RedisService;
 import nirvana.cash.loan.privilege.service.LogoutUserService;
 import nirvana.cash.loan.privilege.service.RoleMenuServie;
@@ -44,6 +45,16 @@ public class LoginTest extends BaseTest {
         System.err.println("done");
     }
 
+    @Test
+    public void deleteWithPattern(){
+        redisService.deleteWithPattern(RedisKeyContant.JSESSIONID);
+        redisService.deleteWithPattern(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX);
+        redisService.deleteWithPattern(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX);
+        redisService.deleteWithPattern(RedisKeyContant.yofishdk_msg_notice_config);
+        redisService.deleteWithPattern(RedisKeyContant.yofishdk_auth_productnos_prefix);
+        redisService.deleteWithPattern(RedisKeyContant.yofishdk_auth_deptname_prefix);
+
+    }
     @Test
     public void findUserIdListByRoleId() {
         long roleId = 21;
