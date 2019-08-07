@@ -15,7 +15,9 @@ public enum MsgModuleEnum {
     // 3-放款失败
     LOAN_FAIL(3, "放款失败"),
     // 4-放款待审核
-    LOAN_CHECK_PENDING(4, "放款待审核");
+    LOAN_CHECK_PENDING(4, "放款待审核"),
+    // 5-重复放款警报
+    DOUBLE_REPAY_WARING(5, "重复放款警报");
 
     private int code;
 
