@@ -106,15 +106,15 @@
         SEAT_NUMBER seatNumber,
         VIEW_RANGE viewRange,
         IS_SEPERATE isSeperate
-        from TB_YOFISHDK_AUTH_USER
+        from TB_YOFISHDK_AUTH_USER where 1=1
         <if test="userIdList!=null and userIdList.size()>0">
-            where USER_ID in
+            and USER_ID in
             <foreach collection="userIdList" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
         </if>
         <if test="isSeperate!=null and isSeperate!=''">
-            IS_SEPERATE = #{isSeperate}
+            and IS_SEPERATE = #{isSeperate}
         </if>
         order by CRATE_TIME desc
     </select>

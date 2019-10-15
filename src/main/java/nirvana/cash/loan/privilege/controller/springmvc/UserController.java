@@ -193,7 +193,7 @@ public class UserController extends BaseController {
     }
 
     /**
-     * 借款获取审核人员信息
+     * 获取借款审核人员信息
      *
      * @param isSeperate(是否分单)
      * @return
@@ -206,6 +206,20 @@ public class UserController extends BaseController {
         List<User> userList = userService.findUserById(userIdList, isSeperate);
         return ResResult.success(userList);
     }
+
+
+    /**
+     * 根据userId获取借款审核人员信息
+     *
+     * @param userId
+     * @return
+     */
+    @RequestMapping("/user/getAuditUserById")
+    public ResResult getAuditUserById(Long userId) {
+        User user = userService.getUserById(userId);
+        return ResResult.success(user);
+    }
+
 
     /**
      * 分页查询借款审核人员信息

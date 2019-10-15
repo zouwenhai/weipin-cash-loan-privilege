@@ -354,9 +354,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     public List<User> findUserById(List<Long> userIdList, Integer isSeperate) {
-        return userMapper.getUserById(userIdList,isSeperate);
+        return userMapper.getUserById(userIdList, isSeperate);
 
 
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        return userMapper.selectByPrimaryKey(userId);
     }
 
 }

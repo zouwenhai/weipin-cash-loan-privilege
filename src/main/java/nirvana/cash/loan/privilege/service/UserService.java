@@ -36,4 +36,6 @@ public interface UserService extends IService<User> {
 
 
     List<User> findUserById(List<Long> userIdList, Integer isSeperate);
+
+    User getUserById(Long userId);
 }
