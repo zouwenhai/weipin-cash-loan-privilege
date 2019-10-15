@@ -10,11 +10,14 @@ import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.RoleService;
+import nirvana.cash.loan.privilege.service.UserRoleService;
 import nirvana.cash.loan.privilege.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +40,10 @@ public class UserController extends BaseController {
     @Autowired
     private DeptService deptService;
 
+
+    @Autowired
+    private UserRoleService userRoleService;
+
     //用户列表
     @RequestMapping("user/list")
     public ResResult userList(QueryRequest request, User user) {
@@ -55,7 +62,7 @@ public class UserController extends BaseController {
                 String deptIds = t.getDeptId();
                 if (StringUtils.isNotBlank(deptIds)) {
                     List<String> deptNameList = Arrays.asList(deptIds.split(",")).stream()
-                            .map(x ->deptmap.get(x))
+                            .map(x -> deptmap.get(x))
                             .collect(Collectors.toList());
                     itemDeptNameSet.addAll(deptNameList);
                 }
@@ -152,11 +159,11 @@ public class UserController extends BaseController {
     //根据用户ID，查询指定用户信息
     @RequestMapping("/user/findByLoginName")
     public ResResult findByLoginName(String loginName) {
-        if(StringUtils.isBlank(loginName)){
+        if (StringUtils.isBlank(loginName)) {
             return ResResult.error("登录名不能为空");
         }
         User user = userService.findByName(loginName);
-        if(user != null){
+        if (user != null) {
             return ResResult.success(user);
         }
         return ResResult.error("用户不存在");
@@ -165,25 +172,57 @@ public class UserController extends BaseController {
     //用户下拉列表
     @RequestMapping("notauth/user/deptUserSelect")
     public ResResult deptUserSelect(ServerHttpRequest request) {
-        User user=this.getLoginUser(request);
-        String deptIds =  user.getDeptId();
+        User user = this.getLoginUser(request);
+        String deptIds = user.getDeptId();
 
         List<User> reslist = new ArrayList<>();
 
-        if(StringUtils.isBlank(deptIds)){
+        if (StringUtils.isBlank(deptIds)) {
             reslist = userService.findAllLikeDeptId(null);
             return ResResult.success(reslist);
         }
 
-        String [] array = deptIds.split(",");
-        for(int i = 0; i< array.length;i++){
-            List<User> userList =  userService.findAllLikeDeptId(Long.valueOf(array[i]));
+        String[] array = deptIds.split(",");
+        for (int i = 0; i < array.length; i++) {
+            List<User> userList = userService.findAllLikeDeptId(Long.valueOf(array[i]));
             reslist.addAll(userList);
         }
-        reslist = reslist.stream().filter(distinctByKey(t->t.getUserId()))
+        reslist = reslist.stream().filter(distinctByKey(t -> t.getUserId()))
                 .collect(Collectors.toList());
         return ResResult.success(reslist);
     }
+
+    /**
+     * 借款获取审核人员信息
+     *
+     * @param isSeperate(是否分单)
+     * @return
+     */
+    @RequestMapping("/user/getAuditUser")
+    public ResResult getAuditUser(Integer isSeperate) {
+        //固定审核人员的角色ID
+        Long roleId = 2L;
+        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
+        List<User> userList = userService.findUserById(userIdList, isSeperate);
+        return ResResult.success(userList);
+    }
+
+    /**
+     * 分页查询借款审核人员信息
+     *
+     * @return
+     */
+    @PostMapping("/user/getPageAuditUser")
+    public ResResult getPageAuditUser(@RequestBody Integer pageNum, Integer pageSize) {
+        //固定审核人员的角色ID
+        Long roleId = 2L;
+        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
+        PageHelper.startPage(pageNum, pageSize);
+        List<User> userList = userService.findUserById(userIdList, null);
+        PageInfo pageInfo = new PageInfo(userList);
+        return ResResult.success(pageInfo);
+    }
+
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
         Map<Object, Boolean> seen = new ConcurrentHashMap<>();
