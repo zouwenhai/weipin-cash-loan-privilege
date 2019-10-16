@@ -55,6 +55,7 @@ eureka:
 
 
 ---
+
 eureka:
   client:
     serviceUrl.defaultZone: http://10.0.22.162:18888/eureka/,http://10.0.22.163:18888/eureka/
