@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.controller.springmvc;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
+import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -200,9 +202,17 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/user/getAuditUser")
     public ResResult getAuditUser(Integer isSeperate) {
-        //固定审核人员的角色ID
-        Long roleId = 2L;
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
+        //固定审核人员的角色
+        Example example = new Example(Role.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<String> roleCode = new ArrayList<>();
+        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
+        if (CollectionUtils.isEmpty(roleList)) {
+            ResResult.error("没有该角色");
+        }
+        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
         List<User> userList = userService.findUserById(userIdList, isSeperate);
         return ResResult.success(userList);
     }
@@ -235,6 +245,17 @@ public class UserController extends BaseController {
         List<User> userList = userService.findUserById(userIdList, null);
         PageInfo pageInfo = new PageInfo(userList);
         return ResResult.success(pageInfo);
+    }
+
+    /**
+     * 审核专员是否分单
+     *
+     * @return
+     */
+    @PostMapping("/user/isDivideOrder")
+    public ResResult isDivideOrder(Long userId) {
+        userService.isDivideOrder(userId);
+        return ResResult.success();
     }
 
 

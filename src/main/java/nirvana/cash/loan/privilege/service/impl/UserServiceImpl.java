@@ -364,4 +364,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         return userMapper.selectByPrimaryKey(userId);
     }
 
+    @Override
+    public int isDivideOrder(Long userId) {
+     
+        return 0;
+    }
+
 }

@@ -74,6 +74,14 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 	}
 
 	@Override
+	public List<Role> findRoleByRoleCode(List<String> roleCode) {
+		roleMapper.getRoleByRoleCode(roleCode);
+		return null;
+
+
+	}
+
+	@Override
 	@Transactional
 	public void addRole(Role role, List<Long> menuIds) {
 		role.setRoleId(this.getSequence(Role.SEQ));
