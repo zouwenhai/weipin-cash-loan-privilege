@@ -3,16 +3,13 @@ package nirvana.cash.loan.privilege.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import nirvana.cash.loan.privilege.common.enums.RoleEnum;
+import nirvana.cash.loan.privilege.fegin.facade.*;
 import nirvana.cash.loan.privilege.service.base.impl.BaseService;
 import nirvana.cash.loan.privilege.common.util.MD5Utils;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.fegin.FeginCollectionApi;
 import nirvana.cash.loan.privilege.fegin.FeginRiskApi;
 import nirvana.cash.loan.privilege.fegin.NewResponseUtil;
-import nirvana.cash.loan.privilege.fegin.facade.RiskUserAddApiFacade;
-import nirvana.cash.loan.privilege.fegin.facade.RiskUserUpdateApiFacade;
-import nirvana.cash.loan.privilege.fegin.facade.UserAddApiFacade;
-import nirvana.cash.loan.privilege.fegin.facade.UserUpdateApiFacade;
 import nirvana.cash.loan.privilege.service.LogoutUserService;
 import nirvana.cash.loan.privilege.dao.RoleMapper;
 import nirvana.cash.loan.privilege.dao.UserMapper;
@@ -365,9 +362,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
-    public int isDivideOrder(Long userId) {
-     
-        return 0;
+    public int isDivideOrder(IsDivideOrderFacade isDivideOrderFacade) {
+        return userMapper.updateDivideOrder(isDivideOrderFacade);
     }
 
 }

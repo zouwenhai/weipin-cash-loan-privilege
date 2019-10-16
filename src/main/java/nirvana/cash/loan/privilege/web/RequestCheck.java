@@ -56,6 +56,8 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/user/findByLoginName");
         noLoginUrls.add("/privilige/user/getAuditUser");
         noLoginUrls.add("/privilige/user/getAuditUserById");
+        noLoginUrls.add("/privilige/user/isDivideOrder");
+        noLoginUrls.add("/privilige/user/getPageAuditUser");
         //监控
         noLoginUrls.add("/actuator/info");
         noLoginUrls.add("/actuator/health");

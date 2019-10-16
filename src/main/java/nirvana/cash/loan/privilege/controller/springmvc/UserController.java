@@ -9,6 +9,8 @@ import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.fegin.facade.AuditUserFacade;
+import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.RoleService;
 import nirvana.cash.loan.privilege.service.UserRoleService;
@@ -210,7 +212,7 @@ public class UserController extends BaseController {
         roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
         List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
         if (CollectionUtils.isEmpty(roleList)) {
-            ResResult.error("没有该角色");
+            return ResResult.error("没有该角色");
         }
         List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
         List<User> userList = userService.findUserById(userIdList, isSeperate);
@@ -237,12 +239,23 @@ public class UserController extends BaseController {
      * @return
      */
     @PostMapping("/user/getPageAuditUser")
-    public ResResult getPageAuditUser(@RequestBody Integer pageNum, Integer pageSize) {
-        //固定审核人员的角色ID
-        Long roleId = 2L;
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
-        PageHelper.startPage(pageNum, pageSize);
+    public ResResult getPageAuditUser(@RequestBody AuditUserFacade auditUserFacade) {
+        //固定审核人员的角色
+        Example example = new Example(Role.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<String> roleCode = new ArrayList<>();
+        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
+        if (CollectionUtils.isEmpty(roleList)) {
+            return ResResult.error("没有该角色");
+        }
+        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
+        PageHelper.startPage(auditUserFacade.getPageNum(), auditUserFacade.getPageSize());
         List<User> userList = userService.findUserById(userIdList, null);
+        userList.forEach(user -> {
+            user.setRoleName(roleList.get(0).getRoleName());
+        });
         PageInfo pageInfo = new PageInfo(userList);
         return ResResult.success(pageInfo);
     }
@@ -253,8 +266,11 @@ public class UserController extends BaseController {
      * @return
      */
     @PostMapping("/user/isDivideOrder")
-    public ResResult isDivideOrder(Long userId) {
-        userService.isDivideOrder(userId);
+    public ResResult isDivideOrder(@RequestBody IsDivideOrderFacade isDivideOrderFacade) {
+        if (isDivideOrderFacade == null) {
+            return ResResult.error("参数为空");
+        }
+        userService.isDivideOrder(isDivideOrderFacade);
         return ResResult.success();
     }
 
