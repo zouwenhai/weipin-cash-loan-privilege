@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nirvana.cash.loan.privilege.dao.RoleMapper">
-  <resultMap id="roleMap" type="nirvana.cash.loan.privilege.domain.Role">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId" />
-    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
-    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
-    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
-    <result column="role_code" jdbcType="VARCHAR" property="roleCode" />
-  </resultMap>
+    <resultMap id="roleMap" type="nirvana.cash.loan.privilege.domain.Role">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId"/>
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="role_code" jdbcType="VARCHAR" property="roleCode"/>
+    </resultMap>
 
-  <select id="findById" resultType="roleWithMenu">
+    <select id="findById" resultType="roleWithMenu">
       select r.role_id roleId,r.role_name roleName,r.remark,
       rm.menu_id menuId,m.type as menuType from tb_yofishdk_auth_role r
       left join tb_yofishdk_auth_role_menu rm on(r.role_id = RM.role_id)
@@ -21,15 +21,29 @@
       where r.role_id = #{roleId}
   </select>
 
-  <select id="findRoleCodeListByRoleIds" resultType="java.lang.String">
-    select
-       role_code
-    from tb_yofishdk_auth_role
-    where
-       role_id in
-          <foreach item="roleId" collection="roleIds"  open="(" separator="," close=")">
+    <select id="findRoleCodeListByRoleIds" resultType="java.lang.String">
+        select
+        role_code
+        from tb_yofishdk_auth_role
+        where
+        role_id in
+        <foreach item="roleId" collection="roleIds" open="(" separator="," close=")">
             #{roleId}
-          </foreach>
-  </select>
-  
+        </foreach>
+    </select>
+
+    <select id="getRoleByRoleCode" parameterType="java.util.List" resultType="nirvana.cash.loan.privilege.domain.Role">
+        select
+        ROLE_ID roleId,
+        ROLE_NAME roleName,
+        role_code roleCode
+        from tb_yofishdk_auth_role
+        <if test="roleCode!=null and roleCode.size()>0">
+            where role_code in
+            <foreach collection="roleCode" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>

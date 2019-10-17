@@ -3,11 +3,14 @@ package nirvana.cash.loan.privilege.controller.springmvc;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import nirvana.cash.loan.privilege.common.domain.QueryRequest;
+import nirvana.cash.loan.privilege.common.enums.RoleEnum;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.fegin.facade.AuditUserFacade;
+import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.RoleService;
 import nirvana.cash.loan.privilege.service.UserRoleService;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -193,19 +197,41 @@ public class UserController extends BaseController {
     }
 
     /**
-     * 借款获取审核人员信息
+     * 获取借款审核人员信息
      *
      * @param isSeperate(是否分单)
      * @return
      */
     @RequestMapping("/user/getAuditUser")
     public ResResult getAuditUser(Integer isSeperate) {
-        //固定审核人员的角色ID
-        Long roleId = 2L;
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
+        //固定审核人员的角色
+        Example example = new Example(Role.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<String> roleCode = new ArrayList<>();
+        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
+        if (CollectionUtils.isEmpty(roleList)) {
+            return ResResult.error("没有该角色");
+        }
+        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
         List<User> userList = userService.findUserById(userIdList, isSeperate);
         return ResResult.success(userList);
     }
+
+
+    /**
+     * 根据userId获取借款审核人员信息
+     *
+     * @param userId
+     * @return
+     */
+    @RequestMapping("/user/getAuditUserById")
+    public ResResult getAuditUserById(Long userId) {
+        User user = userService.getUserById(userId);
+        return ResResult.success(user);
+    }
+
 
     /**
      * 分页查询借款审核人员信息
@@ -213,14 +239,39 @@ public class UserController extends BaseController {
      * @return
      */
     @PostMapping("/user/getPageAuditUser")
-    public ResResult getPageAuditUser(@RequestBody Integer pageNum, Integer pageSize) {
-        //固定审核人员的角色ID
-        Long roleId = 2L;
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleId);
-        PageHelper.startPage(pageNum, pageSize);
+    public ResResult getPageAuditUser(@RequestBody AuditUserFacade auditUserFacade) {
+        //固定审核人员的角色
+        Example example = new Example(Role.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<String> roleCode = new ArrayList<>();
+        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
+        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
+        if (CollectionUtils.isEmpty(roleList)) {
+            return ResResult.error("没有该角色");
+        }
+        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
+        PageHelper.startPage(auditUserFacade.getPageNum(), auditUserFacade.getPageSize());
         List<User> userList = userService.findUserById(userIdList, null);
+        userList.forEach(user -> {
+            user.setRoleName(roleList.get(0).getRoleName());
+        });
         PageInfo pageInfo = new PageInfo(userList);
         return ResResult.success(pageInfo);
+    }
+
+    /**
+     * 审核专员是否分单
+     *
+     * @return
+     */
+    @PostMapping("/user/isDivideOrder")
+    public ResResult isDivideOrder(@RequestBody IsDivideOrderFacade isDivideOrderFacade) {
+        if (isDivideOrderFacade == null) {
+            return ResResult.error("参数为空");
+        }
+        userService.isDivideOrder(isDivideOrderFacade);
+        return ResResult.success();
     }
 
 

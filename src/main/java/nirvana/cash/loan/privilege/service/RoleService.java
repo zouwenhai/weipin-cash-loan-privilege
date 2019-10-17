@@ -9,16 +9,17 @@ import java.util.List;
 
 public interface RoleService extends IService<Role> {
 
-	List<Role> findAllRole(Role role);
-	
-	RoleWithMenu findRoleWithMenus(Long roleId);
+    List<Role> findAllRole(Role role);
 
-	void addRole(Role role, List<Long> menuIds);
-	
-	void updateRole(Role role, List<Long> menuIds,Long loginUserId);
+    RoleWithMenu findRoleWithMenus(Long roleId);
 
-	ResResult deleteRoles(Long roleId, Long loginUserId);
+    void addRole(Role role, List<Long> menuIds);
 
-	Role findByRoleName2(String roleName2);
+    void updateRole(Role role, List<Long> menuIds, Long loginUserId);
 
+    ResResult deleteRoles(Long roleId, Long loginUserId);
+
+    Role findByRoleName2(String roleName2);
+
+    List<Role> findRoleByRoleCode(List<String> roleCode);
 }

@@ -54,6 +54,10 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/notauth/logout");
         noLoginUrls.add("/privilige/notauth/gateway/hystrixTimeout");
         noLoginUrls.add("/privilige/user/findByLoginName");
+        noLoginUrls.add("/privilige/user/getAuditUser");
+        noLoginUrls.add("/privilige/user/getAuditUserById");
+        noLoginUrls.add("/privilige/user/isDivideOrder");
+        noLoginUrls.add("/privilige/user/getPageAuditUser");
         //监控
         noLoginUrls.add("/actuator/info");
         noLoginUrls.add("/actuator/health");
@@ -83,14 +87,14 @@ public class RequestCheck {
             return ResResult.success(user);
         }
         List<Menu> permissionList = null;
-        try{
+        try {
             String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(), String.class);
             if (StringUtils.isBlank(userPermissions)) {
                 return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
             }
             permissionList = JSONObject.parseArray(userPermissions, Menu.class);
-        }catch (Exception ex){
-            log.error("获取权限集发生异常:{}",ex);
+        } catch (Exception ex) {
+            log.error("获取权限集发生异常:{}", ex);
             //从数据库直接获取一次
             String username = user.getUsername();
             permissionList = menuService.findUserPermissions(username);
@@ -107,22 +111,22 @@ public class RequestCheck {
     }
 
     public User getLoginUser(ServerHttpRequest request) {
-        String jsessionid = URLUtil.getHeader(request,RedisKeyContant.JSESSIONID);
+        String jsessionid = URLUtil.getHeader(request, RedisKeyContant.JSESSIONID);
         if (StringUtils.isBlank(jsessionid)) {
             return null;
         }
         String data = "";
-        try{
+        try {
             //从缓存获取登陆信息
             data = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_USER_PREFIX + jsessionid, String.class);
             if (StringUtils.isBlank(data)) {
                 return null;
             }
-        }catch (Exception ex){
-            log.error("从缓存获取登录信息失败:{}",ex);
+        } catch (Exception ex) {
+            log.error("从缓存获取登录信息失败:{}", ex);
             //从数据库直接获取一次
             CacheDto cacheDto = authCacheService.findOne(jsessionid);
-            if(cacheDto != null){
+            if (cacheDto != null) {
                 data = cacheDto.getValue();
             }
         }
@@ -147,16 +151,17 @@ public class RequestCheck {
      * 1.登录用户未配置部门，用户不管理任何产品， authShowIds = "0"
      * 2.登录用户配置了部门，且关联的部门viewRange=0.则可以管理所有产品， authShowIds = "all"
      * 3.其他，以登录用户所关联的部门配置的产品为准。关联的产品即为登录用户可管理的产品
+     *
      * @param user
      * @return
      */
     public Map<String, String> findDeptAndProductAuth(User user) {
         Map resmap = new HashMap();
-        if(user.getViewRange() == 0){
+        if (user.getViewRange() == 0) {
             resmap.put("authShowIds", CommonContants.all_product_no);
             return resmap;
         }
-        if(StringUtils.isBlank(user.getDeptId())){
+        if (StringUtils.isBlank(user.getDeptId())) {
             resmap.put("authShowIds", CommonContants.none_product_no);
             return resmap;
         }
@@ -167,7 +172,7 @@ public class RequestCheck {
         for (String deptId : deptIds) {
             AuthDeptProductInfoVo vo = deptService.findAuthDeptProductInfoFromCache(user.getUserId(), Long.valueOf(deptId));
             //用户可以管理所有产品，方法直接返回！
-            if(CommonContants.all_product_no.equals(vo.getProductNos())){
+            if (CommonContants.all_product_no.equals(vo.getProductNos())) {
                 resmap.put("authShowIds", CommonContants.all_product_no);
                 return resmap;
             }
@@ -180,8 +185,7 @@ public class RequestCheck {
         }
         if (!CollectionUtils.isEmpty(set)) {
             authShowIds = StringUtils.join(set, ",");
-        }
-        else{
+        } else {
             authShowIds = CommonContants.none_product_no;
         }
         resmap.put("authShowIds", authShowIds);

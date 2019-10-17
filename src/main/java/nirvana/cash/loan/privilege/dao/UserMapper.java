@@ -6,6 +6,7 @@ import nirvana.cash.loan.privilege.common.config.MyMapper;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.domain.UserWithRole;
+import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
 import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper extends MyMapper<User> {
@@ -19,4 +20,6 @@ public interface UserMapper extends MyMapper<User> {
     void setDeptIdNull(Long deptId);
 
     List<User> getUserById(@Param("userIdList") List<Long> userIdList, @Param("isSeperate") Integer isSeperate);
+
+    int updateDivideOrder(IsDivideOrderFacade isDivideOrderFacade);
 }

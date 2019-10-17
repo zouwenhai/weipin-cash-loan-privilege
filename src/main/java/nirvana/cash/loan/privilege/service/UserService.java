@@ -1,5 +1,6 @@
 package nirvana.cash.loan.privilege.service;
 
+import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
 import nirvana.cash.loan.privilege.service.base.IService;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.domain.User;
@@ -36,4 +37,14 @@ public interface UserService extends IService<User> {
 
 
     List<User> findUserById(List<Long> userIdList, Integer isSeperate);
+
+    User getUserById(Long userId);
+
+    /**
+     * 是否分单
+     *
+     * @param isDivideOrderFacade
+     * @return
+     */
+    int isDivideOrder(IsDivideOrderFacade isDivideOrderFacade);
 }

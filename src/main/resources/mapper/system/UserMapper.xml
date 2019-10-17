@@ -90,33 +90,28 @@
         USER_ID userId,
         USERNAME username,
         NAME name,
-        PASSWORD password,
         DEPT_ID deptId ,
         EMAIL email,
         MOBILE mobile ,
-        STATUS status,
-        CRATE_TIME createTime ,
-        MODIFY_TIME modifyTime,
-        LAST_LOGIN_TIME lastLoginTime ,
         SSEX ssex,
-        THEME theme ,
-        AVATAR avatar,
-        DESCRIPTION description,
         IS_DELETE isDelete,
-        SEAT_NUMBER seatNumber,
-        VIEW_RANGE viewRange,
         IS_SEPERATE isSeperate
-        from TB_YOFISHDK_AUTH_USER
+        from TB_YOFISHDK_AUTH_USER where IS_DELETE=0
         <if test="userIdList!=null and userIdList.size()>0">
-            where USER_ID in
+            and USER_ID in
             <foreach collection="userIdList" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
         </if>
         <if test="isSeperate!=null and isSeperate!=''">
-            IS_SEPERATE = #{isSeperate}
+            and IS_SEPERATE = #{isSeperate}
         </if>
         order by CRATE_TIME desc
     </select>
+
+
+    <update id="updateDivideOrder" parameterType="nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade">
+        update TB_YOFISHDK_AUTH_USER set IS_SEPERATE = #{isSeperate} where USER_ID=#{id}
+    </update>
 
 </mapper>
