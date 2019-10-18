@@ -6,8 +6,8 @@
     <!--本地测试环境 -->
     <springProfile name="test">
         <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender"
-          name="LOGSTASH_SOCKET">
-            <destination>test.lb.gs.youyuwo.com:50005</destination>
+                  name="LOGSTASH_SOCKET">
+            <destination>10.0.22.8:5044</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}
                 </customFields>
@@ -20,7 +20,7 @@
 
     <springProfile name="pre">
         <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender"
-          name="LOGSTASH_SOCKET">
+                  name="LOGSTASH_SOCKET">
             <destination>pre-logstash.gs.9188.com:51005</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}
@@ -34,7 +34,7 @@
 
     <springProfile name="prod">
         <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender"
-          name="LOGSTASH_SOCKET">
+                  name="LOGSTASH_SOCKET">
             <destination>172.20.20.115:9250</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}
