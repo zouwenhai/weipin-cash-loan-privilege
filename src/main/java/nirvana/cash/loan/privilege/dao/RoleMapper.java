@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface RoleMapper extends MyMapper<Role> {
 
-	List<RoleWithMenu> findById(Long roleId);
+    List<RoleWithMenu> findById(Long roleId);
 
-	List<String>  findRoleCodeListByRoleIds(@Param("roleIds") List<Long> roleIds);
+    List<String> findRoleCodeListByRoleIds(@Param("roleIds") List<Long> roleIds);
+
+    List<Role> getRoleByRoleCode(@Param("roleCode") List<String> roleCode);
 }
