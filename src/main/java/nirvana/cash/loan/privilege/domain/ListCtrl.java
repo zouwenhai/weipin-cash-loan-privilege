@@ -2,8 +2,7 @@ package nirvana.cash.loan.privilege.domain;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -15,7 +14,9 @@ public class ListCtrl {
 
     public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_LIST_CTRL";
 
+    @Id
     @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "MENU_ID")

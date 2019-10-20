@@ -3,10 +3,7 @@ package nirvana.cash.loan.privilege.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import lombok.Data;
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
@@ -17,7 +14,9 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -4852732617765810959L;
 
+/*
     public static final String SEQ = "seq_tb_yofishdk_auth_user";
+*/
 
     /**
      * 账户状态
@@ -42,6 +41,7 @@ public class User implements Serializable {
 
     @Id
     @Column(name = "USER_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @Column(name = "USERNAME")

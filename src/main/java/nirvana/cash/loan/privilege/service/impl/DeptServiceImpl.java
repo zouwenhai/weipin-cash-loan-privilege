@@ -90,21 +90,24 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     @Transactional
     public void addDept(Dept dept) {
         Long parentId = dept.getParentId();
-        if (parentId == null){
+        if (parentId == null) {
             dept.setParentId(0L);
         }
-        if(StringUtils.isBlank(dept.getProductNos())){
+        if (StringUtils.isBlank(dept.getProductNos())) {
             dept.setViewRange(0);
-        } else{
+        } else {
             dept.setViewRange(1);
         }
+/*
         dept.setDeptId(this.getSequence(Dept.SEQ));
+        设置为主键自增
+*/
         dept.setCreateTime(new Date());
         dept.setIsDelete(0);
         this.save(dept);
 
         //添加部门产品关联信息
-        if(dept.getViewRange() == 1){
+        if (dept.getViewRange() == 1) {
             Long deptId = dept.getDeptId();
             String productNos = dept.getProductNos();
             deptProductService.insert(deptId, productNos);
@@ -121,18 +124,18 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     public void updateDept(Dept dept, User loginUser) {
         Long parentId = dept.getParentId();
         Long deptId = dept.getDeptId();
-        if (parentId == null){
+        if (parentId == null) {
             dept.setParentId(0L);
         }
-        if(StringUtils.isBlank(dept.getProductNos())){
+        if (StringUtils.isBlank(dept.getProductNos())) {
             dept.setViewRange(0);
-        } else{
+        } else {
             dept.setViewRange(1);
         }
         this.updateNotNull(dept);
         //重新添加部门产品关联信息
         deptProductService.delete(deptId);
-        if(dept.getViewRange() == 1){
+        if (dept.getViewRange() == 1) {
             String productNos = dept.getProductNos();
             deptProductService.insert(deptId, productNos);
         }
@@ -155,33 +158,32 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
     }
 
     @Override
-    public AuthDeptProductInfoVo findAuthDeptProductInfoFromCache(Long userId,Long deptId) {
-        log.info("获取运营团队权限信息请求参数:userId={},deptId={}",userId,deptId);
+    public AuthDeptProductInfoVo findAuthDeptProductInfoFromCache(Long userId, Long deptId) {
+        log.info("获取运营团队权限信息请求参数:userId={},deptId={}", userId, deptId);
         //从缓存获取部门信息
         Dept dept = null;
-        try{
+        try {
             String rediskey = RedisKeyContant.yofishdk_auth_deptname_prefix + deptId;
             String deptStr = redisService.get(rediskey, String.class);
-            if(StringUtils.isNotBlank(deptStr)){
-                dept = JSONObject.parseObject(deptStr,Dept.class);
-            }
-            else{
+            if (StringUtils.isNotBlank(deptStr)) {
+                dept = JSONObject.parseObject(deptStr, Dept.class);
+            } else {
                 dept = this.findById(deptId);
                 if (dept == null) {
-                    log.error("部门信息不存在,请检查用户所属部门配置！(用户ID:{},部门ID:{})", userId,deptId);
+                    log.error("部门信息不存在,请检查用户所属部门配置！(用户ID:{},部门ID:{})", userId, deptId);
                     BizException.newInstance("部门信息不存在,请检查用户所属部门配置！");
                 }
                 redisService.put(rediskey, JSON.toJSONString(dept));
             }
-        }catch (Exception ex){
-            log.error("获取运营团队权限信息发生异常:{}",ex);
+        } catch (Exception ex) {
+            log.error("获取运营团队权限信息发生异常:{}", ex);
             //直接从数据库获取一次
             dept = this.findById(deptId);
         }
 
         //获取关联产品编号
         String productNos = CommonContants.all_product_no;
-        if(dept.getViewRange() == 1){
+        if (dept.getViewRange() == 1) {
             productNos = deptProductService.findProductNosByDeptIdFromCache(deptId);
         }
         AuthDeptProductInfoVo vo = new AuthDeptProductInfoVo();

@@ -2,9 +2,7 @@ package nirvana.cash.loan.privilege.domain;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -14,11 +12,14 @@ import java.util.Date;
 @Table(name = "TB_YOFISHDK_AUTH_MSG_LIST")
 public class MsgList {
 
+/*
     public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_MSG_LIST";
+*/
 
     //主键ID
     @Id
     @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //用户ID

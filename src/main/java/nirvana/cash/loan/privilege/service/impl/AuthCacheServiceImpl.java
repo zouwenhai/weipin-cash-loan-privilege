@@ -30,7 +30,7 @@ public class AuthCacheServiceImpl extends BaseService<CacheDto> implements AuthC
     @Override
     public CacheDto findOne(String key) {
         Example example = new Example(CacheDto.class);
-        example.createCriteria().andEqualTo("key",key);
+        example.createCriteria().andEqualTo("key", key);
         List<CacheDto> list = cacheMapper.selectByExample(example);
         if (ListUtil.isEmpty(list)) {
             return null;
@@ -41,7 +41,11 @@ public class AuthCacheServiceImpl extends BaseService<CacheDto> implements AuthC
     @Override
     public void insert(String key, String value, String remark) {
         CacheDto dto = new CacheDto();
+/*
         dto.setId(this.getSequence(CacheDto.SEQ));
+       修改为主键自增
+
+*/
         dto.setKey(key);
         dto.setValue(value);
         dto.setREMARK(remark);
@@ -55,9 +59,9 @@ public class AuthCacheServiceImpl extends BaseService<CacheDto> implements AuthC
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String datestr = dateFormat.format(calendar.getTime());
         Date date = dateFormat.parse(datestr);
-        log.info("删除前一日用户登录缓存信息:LessThan date={}",date);
+        log.info("删除前一日用户登录缓存信息:LessThan date={}", date);
         Example example = new Example(CacheDto.class);
-        example.createCriteria().andLessThan("createTime",date);
+        example.createCriteria().andLessThan("createTime", date);
         cacheMapper.deleteByExample(example);
     }
 }

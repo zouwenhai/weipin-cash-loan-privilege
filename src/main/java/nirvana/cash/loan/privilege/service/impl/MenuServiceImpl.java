@@ -45,7 +45,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     @Override
     public List<Menu> findAllMenus(Menu menu) {
         try {
-            return  menuMapper.findAllMenus(menu);
+            return menuMapper.findAllMenus(menu);
         } catch (NumberFormatException e) {
             return new ArrayList<>();
         }
@@ -84,7 +84,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     @Override
     @Transactional
     public void addMenu(Menu menu) {
-        menu.setMenuId(this.getSequence(Menu.SEQ));
+        /* menu.setMenuId(this.getSequence(Menu.SEQ));
+         * 主键自增
+         * */
         menu.setCreateTime(new Date());
         if (menu.getParentId() == null) {
             menu.setParentId(0L);
@@ -123,8 +125,8 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         }
 
         //process orderNum
-        Menu menu =  menus.stream()
-                .filter(t->t.getMenuId().longValue() == menuId)
+        Menu menu = menus.stream()
+                .filter(t -> t.getMenuId().longValue() == menuId)
                 .findAny().orElse(null);
         Long parentId = menu.getParentId();
         this.resetOrderNum(parentId);

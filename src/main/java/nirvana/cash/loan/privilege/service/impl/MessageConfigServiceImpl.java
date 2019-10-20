@@ -71,7 +71,10 @@ public class MessageConfigServiceImpl extends BaseService<MessageConfig> impleme
             messageConfig.setUpdateUser(username);
             messageConfig.setCreateTime(new Date());
             messageConfig.setUpdateTime(new Date());
-            messageConfig.setId(this.getSequence(MessageConfig.SEQ));
+            /*   messageConfig.setId(this.getSequence(MessageConfig.SEQ));
+             * 设置主键自增
+             * */
+
             int i = messageConfigMapper.insertSelective(messageConfig);
             if (i > 0) {
                 return ResResult.success();
