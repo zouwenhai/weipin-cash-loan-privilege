@@ -48,7 +48,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     public List<Menu> findAllMenus(Menu menu) {
         try {
 
-            if (StringUtils.isEmpty(menu.getMenuName()) || StringUtils.isEmpty(menu.getType())) {
+            if (StringUtils.isEmpty(menu.getMenuName()) && StringUtils.isEmpty(menu.getType())) {
                 List<Menu> rootMenu = menuMapper.selectAll();
                 Example example = new Example(Menu.class);
                 example.createCriteria().andEqualTo("parentId", 0L);
@@ -56,12 +56,10 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
                 List<Menu> firstMenu = menuMapper.selectByExample(example);
                 List<Menu> menuList = new ArrayList<Menu>();
                 // 先找到所有的一级菜单
-                for (int i = 0; i < firstMenu.size(); i++) {
-                    // 一级菜单没有parentId
-                    menuList.add(firstMenu.get(i));
-                    // 为一级菜单设置子菜单，getChild是递归调用的
-                    getChild1(firstMenu.get(i).getMenuId(), rootMenu, menuList);
-                }
+                firstMenu.forEach(menu1 -> {
+                    menuList.add(menu1);
+                    getChild1(menu1.getMenuId(), rootMenu, menuList);
+                });
                 return menuList;
             } else {//条件查询
                 List<Menu> menuList = this.menuMapper.findAllMenus(menu);
@@ -250,30 +248,27 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     private List<Menu> getChild1(Long id, List<Menu> rootMenu, List<Menu> menuList) {
         // 子菜单
         List<Menu> childList = new ArrayList<>();
-        for (Menu menu : rootMenu) {
-            // 遍历所有节点，将父菜单id与传过来的id比较
-            if (menu.getParentId() != null) {
-                if (menu.getParentId().equals(id)) {
-                    childList.add(menu);
-                    childList.sort(new Comparator<Menu>() {//按照orderNum升序排序
-                        @Override
-                        public int compare(Menu o1, Menu o2) {
-                            return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
-                        }
-                    });
-                }
+        rootMenu.forEach(menu -> {
+            if (menu.getParentId().equals(id)) {
+                childList.add(menu);
             }
-        }
+        });
         // 递归退出条件
         if (childList.size() == 0) {
             return null;
         }
+        childList.sort(new Comparator<Menu>() {//按照orderNum升序排序
+            @Override
+            public int compare(Menu o1, Menu o2) {
+                return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
+            }
+        });
         menuList.addAll(childList);
         // 把子菜单的子菜单再循环一遍
-        for (Menu menu : childList) {
+        childList.forEach(menu -> {
             // 递归
             getChild1(menu.getMenuId(), rootMenu, menuList);
-        }
+        });
         return menuList;
     }
 
@@ -281,30 +276,28 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     private List<LeftMenuVo> getChild2(Long id, List<LeftMenuVo> rootMenu, List<LeftMenuVo> menuList) {
         // 子菜单
         List<LeftMenuVo> childList = new ArrayList<>();
-        for (LeftMenuVo menu : rootMenu) {
+        rootMenu.forEach(menuVo -> {
             // 遍历所有节点，将父菜单id与传过来的id比较
-            if (menu.getParentId() != null) {
-                if (menu.getParentId().equals(id)) {
-                    childList.add(menu);
-                    childList.sort(new Comparator<LeftMenuVo>() {//按照orderNum排序
-                        @Override
-                        public int compare(LeftMenuVo o1, LeftMenuVo o2) {
-                            return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
-                        }
-                    });
-                }
+            if (menuVo.getParentId().equals(id)) {
+                childList.add(menuVo);
             }
-        }
+        });
         // 递归退出条件
         if (childList.size() == 0) {
             return null;
         }
+        childList.sort(new Comparator<LeftMenuVo>() {//按照orderNum排序
+            @Override
+            public int compare(LeftMenuVo o1, LeftMenuVo o2) {
+                return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
+            }
+        });
         menuList.addAll(childList);
         // 把子菜单的子菜单再循环一遍
-        for (LeftMenuVo menu : childList) {// 没有url子菜单还有子菜单
-            // 递归
-            getChild2(menu.getMenuId(), rootMenu, menuList);
-        }
+        childList.forEach(menuVo -> {
+            //递归
+            getChild2(menuVo.getMenuId(), rootMenu, menuList);
+        });
         return menuList;
     }
 
