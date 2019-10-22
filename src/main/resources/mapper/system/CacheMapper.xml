@@ -3,7 +3,7 @@
 <mapper namespace="nirvana.cash.loan.privilege.dao.CacheMapper">
     <resultMap id="cacheMap" type="nirvana.cash.loan.privilege.domain.CacheDto">
         <result column="ID" jdbcType="DECIMAL" property="id"/>
-        <result column="JSESSIONID" jdbcType="DECIMAL" property="key"/>
+        <result column="JSESSIONID" jdbcType="DECIMAL" property="jsessionId"/>
         <result column="VALUE" jdbcType="VARCHAR" property="value"/>
         <result column="REMARK" jdbcType="DECIMAL" property="remark"/>
         <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
