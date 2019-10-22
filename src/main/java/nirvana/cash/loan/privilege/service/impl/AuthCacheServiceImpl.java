@@ -46,11 +46,12 @@ public class AuthCacheServiceImpl extends BaseService<CacheDto> implements AuthC
        修改为主键自增
 
 */
-        dto.setKey(key);
+        dto.setJsessionId(key);
         dto.setValue(value);
         dto.setREMARK(remark);
         dto.setCreateTime(new Date());
         cacheMapper.insertSelective(dto);
+
     }
 
     @Override

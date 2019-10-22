@@ -9,20 +9,20 @@ import java.util.Date;
 @Table(name = "TB_YOFISHDK_AUTH_CACHE")
 public class CacheDto {
 
-    public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_CACHE";
+    /*  public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_CACHE";*/
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.TABLE,generator = "JDBC")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "JDBC")
     private Long id;
 
-    @Column(name = "KEY")
-    private String key;
+    @Column(name = "JSESSIONID")
+    private String jsessionId;
 
     @Column(name = "VALUE")
     private String value;
 
-    @Column(name = "remark")
+    @Column(name = "REMARK")
     private String REMARK;
 
     @Column(name = "CREATE_TIME")

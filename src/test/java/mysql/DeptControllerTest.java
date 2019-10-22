@@ -1,8 +1,10 @@
 package mysql;
 
 import nirvana.cash.loan.privilege.Application;
+import nirvana.cash.loan.privilege.dao.CacheMapper;
 import nirvana.cash.loan.privilege.dao.DeptMapper;
 import nirvana.cash.loan.privilege.dao.MenuMapper;
+import nirvana.cash.loan.privilege.domain.CacheDto;
 import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Menu;
 import nirvana.cash.loan.privilege.service.DeptProductService;
@@ -47,13 +49,21 @@ public class DeptControllerTest {
     @Resource
     private MenuService menuService;
 
-    @Test
-    public void testDeptList() {
+    @Resource
+    private CacheMapper cacheMapper;
 
-        Dept dept = new Dept();
-        dept.setViewRange(1);
-        dept.setParentId(0L);
-        dept.setDeptName("主渠道");
+    @Resource
+    private DeptMapper deptMapper;
+
+    @Test
+    public void testDeptList2() {
+
+       CacheDto dto = new CacheDto();
+        dto.setId(9214L);
+        dto.setJsessionId("123123132132");
+        dto.setValue("1231231");
+        dto.setREMARK("sdfsdfsfsfsd");
+        cacheMapper.insertSelective(dto);
  /*       Dept dept = new Dept();
         dept.setDeptId(221L);
         List<Dept> list = this.deptService.findAllDepts(dept);
@@ -65,6 +75,15 @@ public class DeptControllerTest {
         });*/
     }
 
+    @Test
+    public void testDeptList() {
+
+        Dept dept = new Dept();
+        dept.setViewRange(1);
+        dept.setParentId(0L);
+        dept.setDeptName("主渠道");
+        deptMapper.insertSelective(dept);
+    }
 
     public List<Menu> getTreeList(String topId) {
         Menu menu = new Menu();
