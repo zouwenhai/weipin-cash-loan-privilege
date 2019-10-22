@@ -16,7 +16,7 @@ public class ListCtrl {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "JDBC")
     private Long id;
 
     @Column(name = "MENU_ID")

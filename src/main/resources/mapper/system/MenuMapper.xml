@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nirvana.cash.loan.privilege.dao.MenuMapper">
-  <resultMap id="menu" type="nirvana.cash.loan.privilege.domain.Menu">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="MENU_ID" jdbcType="DECIMAL" property="menuId" />
-    <result column="PARENT_ID" jdbcType="DECIMAL" property="parentId" />
-    <result column="MENU_NAME" jdbcType="VARCHAR" property="menuName" />
-    <result column="URL" jdbcType="VARCHAR" property="url" />
-    <result column="PERMS" jdbcType="VARCHAR" property="perms" />
-    <result column="ICON" jdbcType="VARCHAR" property="icon" />
-    <result column="TYPE" jdbcType="CHAR" property="type" />
-    <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum" />
-    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
-  </resultMap>
-  
-  <select id="findUserPermissions" resultMap="menu">
-  	select m.perms from tb_yofishdk_auth_role r
-        left join tb_yofishdk_auth_user_role ur on(r.role_id = ur.role_id)
-        left join tb_yofishdk_auth_user u on(u.user_id = ur.user_id)
-        left join tb_yofishdk_auth_role_menu rm on(rm.role_id = r.role_id)
-        left join tb_yofishdk_auth_menu m on(m.menu_id = rm.menu_id and m.type = 1 )
+    <resultMap id="menu" type="nirvana.cash.loan.privilege.domain.Menu">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="MENU_ID" jdbcType="DECIMAL" property="menuId"/>
+        <result column="PARENT_ID" jdbcType="DECIMAL" property="parentId"/>
+        <result column="MENU_NAME" jdbcType="VARCHAR" property="menuName"/>
+        <result column="URL" jdbcType="VARCHAR" property="url"/>
+        <result column="PERMS" jdbcType="VARCHAR" property="perms"/>
+        <result column="ICON" jdbcType="VARCHAR" property="icon"/>
+        <result column="TYPE" jdbcType="CHAR" property="type"/>
+        <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <select id="findUserPermissions" resultMap="menu">
+  	select m.perms from TB_YOFISHDK_AUTH_ROLE r
+        left join TB_YOFISHDK_AUTH_USER_ROLE ur on(r.role_id = ur.role_id)
+        left join TB_YOFISHDK_AUTH_USER u on(u.user_id = ur.user_id)
+        left join TB_YOFISHDK_AUTH_ROLE_MENU rm on(rm.role_id = r.role_id)
+        left join TB_YOFISHDK_AUTH_MENU m on(m.menu_id = rm.menu_id and m.type = 1 )
         where u.username = #{userName} and m.perms is not null
   </select>
 
@@ -36,33 +36,26 @@
                t1.icon as icon ,
                t1.order_num as orderNum,
                t2.role_ids as roleIds
-         from tb_yofishdk_auth_menu t1
+         from TB_YOFISHDK_AUTH_MENU t1
          left join
           (
-             select
-                  menu_id,
-                  listagg(role_id,',') within group (order by role_id)  as  role_ids
-             from tb_yofishdk_auth_role_menu
-             group by menu_id
+         SELECT menu_id,GROUP_CONCAT(role_id SEPARATOR ',') role_ids FROM TB_YOFISHDK_AUTH_ROLE_MENU
+        GROUP BY menu_id
            )t2
            on  t1.menu_id = t2.menu_id
            where t1.type = 0
-           start with t1.PARENT_ID = 0 connect by t1.PARENT_ID = prior t1.MENU_ID
-           order siblings by t1.order_num asc
     </select>
 
     <select id="findAllMenus" resultMap="menu"
-        parameterType="nirvana.cash.loan.privilege.domain.Menu">
+            parameterType="nirvana.cash.loan.privilege.domain.Menu">
         select *
-        from tb_yofishdk_auth_menu t1
+        from TB_YOFISHDK_AUTH_MENU t1
         where 1 = 1
-            <if test="menuName != null ">
-                and menu_name = #{menuName}
-            </if>
-            <if test="type != null ">
-                and type = #{type}
-            </if>
-            start with t1.PARENT_ID = 0 connect by t1.PARENT_ID = prior t1.MENU_ID
-            order siblings by t1.order_num asc
+        <if test="menuName != null ">
+            and menu_name = #{menuName}
+        </if>
+        <if test="type != null ">
+            and type = #{type}
+        </if>
     </select>
 </mapper>

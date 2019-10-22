@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@Table(name = "tb_yofishdk_auth_menu")
+@Table(name = "TB_YOFISHDK_AUTH_MENU")
 public class Menu implements Serializable {
 
     public static final String TYPE_MENU = "0";
@@ -21,7 +21,7 @@ public class Menu implements Serializable {
     @Id
     @Column(name = "MENU_ID")
     @ExportConfig(value = "编号")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "JDBC")
     private Long menuId;
 
     @Column(name = "PARENT_ID")

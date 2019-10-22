@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@Table(name = "tb_yofishdk_auth_role")
+@Table(name = "TB_YOFISHDK_AUTH_ROLE")
 public class Role implements Serializable {
 
     /**
@@ -20,7 +20,7 @@ public class Role implements Serializable {
 
     @Id
     @Column(name = "ROLE_ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "JDBC")
     private Long roleId;
 
     @Column(name = "ROLE_NAME")

@@ -9,7 +9,7 @@ import lombok.Data;
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
 @Data
-@Table(name = "tb_yofishdk_auth_dept")
+@Table(name = "TB_YOFISHDK_AUTH_DEPT")
 public class Dept implements Serializable {
 
     public static final String SEQ = "seq_tb_yofishdk_auth_dept";
@@ -17,7 +17,7 @@ public class Dept implements Serializable {
     @Id
     @Column(name = "DEPT_ID")
     @ExportConfig(value = "编号")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "JDBC")
     private Long deptId;
 
     @Column(name = "PARENT_ID")

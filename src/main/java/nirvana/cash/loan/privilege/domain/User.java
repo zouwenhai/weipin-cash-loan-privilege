@@ -9,7 +9,7 @@ import lombok.Data;
 import nirvana.cash.loan.privilege.common.annotation.ExportConfig;
 
 @Data
-@Table(name = "tb_yofishdk_auth_user")
+@Table(name = "TB_YOFISHDK_AUTH_USER")
 public class User implements Serializable {
 
     private static final long serialVersionUID = -4852732617765810959L;
@@ -41,7 +41,7 @@ public class User implements Serializable {
 
     @Id
     @Column(name = "USER_ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "JDBC")
     private Long userId;
 
     @Column(name = "USERNAME")
