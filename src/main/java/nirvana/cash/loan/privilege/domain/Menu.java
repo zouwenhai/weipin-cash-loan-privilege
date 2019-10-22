@@ -16,7 +16,9 @@ public class Menu implements Serializable {
 
     public static final String TYPE_BUTTON = "1";
 
+/*
 	public static final String SEQ = "seq_tb_yofishdk_auth_menu";
+*/
 
     @Id
     @Column(name = "MENU_ID")

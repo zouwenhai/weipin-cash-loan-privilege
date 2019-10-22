@@ -12,7 +12,7 @@ import java.util.Date;
 @Table(name = "TB_YOFISHDK_AUTH_LIST_CTRL")
 public class ListCtrl {
 
-    public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_LIST_CTRL";
+/*    public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_LIST_CTRL";*/
 
     @Id
     @Column(name = "ID")
