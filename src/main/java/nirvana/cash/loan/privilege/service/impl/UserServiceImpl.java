@@ -72,7 +72,11 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         } else {
             user.setViewRange(1);
         }
-        user.setUserId(this.getSequence(User.SEQ));
+
+        /*  user.setUserId(this.getSequence(User.SEQ))
+         * 数据库住建设为自增
+         * */
+        ;
         user.setCrateTime(new Date());
         user.setTheme(User.DEFAULT_THEME);
         user.setAvatar(User.DEFAULT_AVATAR);

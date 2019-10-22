@@ -16,7 +16,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @MapperScan("nirvana.cash.loan.privilege.dao")
 @EnableFeignClients("nirvana.cash.loan.privilege.fegin")
-public class Application {
+public class
+Application {
 
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 

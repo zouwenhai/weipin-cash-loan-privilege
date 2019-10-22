@@ -242,12 +242,19 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- oracle驱动 -->
+<!--        &lt;!&ndash; oracle驱动 &ndash;&gt;
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc7</artifactId>
             <version>12.2.0.1</version>
-        </dependency>
+        </dependency>-->
+
+        <!--mysql驱动-->
+              <dependency>
+                  <groupId>mysql</groupId>
+                  <artifactId>mysql-connector-java</artifactId>
+                  <version>8.0.18</version>
+              </dependency>
 
         <!--springboot2.0,默认数据库连接池 HikariCP -->
         <dependency>

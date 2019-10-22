@@ -14,19 +14,19 @@
     </resultMap>
 
     <select id="findById" resultType="roleWithMenu">
-      select r.role_id roleId,r.role_name roleName,r.remark,
-      rm.menu_id menuId,m.type as menuType from tb_yofishdk_auth_role r
-      left join tb_yofishdk_auth_role_menu rm on(r.role_id = RM.role_id)
-      left join tb_yofishdk_auth_menu m on (rm.menu_id = m.menu_id)
-      where r.role_id = #{roleId}
+      select r.ROLE_ID roleId,r.ROLE_NAME roleName,r.remark,
+      rm.MENU_ID menuId,m.type as menuType from TB_YOFISHDK_AUTH_ROLE r
+      left join TB_YOFISHDK_AUTH_ROLE_MENU rm on(r.ROLE_ID = rm.ROLE_ID)
+      left join TB_YOFISHDK_AUTH_MENU m on (rm.MENU_ID = m.MENU_ID)
+      where r.ROLE_ID = #{roleId}
   </select>
 
     <select id="findRoleCodeListByRoleIds" resultType="java.lang.String">
         select
-        role_code
-        from tb_yofishdk_auth_role
+        ROLE_CODE
+        from TB_YOFISHDK_AUTH_ROLE
         where
-        role_id in
+        ROLE_ID in
         <foreach item="roleId" collection="roleIds" open="(" separator="," close=")">
             #{roleId}
         </foreach>
@@ -36,10 +36,10 @@
         select
         ROLE_ID roleId,
         ROLE_NAME roleName,
-        role_code roleCode
-        from tb_yofishdk_auth_role
+        ROLE_CODE roleCode
+        from TB_YOFISHDK_AUTH_ROLE
         <if test="roleCode!=null and roleCode.size()>0">
-            where role_code in
+            where ROLE_CODE in
             <foreach collection="roleCode" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>

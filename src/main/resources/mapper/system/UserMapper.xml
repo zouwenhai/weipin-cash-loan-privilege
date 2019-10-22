@@ -42,15 +42,13 @@
         u.name,
         u.dept_id deptId,
         u.view_range viewRange,
-        ( select
-        listagg(role_id,',') within group (order by role_id) as role_ids
-        from tb_yofishdk_auth_user_role ur
-        where ur.user_id = u.USER_ID
+        ( SELECT GROUP_CONCAT(role_id SEPARATOR ',') FROM TB_YOFISHDK_AUTH_USER_ROLE ur
+        GROUP BY ur.user_id HAVING ur.user_id = u.user_id
         ) roleIds2
-        from tb_yofishdk_auth_user u
+        from TB_YOFISHDK_AUTH_USER u
         where u.is_delete = 0
         <if test="username != null and username != ''">
-            AND lower(u.username) = #{username}
+            AND u.username = #{username}
         </if>
         <if test="ssex != null and ssex != ''">
             AND u.ssex = #{ssex}
@@ -66,20 +64,20 @@
 		select u.user_id userId,u.username,u.dept_id deptId,u.email,u.mobile,
 		u.status,u.ssex,ur.role_id roleId,u.name,u.seat_number seatNumber,
 	    u.view_range viewRange
-		from tb_yofishdk_auth_user u
-		left join tb_yofishdk_auth_user_role ur on (u.user_id = ur.user_id)
+		from TB_YOFISHDK_AUTH_USER u
+		left join TB_YOFISHDK_AUTH_USER_ROLE ur on (u.user_id = ur.user_id)
 		where u.user_id = #{userId}
   </select>
 
     <select id="findUserRoldIds" resultType="java.lang.String">
 	 select
-	      listagg(role_id,',') within group (order by role_id)  as  role_ids
-	 from tb_yofishdk_auth_user_role
-	 where user_id = #{userId}
+	      GROUP_CONCAT(role_id SEPARATOR ',')  as  role_ids
+	 from TB_YOFISHDK_AUTH_USER_ROLE ur
+	 where ur.user_id = #{userId}  GROUP BY ur.user_id
 	</select>
 
     <update id="setDeptIdNull" parameterType="java.lang.Long">
-		update tb_yofishdk_auth_user
+		update TB_YOFISHDK_AUTH_USER
 		set dept_id = NULL
 		where dept_id = #{deptId}
 	</update>

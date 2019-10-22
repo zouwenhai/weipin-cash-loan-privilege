@@ -83,7 +83,9 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
     @Override
     @Transactional
     public void addRole(Role role, List<Long> menuIds) {
-        role.setRoleId(this.getSequence(Role.SEQ));
+        /*     role.setRoleId(this.getSequence(Role.SEQ));
+         * 主键改为自增
+         * */
         role.setCreateTime(new Date());
         role.setModifyTime(new Date());
         role.setRoleName(RoleEnum.getPaymentStatusEnumByValue(role.getRoleCode()).getName());
