@@ -255,7 +255,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             if (menu.getParentId() != null) {
                 if (menu.getParentId().equals(id)) {
                     childList.add(menu);
-                    childList.sort(new Comparator<Menu>() {//按照orderNum排序
+                    childList.sort(new Comparator<Menu>() {//按照orderNum升序排序
                         @Override
                         public int compare(Menu o1, Menu o2) {
                             return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
@@ -270,7 +270,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         }
         menuList.addAll(childList);
         // 把子菜单的子菜单再循环一遍
-        for (Menu menu : childList) {// 没有url子菜单还有子菜单
+        for (Menu menu : childList) {
             // 递归
             getChild1(menu.getMenuId(), rootMenu, menuList);
         }
