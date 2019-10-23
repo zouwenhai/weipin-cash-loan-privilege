@@ -72,7 +72,7 @@ eureka:
   client:
     serviceUrl.defaultZone: http://pre.lb.gs.youyuwo.com:18888/eureka/,http://pre.lb.gs.youyuwo.com:18889/eureka/,http://pre.lb.gs.youyuwo.com:18890/eureka/
     register-with-eureka: true
-#    registry-fetch-interval-seconds: 5
+  #    registry-fetch-interval-seconds: 5
   instance:
     prefer-ip-address: true
 
@@ -91,9 +91,9 @@ spring:
 ---
 eureka:
   client:
-    serviceUrl.defaultZone: http://172.20.20.103:18888/eureka/,http://172.20.20.103:18889/eureka/,http://172.20.20.103:18890/eureka/
+    serviceUrl.defaultZone: http://10.160.0.24:18888/eureka/,http://10.160.0.25:18888/eureka/,http://10.160.0.26:18888/eureka/
     register-with-eureka: true
-#    registry-fetch-interval-seconds: 5
+  #    registry-fetch-interval-seconds: 5
   instance:
     prefer-ip-address: true
 spring:
