@@ -183,15 +183,20 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
     @Override
     public List<LeftMenuVo> findUserMenus() {
+        //TODO 修改为mysql,通过递归查询出菜单
+        // 原始的数据
         List<LeftMenuVo> rootMenu = menuMapper.findLeftMenuList();
         // 最后的结果
         List<LeftMenuVo> menuList = new ArrayList<LeftMenuVo>();
         // 先找到所有的一级菜单
-        rootMenu.forEach(menuVo -> {
-            menuList.add(menuVo);
-            // 为一级菜单设置子菜单，getChild是递归调用的
-            getChild2(menuVo.getMenuId(), rootMenu, menuList);
-        });
+        for (int i = 0; i < rootMenu.size(); i++) {
+            // 一级菜单没有parentId
+            if (rootMenu.get(i).getParentId() == 0L) {
+                menuList.add(rootMenu.get(i));
+                // 为一级菜单设置子菜单，getChild是递归调用的
+                getChild2(rootMenu.get(i).getMenuId(), rootMenu, menuList);
+            }
+        }
         return menuList;
     }
 
@@ -260,10 +265,10 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         });
         menuList.addAll(childList);
         // 把子菜单的子菜单再循环一遍
-        childList.forEach(menu -> {
+        for (Menu menu : childList) {
             // 递归
             getChild1(menu.getMenuId(), rootMenu, menuList);
-        });
+        }
         return menuList;
     }
 
@@ -273,26 +278,31 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         List<LeftMenuVo> childList = new ArrayList<>();
         rootMenu.forEach(menuVo -> {
             // 遍历所有节点，将父菜单id与传过来的id比较
+
             if (menuVo.getParentId().equals(id)) {
                 childList.add(menuVo);
+                childList.sort(new Comparator<LeftMenuVo>() {//按照orderNum排序
+                    @Override
+                    public int compare(LeftMenuVo o1, LeftMenuVo o2) {
+                        return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
+                    }
+                });
             }
+
         });
+        for (LeftMenuVo menu : rootMenu) {
+
+        }
         // 递归退出条件
         if (childList.size() == 0) {
             return null;
         }
-        childList.sort(new Comparator<LeftMenuVo>() {//按照orderNum排序
-            @Override
-            public int compare(LeftMenuVo o1, LeftMenuVo o2) {
-                return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
-            }
-        });
         menuList.addAll(childList);
         // 把子菜单的子菜单再循环一遍
-        childList.forEach(menuVo -> {
-            //递归
-            getChild2(menuVo.getMenuId(), rootMenu, menuList);
-        });
+        for (LeftMenuVo menu : childList) {// 没有url子菜单还有子菜单
+            // 递归
+            getChild2(menu.getMenuId(), rootMenu, menuList);
+        }
         return menuList;
     }
 

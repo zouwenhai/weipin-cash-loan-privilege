@@ -7,9 +7,11 @@ import nirvana.cash.loan.privilege.dao.MenuMapper;
 import nirvana.cash.loan.privilege.domain.CacheDto;
 import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Menu;
+import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.MenuService;
+import nirvana.cash.loan.privilege.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,6 +56,9 @@ public class DeptControllerTest {
 
     @Resource
     private DeptMapper deptMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Test
     public void testDeptList2() {
@@ -195,6 +200,11 @@ public class DeptControllerTest {
         list2.add(menu1);
         result.addAll(list1);
         result.addAll(list2);
+    }
+
+    @Test
+    public void test3(){
+      User user =  userService.findByName("system");
     }
 
 }
