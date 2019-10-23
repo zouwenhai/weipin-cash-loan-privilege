@@ -8,6 +8,7 @@ import nirvana.cash.loan.privilege.domain.CacheDto;
 import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Menu;
 import nirvana.cash.loan.privilege.domain.User;
+import nirvana.cash.loan.privilege.domain.vo.LeftMenuVo;
 import nirvana.cash.loan.privilege.service.DeptProductService;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.MenuService;
@@ -59,6 +60,13 @@ public class DeptControllerTest {
 
     @Autowired
     private UserService userService;
+
+
+    @Test
+    public void testfindLeftMenuList() {
+
+        List<LeftMenuVo> menus=menuService.findUserMenus();
+    }
 
     @Test
     public void testDeptList2() {

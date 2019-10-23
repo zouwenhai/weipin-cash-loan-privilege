@@ -188,15 +188,26 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         List<LeftMenuVo> rootMenu = menuMapper.findLeftMenuList();
         // 最后的结果
         List<LeftMenuVo> menuList = new ArrayList<LeftMenuVo>();
+        List<LeftMenuVo> firstMenuList = new ArrayList<LeftMenuVo>();
         // 先找到所有的一级菜单
         for (int i = 0; i < rootMenu.size(); i++) {
             // 一级菜单没有parentId
             if (rootMenu.get(i).getParentId() == 0L) {
-                menuList.add(rootMenu.get(i));
-                // 为一级菜单设置子菜单，getChild是递归调用的
-                getChild2(rootMenu.get(i).getMenuId(), rootMenu, menuList);
+                firstMenuList.add(rootMenu.get(i));
+                firstMenuList.sort(new Comparator<LeftMenuVo>() {
+                    @Override
+                    public int compare(LeftMenuVo o1, LeftMenuVo o2) {//一级菜单升序排列
+                        return o1.getOrderNum().intValue() - o2.getOrderNum().intValue();
+                    }
+                });
             }
         }
+        // 为一级菜单设置子菜单，getChild是递归调用的
+        firstMenuList.forEach(menuVo -> {
+            menuList.add(menuVo);
+            getChild2(menuVo.getMenuId(), rootMenu, menuList);
+
+        });
         return menuList;
     }
 
