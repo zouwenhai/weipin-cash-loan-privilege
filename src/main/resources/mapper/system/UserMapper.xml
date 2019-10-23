@@ -42,10 +42,14 @@
         u.name,
         u.dept_id deptId,
         u.view_range viewRange,
-        ( SELECT GROUP_CONCAT(role_id SEPARATOR ',') FROM TB_YOFISHDK_AUTH_USER_ROLE ur
-        GROUP BY ur.user_id HAVING ur.user_id = u.user_id
-        ) roleIds2
+        ur.roleIds2
         from TB_YOFISHDK_AUTH_USER u
+        LEFT JOIN (SELECT user_id,
+        GROUP_CONCAT(role_id SEPARATOR ',') roleIds2
+        FROM
+        TB_YOFISHDK_AUTH_USER_ROLE
+        GROUP BY user_id ) ur
+        ON u.user_id = ur.user_id
         where u.is_delete = 0
         <if test="username != null and username != ''">
             AND u.username = #{username}
