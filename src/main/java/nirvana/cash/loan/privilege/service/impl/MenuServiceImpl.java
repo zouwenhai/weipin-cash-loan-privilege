@@ -206,7 +206,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         firstMenuList.forEach(menuVo -> {
             menuList.add(menuVo);
             getChild2(menuVo.getMenuId(), rootMenu, menuList);
-
         });
         return menuList;
     }
