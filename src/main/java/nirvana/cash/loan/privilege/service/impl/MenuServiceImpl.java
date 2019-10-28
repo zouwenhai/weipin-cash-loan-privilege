@@ -300,9 +300,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             }
 
         });
-        for (LeftMenuVo menu : rootMenu) {
-
-        }
         // 递归退出条件
         if (childList.size() == 0) {
             return null;
