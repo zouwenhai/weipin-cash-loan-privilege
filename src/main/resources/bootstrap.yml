@@ -91,7 +91,7 @@ spring:
 ---
 eureka:
   client:
-    serviceUrl.defaultZone: http://10.160.0.24:18888/eureka/,http://10.160.0.25:18888/eureka/,http://10.160.0.26:18888/eureka/
+    serviceUrl.defaultZone: http://172.31.99.78:18888/eureka/,http://172.31.99.185:18888/eureka/,http://172.31.99.43:18888/eureka/
     register-with-eureka: true
   #    registry-fetch-interval-seconds: 5
   instance:
