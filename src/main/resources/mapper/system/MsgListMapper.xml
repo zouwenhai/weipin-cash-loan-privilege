@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nirvana.cash.loan.privilege.dao.MsgListMapper">
-  <resultMap id="resultMap" type="nirvana.cash.loan.privilege.domain.MsgList">
-    <result column="ID" jdbcType="DECIMAL" property="id" />
-    <result column="USER_ID" jdbcType="DECIMAL" property="userId" />
-    <result column="UUID" jdbcType="VARCHAR" property="uuid" />
-    <result column="MSG_MODULE" jdbcType="DECIMAL" property="msgModule" />
-    <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
-    <result column="STATUS" jdbcType="DECIMAL" property="status"/>
-    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser"/>
-    <result column="UPDATE_USER" jdbcType="VARCHAR" property="updateUser"/>
-    <result column="IS_DELETE" jdbcType="DECIMAL" property="isDelete"/>
-  </resultMap>
+    <resultMap id="resultMap" type="nirvana.cash.loan.privilege.domain.MsgList">
+        <result column="ID" jdbcType="DECIMAL" property="id"/>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="UUID" jdbcType="VARCHAR" property="uuid"/>
+        <result column="MSG_MODULE" jdbcType="DECIMAL" property="msgModule"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="STATUS" jdbcType="DECIMAL" property="status"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser"/>
+        <result column="UPDATE_USER" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="IS_DELETE" jdbcType="DECIMAL" property="isDelete"/>
+    </resultMap>
 
-  <select id="findPageList" resultMap="resultMap" parameterType="nirvana.cash.loan.privilege.domain.MsgList">
+    <select id="findPageList" resultMap="resultMap" parameterType="nirvana.cash.loan.privilege.domain.MsgList">
     select * from TB_YOFISHDK_AUTH_MSG_LIST
     where IS_DELETE = 0 and USER_ID = #{userId} order by ID desc
   </select>
 
-  <update id="maskAsRead">
+    <update id="maskAsRead">
     UPDATE TB_YOFISHDK_AUTH_MSG_LIST SET STATUS = 1
-    WHERE CONTENT LIKE '%"orderId":"'||#{orderId}||'"%' AND CONTENT LIKE '%"orderStatus":"'||#{orderStatus}||'"%' AND IS_DELETE = 0
+    WHERE CONTENT LIKE  concat  ('%"orderId":"',#{orderId},'"%') AND CONTENT LIKE concat('%"orderStatus":"',#{orderStatus},'"%')  AND IS_DELETE = 0
   </update>
 
-  <select id="selectCountByOrderIdAndStatus" resultType="int">
+    <select id="selectCountByOrderIdAndStatus" resultType="int">
     SELECT count(1) FROM TB_YOFISHDK_AUTH_MSG_LIST
-    WHERE CONTENT LIKE '%"orderId":"'||#{orderId}||'"%' AND CONTENT LIKE '%"orderStatus":"'||#{orderStatus}||'"%'
+    WHERE CONTENT LIKE concat('%"orderId":"',#{orderId},'"%') AND CONTENT LIKE concat ('%"orderStatus":"',#{orderStatus},'"%')
   </select>
 
 </mapper>

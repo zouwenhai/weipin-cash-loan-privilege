@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nirvana.cash.loan.privilege.dao.UserRoleMapper">
-  <resultMap id="BaseResultMap" type="nirvana.cash.loan.privilege.domain.UserRole">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="USER_ID" jdbcType="DECIMAL" property="userId" />
-    <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="nirvana.cash.loan.privilege.domain.UserRole">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId"/>
+    </resultMap>
 
-  <select id="findRoleCodeListByUserId" resultType="java.lang.String">
+    <select id="findRoleCodeListByUserId" resultType="java.lang.String">
       select t2.role_code
-      from tb_yofishdk_auth_user_role t1
-      inner join  tb_yofishdk_auth_role t2 on t1.role_id = t2.role_id
+      from TB_YOFISHDK_AUTH_USER_ROLE t1
+      inner join  TB_YOFISHDK_AUTH_ROLE t2 on t1.role_id = t2.role_id
       where t1.user_id = #{userId}
   </select>
 
     <select id="findUserIdListByRoleId" resultType="java.lang.Long">
-       SELECT user_id FROM tb_yofishdk_auth_user_role  WHERE role_id = #{roleId}
+       SELECT user_id FROM TB_YOFISHDK_AUTH_USER_ROLE  WHERE role_id = #{roleId}
     </select>
 
 </mapper>

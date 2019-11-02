@@ -35,7 +35,9 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
     public ResResult saveMsg(MsgList msgList) {
         msgList.setStatus(0);
         msgList.setIsDelete(0);
-        msgList.setId(this.getSequence(MsgList.SEQ));
+        /*   msgList.setId(this.getSequence(MsgList.SEQ));
+         * 修改为主键自增
+         * */
         msgList.setCreateUser("system");
         msgList.setUpdateUser("system");
         msgList.setCreateTime(new Date());
@@ -45,53 +47,53 @@ public class MsgListServiceImpl extends BaseService<MsgList> implements MsgListS
     }
 
     @Override
-    public void msgDelete(List<Long> idList,User user) {
+    public void msgDelete(List<Long> idList, User user) {
         MsgList msgList = new MsgList();
         msgList.setUpdateUser(user.getUsername());
         msgList.setUpdateTime(new Date());
         msgList.setIsDelete(1);
 
         Example example = new Example(MsgList.class);
-        example.createCriteria().andIn("id",idList);
-        msgListMapper.updateByExampleSelective(msgList,example);
+        example.createCriteria().andIn("id", idList);
+        msgListMapper.updateByExampleSelective(msgList, example);
     }
 
     @Override
-    public void updateStatus(List<Long> idList, Integer status,User user) {
+    public void updateStatus(List<Long> idList, Integer status, User user) {
         MsgList msgList = new MsgList();
         msgList.setUpdateUser(user.getUsername());
         msgList.setUpdateTime(new Date());
         msgList.setStatus(status);
 
         Example example = new Example(MsgList.class);
-        example.createCriteria().andIn("id",idList);
-        msgListMapper.updateByExampleSelective(msgList,example);
+        example.createCriteria().andIn("id", idList);
+        msgListMapper.updateByExampleSelective(msgList, example);
 
     }
 
     @Override
     public Integer countUnReadMsg(Long userId) {
         Example example = new Example(MsgList.class);
-        example.createCriteria().andEqualTo("userId",userId)
-        .andEqualTo("status",0)
-        .andEqualTo("isDelete",0);
+        example.createCriteria().andEqualTo("userId", userId)
+                .andEqualTo("status", 0)
+                .andEqualTo("isDelete", 0);
         return msgListMapper.selectCountByExample(example);
     }
 
     @Override
     public void updateMessageStatus(String uuid, Integer status, User user) {
         Example example = new Example(MsgList.class);
-        example.createCriteria().andEqualTo("uuid",uuid);
+        example.createCriteria().andEqualTo("uuid", uuid);
         MsgList msgList = new MsgList();
         msgList.setUpdateUser(user.getUsername());
         msgList.setUpdateTime(new Date());
         msgList.setStatus(status);
-        msgListMapper.updateByExampleSelective(msgList,example);
+        msgListMapper.updateByExampleSelective(msgList, example);
     }
 
     @Override
     public List<MsgList> queryUnreadMessage(Long userId) {
-        Example example =new Example(MsgList.class);
+        Example example = new Example(MsgList.class);
         example.createCriteria().andEqualTo("userId", userId)
                 .andEqualTo("status", 0)
                 .andEqualTo("isDelete", 0);

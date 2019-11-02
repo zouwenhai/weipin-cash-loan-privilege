@@ -41,7 +41,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         if (!NewResponseUtil.SUCCESS.equals(responseUtil.getCode())) {
             return new ArrayList<>();
         }
-        return JSON.parseArray(JSON.toJSONString(responseUtil.getData()),CashLoanGetAllProductsFacade.class);
+        return JSON.parseArray(JSON.toJSONString(responseUtil.getData()), CashLoanGetAllProductsFacade.class);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
             return CommonContants.none_product_no;
         }
         String productNos = CommonContants.none_product_no;
-        try{
+        try {
             //从缓存获取关联产品编号
             String redisKey = RedisKeyContant.yofishdk_auth_productnos_prefix + deptId;
             productNos = redisService.get(redisKey, String.class);
@@ -74,8 +74,8 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
                 productNos = CommonContants.none_product_no;
             }
             redisService.put(redisKey, productNos);
-        }catch (Exception ex){
-            log.error("获取运营产品队权限信息发生异常:{}",ex);
+        } catch (Exception ex) {
+            log.error("获取运营产品队权限信息发生异常:{}", ex);
             //直接从数据库获取一次
             productNos = this.findProductNosByDeptId(deptId);
         }
@@ -92,7 +92,10 @@ public class DeptProductServiceImpl extends BaseService<DeptProduct> implements 
         DeptProduct dto = null;
         for (String productNo : arr) {
             dto = new DeptProduct();
+/*
             dto.setId(this.getSequence(DeptProduct.SEQ));
+            修改为主键自增
+*/
             dto.setDeptId(deptId);
             dto.setProductNo(productNo);
             deptProductMapper.insertSelective(dto);

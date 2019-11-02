@@ -7,7 +7,7 @@
     <springProfile name="test">
         <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender"
           name="LOGSTASH_SOCKET">
-            <destination>test.lb.gs.youyuwo.com:50005</destination>
+            <destination>10.170.0.2:5044</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}
                 </customFields>
@@ -35,7 +35,7 @@
     <springProfile name="prod">
         <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender"
           name="LOGSTASH_SOCKET">
-            <destination>172.20.20.115:9250</destination>
+            <destination>172.31.99.77:5044</destination>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}
                 </customFields>

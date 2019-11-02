@@ -29,9 +29,9 @@ public class ListCtrlServiceImpl extends BaseService<ListCtrl> implements ListCt
     @Override
     public ListCtrl findListCtrl(Long userId, Long menuId) {
         Example example = new Example(ListCtrl.class);
-        example.createCriteria().andEqualTo("userId",userId)
-                .andEqualTo("menuId",menuId);
-       return this.selectOneByExample(example);
+        example.createCriteria().andEqualTo("userId", userId)
+                .andEqualTo("menuId", menuId);
+        return this.selectOneByExample(example);
     }
 
     @Transactional
@@ -39,22 +39,24 @@ public class ListCtrlServiceImpl extends BaseService<ListCtrl> implements ListCt
     public ResResult saveOrUpdate(ListCtrl listCtrl) {
         Long userId = listCtrl.getUserId();
         Long menuId = listCtrl.getMenuId();
-        String newHiddenColumn =  listCtrl.getHiddenColumn();
-        ListCtrl oldListCtrl = this.findListCtrl(userId,menuId);
+        String newHiddenColumn = listCtrl.getHiddenColumn();
+        ListCtrl oldListCtrl = this.findListCtrl(userId, menuId);
         if (oldListCtrl == null) {
-            listCtrl.setId(this.getSequence(ListCtrl.SEQ));
+            /*   listCtrl.setId(this.getSequence(ListCtrl.SEQ));
+             * 主键自增
+             * */
             listCtrl.setCreateTime(new Date());
             listCtrl.setUpdateTime(new Date());
             this.save(listCtrl);
             return ResResult.success();
         }
 
-        BeanUtils.copyProperties(oldListCtrl,listCtrl);
+        BeanUtils.copyProperties(oldListCtrl, listCtrl);
         listCtrl.setUpdateTime(new Date());
         listCtrl.setHiddenColumn(newHiddenColumn);
         Example example = new Example(ListCtrl.class);
-        example.createCriteria().andEqualTo("id",oldListCtrl.getId());
-        listCtrlMapper.updateByExample(listCtrl,example);
+        example.createCriteria().andEqualTo("id", oldListCtrl.getId());
+        listCtrlMapper.updateByExample(listCtrl, example);
         return ResResult.success();
     }
 }

@@ -2,9 +2,7 @@ package nirvana.cash.loan.privilege.domain;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,10 +16,13 @@ public class MessageConfig implements Serializable {
 
     private static final long serialVersionUID = -7865552752652420326L;
 
+/*
     public static final String SEQ = "SEQ_TB_YOFISHDK_AUTH_MSG_CONFIG";
+*/
 
     @Id
     @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.TABLE,generator = "JDBC")
     private Long id;
 
     @Column(name = "MSG_MODULE")

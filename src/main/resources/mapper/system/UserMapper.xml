@@ -1,77 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nirvana.cash.loan.privilege.dao.UserMapper">
-  <resultMap id="BaseResultMap" type="nirvana.cash.loan.privilege.domain.User">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="USER_ID" jdbcType="DECIMAL" property="userId" />
-    <result column="USERNAME" jdbcType="VARCHAR" property="username" />
-    <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
-    <result column="DEPT_ID" jdbcType="DECIMAL" property="deptId" />
-    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
-    <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
-    <result column="STATUS" jdbcType="CHAR" property="status" />
-    <result column="CRATE_TIME" jdbcType="TIMESTAMP" property="crateTime" />
-    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
-    <result column="LAST_LOGIN_TIME" jdbcType="TIMESTAMP" property="lastLoginTime" />
-    <result column="SSEX" jdbcType="CHAR" property="ssex" />
-    <result column="THEME" jdbcType="VARCHAR" property="theme" />
-    <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
-    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
-    <result column="is_delete" jdbcType="DECIMAL" property="isDelete" />
-    <result column="SEAT_NUMBER" jdbcType="VARCHAR" property="seatNumber" />
-    <result column="VIEW_RANGE" jdbcType="DECIMAL" property="viewRange" />
-  </resultMap>
-  
-  <select id="findUserWithDept" resultType="user" parameterType="user">
-  		select
-			u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-			u.ssex,u.seat_number seatNumber,
-	        u.name,
-	        u.dept_id deptId,
-	        u.view_range viewRange,
-		   ( select
-			  listagg(role_id,',') within group (order by role_id)  as  role_ids
-			  from tb_yofishdk_auth_user_role ur
-		 	 where ur.user_id = u.USER_ID
-		    )  roleIds2
-	    from tb_yofishdk_auth_user u
-  		where u.is_delete = 0
-  		<if test="username != null and username != ''">
-        	AND lower(u.username) = #{username}
-	    </if>
-  		<if test="ssex != null and ssex != ''">
-	        AND u.ssex = #{ssex}
-	    </if>
-	    <if test="status != null and status != ''">
-	        AND u.status = #{status}
-	    </if>
-  		order by u.user_id
-  </select>
-  
-    
-  <select id="findUserWithRole" resultType="userWithRole">
+    <resultMap id="BaseResultMap" type="nirvana.cash.loan.privilege.domain.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="DEPT_ID" jdbcType="DECIMAL" property="deptId"/>
+        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>
+        <result column="MOBILE" jdbcType="VARCHAR" property="mobile"/>
+        <result column="STATUS" jdbcType="CHAR" property="status"/>
+        <result column="CRATE_TIME" jdbcType="TIMESTAMP" property="crateTime"/>
+        <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="LAST_LOGIN_TIME" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="SSEX" jdbcType="CHAR" property="ssex"/>
+        <result column="THEME" jdbcType="VARCHAR" property="theme"/>
+        <result column="AVATAR" jdbcType="VARCHAR" property="avatar"/>
+        <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
+        <result column="is_delete" jdbcType="DECIMAL" property="isDelete"/>
+        <result column="SEAT_NUMBER" jdbcType="VARCHAR" property="seatNumber"/>
+        <result column="VIEW_RANGE" jdbcType="DECIMAL" property="viewRange"/>
+        <result column="IS_SEPERATE" jdbcType="NUMERIC" property="isSeperate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        USER_ID, USERNAME, NAME, PASSWORD, DEPT_ID, EMAIL, MOBILE,
+        STATUS, CRATE_TIME, MODIFY_TIME, LAST_LOGIN_TIME,SSEX,THEME,AVATAR,
+        DESCRIPTION,is_delete,SEAT_NUMBER,VIEW_RANGE,IS_SEPERATE
+    </sql>
+
+    <select id="findUserWithDept" resultType="user" parameterType="user">
+        select
+        u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
+        u.ssex,u.seat_number seatNumber,
+        u.name,
+        u.dept_id deptId,
+        u.view_range viewRange,
+        ur.roleIds2
+        from TB_YOFISHDK_AUTH_USER u
+        LEFT JOIN (SELECT user_id,
+        GROUP_CONCAT(role_id SEPARATOR ',') roleIds2
+        FROM
+        TB_YOFISHDK_AUTH_USER_ROLE
+        GROUP BY user_id ) ur
+        ON u.user_id = ur.user_id
+        where u.is_delete = 0
+        <if test="username != null and username != ''">
+            AND u.username = #{username}
+        </if>
+        <if test="ssex != null and ssex != ''">
+            AND u.ssex = #{ssex}
+        </if>
+        <if test="status != null and status != ''">
+            AND u.status = #{status}
+        </if>
+        order by u.user_id
+    </select>
+
+
+    <select id="findUserWithRole" resultType="userWithRole">
 		select u.user_id userId,u.username,u.dept_id deptId,u.email,u.mobile,
 		u.status,u.ssex,ur.role_id roleId,u.name,u.seat_number seatNumber,
 	    u.view_range viewRange
-		from tb_yofishdk_auth_user u
-		left join tb_yofishdk_auth_user_role ur on (u.user_id = ur.user_id)
+		from TB_YOFISHDK_AUTH_USER u
+		left join TB_YOFISHDK_AUTH_USER_ROLE ur on (u.user_id = ur.user_id)
 		where u.user_id = #{userId}
   </select>
 
-	<select id="findUserRoldIds" resultType="java.lang.String">
+    <select id="findUserRoldIds" resultType="java.lang.String">
 	 select
-	      listagg(role_id,',') within group (order by role_id)  as  role_ids
-	 from tb_yofishdk_auth_user_role
-	 where user_id = #{userId}
+	      GROUP_CONCAT(role_id SEPARATOR ',')  as  role_ids
+	 from TB_YOFISHDK_AUTH_USER_ROLE ur
+	 where ur.user_id = #{userId}  GROUP BY ur.user_id
 	</select>
 
-	<update id="setDeptIdNull" parameterType="java.lang.Long">
-		update tb_yofishdk_auth_user
+    <update id="setDeptIdNull" parameterType="java.lang.Long">
+		update TB_YOFISHDK_AUTH_USER
 		set dept_id = NULL
 		where dept_id = #{deptId}
 	</update>
+
+
+    <select id="getUserById" parameterType="java.util.List" resultType="nirvana.cash.loan.privilege.domain.User">
+        select
+        USER_ID userId,
+        USERNAME username,
+        NAME name,
+        DEPT_ID deptId ,
+        EMAIL email,
+        MOBILE mobile ,
+        SSEX ssex,
+        IS_DELETE isDelete,
+        IS_SEPERATE isSeperate
+        from TB_YOFISHDK_AUTH_USER where IS_DELETE=0
+        <if test="userIdList!=null and userIdList.size()>0">
+            and USER_ID in
+            <foreach collection="userIdList" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="isSeperate!=null and isSeperate!=''">
+            and IS_SEPERATE = #{isSeperate}
+        </if>
+        order by CRATE_TIME desc
+    </select>
+
+
+    <update id="updateDivideOrder" parameterType="nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade">
+        update TB_YOFISHDK_AUTH_USER set IS_SEPERATE = #{isSeperate} where USER_ID=#{id}
+    </update>
 
 </mapper>
