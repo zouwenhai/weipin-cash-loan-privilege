@@ -47,7 +47,12 @@ public enum RoleEnum {
     //财务模块开发管理
     FINANCE_MODULE_DEVELOPMENT("finance_module_development", "财务模块开发管理"),
     //运营统计模块开发管理
-    OPERATION_MODULE_DEVELOPMENT("operation_module_development", "运营统计模块开发管理");
+    OPERATION_MODULE_DEVELOPMENT("operation_module_development", "运营统计模块开发管理"),
+
+    //微品借款款订单审核专员
+    BORROW_AUDIT_USER("borrow_audit_user", "借款订单审核专员"),
+    //微品借款款订单审核专员
+    BORROW_AUDIT_ADMIN("borrow_audit_admin", "借款订单审核主管");
 
     private String code;
 
