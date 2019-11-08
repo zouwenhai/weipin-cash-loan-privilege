@@ -22,4 +22,12 @@ public interface UserMapper extends MyMapper<User> {
     List<User> getUserById(@Param("userIdList") List<Long> userIdList, @Param("isSeperate") Integer isSeperate);
 
     int updateDivideOrder(IsDivideOrderFacade isDivideOrderFacade);
+
+    /**
+     * 获取借款订单审核专员
+     *
+     * @param isSeperate
+     * @return
+     */
+    List<User> getAuditUser(@Param("isSeperate") Integer isSeperate);
 }

@@ -47,4 +47,13 @@ public interface UserService extends IService<User> {
      * @return
      */
     int isDivideOrder(IsDivideOrderFacade isDivideOrderFacade);
+
+
+    /**
+     * 获取借款订单审核专员
+     *
+     * @param isSeperate
+     * @return
+     */
+    List<User> getAuditUser(Integer isSeperate);
 }

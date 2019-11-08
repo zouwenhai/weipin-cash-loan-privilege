@@ -204,18 +204,8 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/user/getAuditUser")
     public ResResult getAuditUser(Integer isSeperate) {
-        //固定审核人员的角色
-        Example example = new Example(Role.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<String> roleCode = new ArrayList<>();
-        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
-        if (CollectionUtils.isEmpty(roleList)) {
-            return ResResult.error("没有该角色");
-        }
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
-        List<User> userList = userService.findUserById(userIdList, isSeperate);
+
+        List<User> userList = userService.getAuditUser(isSeperate);
         return ResResult.success(userList);
     }
 
@@ -240,22 +230,9 @@ public class UserController extends BaseController {
      */
     @PostMapping("/user/getPageAuditUser")
     public ResResult getPageAuditUser(@RequestBody AuditUserFacade auditUserFacade) {
-        //固定审核人员的角色
-        Example example = new Example(Role.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<String> roleCode = new ArrayList<>();
-        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
-        if (CollectionUtils.isEmpty(roleList)) {
-            return ResResult.error("没有该角色");
-        }
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
+
         PageHelper.startPage(auditUserFacade.getPageNum(), auditUserFacade.getPageSize());
-        List<User> userList = userService.findUserById(userIdList, null);
-        userList.forEach(user -> {
-            user.setRoleName(roleList.get(0).getRoleName());
-        });
+        List<User> userList = userService.getAuditUser(null);
         PageInfo pageInfo = new PageInfo(userList);
         return ResResult.success(pageInfo);
     }

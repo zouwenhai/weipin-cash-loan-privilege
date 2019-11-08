@@ -371,4 +371,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         return userMapper.updateDivideOrder(isDivideOrderFacade);
     }
 
+    @Override
+    public List<User> getAuditUser(Integer isSeperate) {
+
+        return userMapper.getAuditUser(isSeperate);
+    }
+
 }

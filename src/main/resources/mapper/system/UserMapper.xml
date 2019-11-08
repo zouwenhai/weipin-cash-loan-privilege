@@ -112,6 +112,31 @@
     </select>
 
 
+    <select id="getAuditUser" parameterType="java.lang.Integer" resultType="nirvana.cash.loan.privilege.domain.User">
+        SELECT
+        t1.user_id userId,
+        t1.USERNAME username,
+        t1.NAME name,
+        t1.DEPT_ID deptId,
+        t1.EMAIL email,
+        t1.SSEX ssex,
+        t1.IS_DELETE isDelete,
+        t1.IS_SEPERATE isSeperate,
+        t1.MOBILE mobile,
+        t3.ROLE_NAME2 roleName
+        FROM
+        TB_YOFISHDK_AUTH_USER t1
+        LEFT JOIN TB_YOFISHDK_AUTH_USER_ROLE t2
+        ON t1.user_id = t2.user_id
+        LEFT JOIN TB_YOFISHDK_AUTH_ROLE t3
+        ON t2.role_id = t3.role_id
+        WHERE t3.ROLE_CODE = 'borrow_audit_user' and t1.IS_DELETE=0
+        <if test="isSeperate!=null">
+            and t1.IS_SEPERATE=#{isSeperate};
+        </if>
+
+    </select>
+
     <update id="updateDivideOrder" parameterType="nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade">
         update TB_YOFISHDK_AUTH_USER set IS_SEPERATE = #{isSeperate} where USER_ID=#{id}
     </update>
