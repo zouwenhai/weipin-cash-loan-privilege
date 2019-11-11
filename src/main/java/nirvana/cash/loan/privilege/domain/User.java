@@ -120,12 +120,5 @@ public class User implements Serializable {
     private Integer isSeperate;
 
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
+
 }

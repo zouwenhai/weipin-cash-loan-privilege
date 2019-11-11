@@ -91,7 +91,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header("authDeptIds", CommonContants.all_dept_id.equals(authDeptIds) ? "" : authDeptIds)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
-        log.info("user:{}", user.toString());
         try {
             log.info("url地址={}", uri.toString());
             log.info("urlContain={}", uri.toString().contains("/customerInfo/realNo"));
