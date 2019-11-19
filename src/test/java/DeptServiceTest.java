@@ -34,4 +34,15 @@ public class DeptServiceTest extends BaseTest {
         Long id = seqenceMapper.getSequence("seq_tb_yofishdk_auth_dept");
         System.err.println("id="+id);
     }
+
+
+
+
+    @Test
+    public void test2(){
+        String url="/weipin/cash-loan-web/web/order/riskControls";
+        System.out.println(url.endsWith("web/order/riskControls"));
+
+
+    }
 }
