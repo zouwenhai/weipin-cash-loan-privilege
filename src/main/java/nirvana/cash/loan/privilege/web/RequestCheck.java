@@ -101,12 +101,14 @@ public class RequestCheck {
             permissionList = menuService.findUserPermissions(username);
         }
         //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
-        log.info("url:{}", url);
+
         long count = permissionList.stream()
                 .filter(t -> StringUtils.isNotBlank(t.getPerms()))
                 .filter(t -> url.endsWith(t.getPerms().trim()))
                 .count();
         if (count == 0) {
+            log.info("url:{}", url);
+            log.info("permissionList:{}", permissionList);
             return ResResult.error("您访问的接口未经授权!", ResResult.UNAUTHORIZED_URL);
         }
         return ResResult.success(user);
