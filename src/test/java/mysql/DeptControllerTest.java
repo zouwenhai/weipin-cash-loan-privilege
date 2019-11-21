@@ -65,13 +65,13 @@ public class DeptControllerTest {
     @Test
     public void testfindLeftMenuList() {
 
-        List<LeftMenuVo> menus=menuService.findUserMenus();
+        List<LeftMenuVo> menus = menuService.findUserMenus();
     }
 
     @Test
     public void testDeptList2() {
 
-       CacheDto dto = new CacheDto();
+        CacheDto dto = new CacheDto();
         dto.setId(9214L);
         dto.setJsessionId("123123132132");
         dto.setValue("1231231");
@@ -211,8 +211,15 @@ public class DeptControllerTest {
     }
 
     @Test
-    public void test3(){
-      User user =  userService.findByName("system");
+    public void test3() {
+        User user = userService.findByName("system");
     }
 
+
+    @Test
+    public void testgetPageAuditUser() {
+
+
+        userService.getAuditUser(null);
+    }
 }
