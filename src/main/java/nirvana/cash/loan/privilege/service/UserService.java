@@ -1,6 +1,8 @@
 package nirvana.cash.loan.privilege.service;
 
+import nirvana.cash.loan.privilege.fegin.facade.ExtNumberFacade;
 import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
+import nirvana.cash.loan.privilege.fegin.facade.IsOpenSeatFacade;
 import nirvana.cash.loan.privilege.service.base.IService;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.domain.User;
@@ -56,4 +58,13 @@ public interface UserService extends IService<User> {
      * @return
      */
     List<User> getAuditUser(Integer isSeperate);
+
+    /**
+     * 是否开启坐席
+     *
+     * @param isOpenSeatFacade
+     */
+    void isOpenSeat(IsOpenSeatFacade isOpenSeatFacade);
+
+    void addExtNumber(ExtNumberFacade extNumberFacade);
 }

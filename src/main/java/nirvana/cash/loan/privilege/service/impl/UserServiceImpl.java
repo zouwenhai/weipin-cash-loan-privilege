@@ -377,4 +377,14 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         return userMapper.getAuditUser(isSeperate);
     }
 
+    @Override
+    public void isOpenSeat(IsOpenSeatFacade isOpenSeatFacade) {
+        userMapper.updateSeat(isOpenSeatFacade);
+    }
+
+    @Override
+    public void addExtNumber(ExtNumberFacade extNumberFacade) {
+        userMapper.updateExtNumber(extNumberFacade);
+    }
+
 }

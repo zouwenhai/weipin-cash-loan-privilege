@@ -10,7 +10,9 @@ import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.fegin.facade.AuditUserFacade;
+import nirvana.cash.loan.privilege.fegin.facade.ExtNumberFacade;
 import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
+import nirvana.cash.loan.privilege.fegin.facade.IsOpenSeatFacade;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.RoleService;
 import nirvana.cash.loan.privilege.service.UserRoleService;
@@ -248,6 +250,46 @@ public class UserController extends BaseController {
             return ResResult.error("参数为空");
         }
         userService.isDivideOrder(isDivideOrderFacade);
+        return ResResult.success();
+    }
+
+    /**
+     * 是否开启坐席
+     *
+     * @param isOpenSeatFacade
+     * @return
+     */
+    @PostMapping(value = "/user/isOpenSeat")
+    public ResResult isOpenSeat(@RequestBody IsOpenSeatFacade isOpenSeatFacade) {
+        if (isOpenSeatFacade == null) {
+            return ResResult.error("参数为空");
+        }
+        try {
+            userService.isOpenSeat(isOpenSeatFacade);
+        } catch (Exception e) {
+            logger.error("修改失败:{}", e);
+            return ResResult.error("坐席状态修改失败");
+        }
+        return ResResult.success();
+    }
+
+    /**
+     * 添加分机号
+     *
+     * @param extNumberFacade
+     * @return
+     */
+    @PostMapping(value = "/user/addExtNumber")
+    public ResResult addExtNumber(@RequestBody ExtNumberFacade extNumberFacade) {
+        if (extNumberFacade == null) {
+            return ResResult.error("参数为空");
+        }
+        try {
+            userService.addExtNumber(extNumberFacade);
+        } catch (Exception e) {
+            logger.error("修改失败:{}", e);
+            return ResResult.error("分机号修改失败");
+        }
         return ResResult.success();
     }
 
