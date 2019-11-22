@@ -58,6 +58,8 @@ public class RequestCheck {
         noLoginUrls.add("/privilige/user/getAuditUserById");
         noLoginUrls.add("/privilige/user/isDivideOrder");
         noLoginUrls.add("/privilige/user/getPageAuditUser");
+        noLoginUrls.add("/privilige/user/isOpenSeat");
+        noLoginUrls.add("/privilige/user/addExtNumber");
         //监控
         noLoginUrls.add("/actuator/info");
         noLoginUrls.add("/actuator/health");
@@ -89,6 +91,7 @@ public class RequestCheck {
         List<Menu> permissionList = null;
         try {
             String userPermissions = redisService.get(RedisKeyContant.YOFISHDK_LOGIN_AUTH_PREFIX + user.getUsername(), String.class);
+            log.info("userPermissions:{}", userPermissions);
             if (StringUtils.isBlank(userPermissions)) {
                 return ResResult.error("登录失效", ResResult.LOGIN_SESSION_TIMEOUT);
             }
@@ -100,6 +103,7 @@ public class RequestCheck {
             permissionList = menuService.findUserPermissions(username);
         }
         //logger.info("user menuList:{}",JSON.toJSONString(permissionList));
+        log.info("url:{}", url);
         long count = permissionList.stream()
                 .filter(t -> StringUtils.isNotBlank(t.getPerms()))
                 .filter(t -> url.endsWith(t.getPerms().trim()))

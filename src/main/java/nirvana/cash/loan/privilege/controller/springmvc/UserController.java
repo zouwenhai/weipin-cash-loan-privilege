@@ -10,7 +10,9 @@ import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
 import nirvana.cash.loan.privilege.fegin.facade.AuditUserFacade;
+import nirvana.cash.loan.privilege.fegin.facade.ExtNumberFacade;
 import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
+import nirvana.cash.loan.privilege.fegin.facade.IsOpenSeatFacade;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.RoleService;
 import nirvana.cash.loan.privilege.service.UserRoleService;
@@ -204,18 +206,8 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/user/getAuditUser")
     public ResResult getAuditUser(Integer isSeperate) {
-        //固定审核人员的角色
-        Example example = new Example(Role.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<String> roleCode = new ArrayList<>();
-        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
-        if (CollectionUtils.isEmpty(roleList)) {
-            return ResResult.error("没有该角色");
-        }
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
-        List<User> userList = userService.findUserById(userIdList, isSeperate);
+
+        List<User> userList = userService.getAuditUser(isSeperate);
         return ResResult.success(userList);
     }
 
@@ -240,22 +232,9 @@ public class UserController extends BaseController {
      */
     @PostMapping("/user/getPageAuditUser")
     public ResResult getPageAuditUser(@RequestBody AuditUserFacade auditUserFacade) {
-        //固定审核人员的角色
-        Example example = new Example(Role.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("roleCode", RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<String> roleCode = new ArrayList<>();
-        roleCode.add(RoleEnum.BORROW_AUDIT_USER.getCode());
-        List<Role> roleList = roleService.findRoleByRoleCode(roleCode);
-        if (CollectionUtils.isEmpty(roleList)) {
-            return ResResult.error("没有该角色");
-        }
-        List<Long> userIdList = userRoleService.findUserIdListByRoleId(roleList.get(0).getRoleId());
+
         PageHelper.startPage(auditUserFacade.getPageNum(), auditUserFacade.getPageSize());
-        List<User> userList = userService.findUserById(userIdList, null);
-        userList.forEach(user -> {
-            user.setRoleName(roleList.get(0).getRoleName());
-        });
+        List<User> userList = userService.getAuditUser(null);
         PageInfo pageInfo = new PageInfo(userList);
         return ResResult.success(pageInfo);
     }
@@ -271,6 +250,46 @@ public class UserController extends BaseController {
             return ResResult.error("参数为空");
         }
         userService.isDivideOrder(isDivideOrderFacade);
+        return ResResult.success();
+    }
+
+    /**
+     * 是否开启坐席
+     *
+     * @param isOpenSeatFacade
+     * @return
+     */
+    @PostMapping(value = "/user/isOpenSeat")
+    public ResResult isOpenSeat(@RequestBody IsOpenSeatFacade isOpenSeatFacade) {
+        if (isOpenSeatFacade == null) {
+            return ResResult.error("参数为空");
+        }
+        try {
+            userService.isOpenSeat(isOpenSeatFacade);
+        } catch (Exception e) {
+            logger.error("修改失败:{}", e);
+            return ResResult.error("坐席状态修改失败");
+        }
+        return ResResult.success();
+    }
+
+    /**
+     * 添加分机号
+     *
+     * @param extNumberFacade
+     * @return
+     */
+    @PostMapping(value = "/user/addExtNumber")
+    public ResResult addExtNumber(@RequestBody ExtNumberFacade extNumberFacade) {
+        if (extNumberFacade == null) {
+            return ResResult.error("参数为空");
+        }
+        try {
+            userService.addExtNumber(extNumberFacade);
+        } catch (Exception e) {
+            logger.error("修改失败:{}", e);
+            return ResResult.error("分机号修改失败");
+        }
         return ResResult.success();
     }
 

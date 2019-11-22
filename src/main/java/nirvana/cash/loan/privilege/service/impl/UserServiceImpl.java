@@ -83,9 +83,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
         user.setIsDelete(0);
         user.setIsSeperate(0);
+        user.setIsSeat(0);
+        user.setExtNumber("0");
         this.save(user);
         setUserRoles(user, roles);
-
         //子系统用户同步
         List<Long> roleIds = roles;
         List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
@@ -157,6 +158,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setUsername(oldUser.getUsername());
         user.setModifyTime(new Date());
         user.setIsDelete(0);
+        user.setIsSeperate(oldUser.getIsSeperate());
+        user.setIsSeat(oldUser.getIsSeat());
+        user.setExtNumber(oldUser.getExtNumber());
         this.updateAll(user);
         Example example = new Example(UserRole.class);
         example.createCriteria().andCondition("user_id=", user.getUserId());
@@ -369,6 +373,22 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     public int isDivideOrder(IsDivideOrderFacade isDivideOrderFacade) {
         return userMapper.updateDivideOrder(isDivideOrderFacade);
+    }
+
+    @Override
+    public List<User> getAuditUser(Integer isSeperate) {
+
+        return userMapper.getAuditUser(isSeperate);
+    }
+
+    @Override
+    public void isOpenSeat(IsOpenSeatFacade isOpenSeatFacade) {
+        userMapper.updateSeat(isOpenSeatFacade);
+    }
+
+    @Override
+    public void addExtNumber(ExtNumberFacade extNumberFacade) {
+        userMapper.updateExtNumber(extNumberFacade);
     }
 
 }

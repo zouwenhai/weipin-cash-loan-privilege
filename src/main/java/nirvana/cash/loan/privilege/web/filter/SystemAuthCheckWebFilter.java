@@ -81,7 +81,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
         Map<String, String> deptAndProductAuth = requestCheck.findDeptAndProductAuth(user);
         String authShowIds = deptAndProductAuth.get("authShowIds");
         log.info("当前请求:traceId={},用户ID:{},部门ID:{},管理的产品showId={}", traceId, user.getUserId(), authDeptIds, authShowIds);
-
         ServerHttpRequest host = null;
         host = exchange.getRequest()
                 .mutate()
@@ -92,8 +91,6 @@ public class SystemAuthCheckWebFilter implements WebFilter {
                 .header("authDeptIds", CommonContants.all_dept_id.equals(authDeptIds) ? "" : authDeptIds)
                 .build();
         ServerWebExchange build = exchange.mutate().request(host).build();
-
-
         try {
             log.info("url地址={}", uri.toString());
             log.info("urlContain={}", uri.toString().contains("/customerInfo/realNo"));

@@ -119,5 +119,17 @@ public class User implements Serializable {
     @Column(name = "IS_SEPERATE")
     private Integer isSeperate;
 
+    /**
+     * 分机号
+     */
+    @Column(name = "ext_number")
+    private String extNumber;
+
+    /**
+     * 是否开启坐席
+     */
+    @Column(name = "IS_SEAT")
+    private Integer isSeat;
+
 
 }
