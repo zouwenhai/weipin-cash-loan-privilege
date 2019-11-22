@@ -123,6 +123,8 @@
         t1.IS_DELETE isDelete,
         t1.IS_SEPERATE isSeperate,
         t1.MOBILE mobile,
+        t1.IS_SEAT isSeat,
+        t1.EXT_NUMBER extNumber,
         t3.ROLE_NAME2 roleName
         FROM
         TB_YOFISHDK_AUTH_USER t1
@@ -137,8 +139,19 @@
 
     </select>
 
+
+
     <update id="updateDivideOrder" parameterType="nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade">
         update TB_YOFISHDK_AUTH_USER set IS_SEPERATE = #{isSeperate} where USER_ID=#{id}
+    </update>
+
+    <update id="updateSeat" parameterType="nirvana.cash.loan.privilege.fegin.facade.IsOpenSeatFacade">
+        update TB_YOFISHDK_AUTH_USER set IS_SEAT = #{isOpenSeat} where USER_ID=#{id}
+    </update>
+
+    <update id="updateExtNumber" parameterType="nirvana.cash.loan.privilege.fegin.facade.ExtNumberFacade">
+        update TB_YOFISHDK_AUTH_USER set EXT_NUMBER = #{extNumber} where USER_ID=#{id}
+
     </update>
 
 </mapper>
