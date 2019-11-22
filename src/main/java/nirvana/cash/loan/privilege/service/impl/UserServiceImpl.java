@@ -158,6 +158,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setUsername(oldUser.getUsername());
         user.setModifyTime(new Date());
         user.setIsDelete(0);
+        user.setIsSeperate(oldUser.getIsSeperate());
+        user.setIsSeat(oldUser.getIsSeat());
         this.updateAll(user);
         Example example = new Example(UserRole.class);
         example.createCriteria().andCondition("user_id=", user.getUserId());
