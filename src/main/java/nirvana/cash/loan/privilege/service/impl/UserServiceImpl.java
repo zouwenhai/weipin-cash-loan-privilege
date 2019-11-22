@@ -84,9 +84,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setIsDelete(0);
         user.setIsSeperate(0);
         user.setIsSeat(0);
+        user.setExtNumber("0");
         this.save(user);
         setUserRoles(user, roles);
-
         //子系统用户同步
         List<Long> roleIds = roles;
         List<String> roleCodeList = roleMapper.findRoleCodeListByRoleIds(roleIds);
@@ -160,6 +160,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setIsDelete(0);
         user.setIsSeperate(oldUser.getIsSeperate());
         user.setIsSeat(oldUser.getIsSeat());
+        user.setExtNumber(oldUser.getExtNumber());
         this.updateAll(user);
         Example example = new Example(UserRole.class);
         example.createCriteria().andCondition("user_id=", user.getUserId());
