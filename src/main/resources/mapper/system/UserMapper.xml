@@ -123,7 +123,7 @@
         t1.IS_DELETE isDelete,
         t1.IS_SEPERATE isSeperate,
         t1.MOBILE mobile,
-        t1.IS_SEPERATE isSeat,
+        t1.IS_SEAT isSeat,
         t1.EXT_NUMBER extNumber,
         t3.ROLE_NAME2 roleName
         FROM

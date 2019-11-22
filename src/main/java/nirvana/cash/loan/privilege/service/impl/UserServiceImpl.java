@@ -83,6 +83,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
         user.setIsDelete(0);
         user.setIsSeperate(0);
+        user.setIsSeat(0);
         this.save(user);
         setUserRoles(user, roles);
 
