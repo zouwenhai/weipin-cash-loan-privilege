@@ -46,4 +46,17 @@
         </logger>
     </springProfile>
 
+    <springProfile name="ABCash">
+        <appender class="net.logstash.logback.appender.LogstashTcpSocketAppender"
+          name="LOGSTASH_SOCKET">
+            <destination>172.31.88.131:5044</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"index":"weipin-cash-loan-privilege","type":"logback"}</customFields>
+            </encoder>
+        </appender>
+        <logger level="INFO" name="nirvana.cash.loan.privilege">
+            <appender-ref ref="LOGSTASH_SOCKET"/>
+        </logger>
+    </springProfile>
+
 </configuration>

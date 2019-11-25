@@ -98,3 +98,14 @@ eureka:
     prefer-ip-address: true
 spring:
   profiles: prod
+
+---
+eureka:
+  client:
+    serviceUrl.defaultZone: http://172.31.88.26:18888/eureka/,http://172.31.88.76:18888/eureka/,http://172.31.88.42:18888/eureka/
+    register-with-eureka: true
+  #    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+spring:
+  profiles: ABCash
