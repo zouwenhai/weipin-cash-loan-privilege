@@ -9,6 +9,7 @@ import nirvana.cash.loan.privilege.domain.UserWithRole;
 import nirvana.cash.loan.privilege.fegin.facade.ExtNumberFacade;
 import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
 import nirvana.cash.loan.privilege.fegin.facade.IsOpenSeatFacade;
+import nirvana.cash.loan.privilege.fegin.facade.OrderTopFacade;
 import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper extends MyMapper<User> {
@@ -46,4 +47,20 @@ public interface UserMapper extends MyMapper<User> {
      * @param extNumberFacade
      */
     void updateExtNumber(ExtNumberFacade extNumberFacade);
+
+    /**
+     * 获取复审专员信息
+     *
+     * @param isSeperate
+     * @return
+     */
+    List<User> getReviewUser(@Param("isSeperate") Integer isSeperate);
+
+    /**
+     * 修改接单上限
+     *
+     * @param orderTopFacade
+     */
+
+    void updateOrderTop(OrderTopFacade orderTopFacade);
 }

@@ -85,6 +85,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setIsSeperate(0);
         user.setIsSeat(0);
         user.setExtNumber("0");
+        user.setOrderTop(0);
         this.save(user);
         setUserRoles(user, roles);
         //子系统用户同步
@@ -161,6 +162,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setIsSeperate(oldUser.getIsSeperate());
         user.setIsSeat(oldUser.getIsSeat());
         user.setExtNumber(oldUser.getExtNumber());
+        user.setOrderTop(oldUser.getOrderTop());
         this.updateAll(user);
         Example example = new Example(UserRole.class);
         example.createCriteria().andCondition("user_id=", user.getUserId());
@@ -389,6 +391,16 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     public void addExtNumber(ExtNumberFacade extNumberFacade) {
         userMapper.updateExtNumber(extNumberFacade);
+    }
+
+    @Override
+    public List<User> getReviewUser(Integer isSeperate) {
+        return userMapper.getReviewUser(isSeperate);
+    }
+
+    @Override
+    public void updateOrderTop(OrderTopFacade orderTopFacade) {
+        userMapper.updateOrderTop(orderTopFacade);
     }
 
 }

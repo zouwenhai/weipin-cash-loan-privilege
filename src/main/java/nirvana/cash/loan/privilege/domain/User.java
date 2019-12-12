@@ -132,4 +132,13 @@ public class User implements Serializable {
     private Integer isSeat;
 
 
+    /**
+     * 用户接单上限
+     */
+
+    @Column(name = "ORDER_TOP")
+    private Integer orderTop;
+
+
+
 }

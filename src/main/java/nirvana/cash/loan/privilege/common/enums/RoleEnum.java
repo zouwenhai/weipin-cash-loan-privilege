@@ -51,6 +51,8 @@ public enum RoleEnum {
 
     //微品借款款订单审核专员
     BORROW_AUDIT_USER("borrow_audit_user", "借款订单审核专员"),
+    //复审专员
+    BORROW_REVIEW_USER("borrow_review_user", "借款订单复审专员"),
     //微品借款款订单审核专员
     BORROW_AUDIT_ADMIN("borrow_audit_admin", "借款订单审核主管");
 

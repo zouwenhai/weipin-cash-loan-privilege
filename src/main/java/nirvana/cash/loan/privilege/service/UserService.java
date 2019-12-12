@@ -3,6 +3,7 @@ package nirvana.cash.loan.privilege.service;
 import nirvana.cash.loan.privilege.fegin.facade.ExtNumberFacade;
 import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
 import nirvana.cash.loan.privilege.fegin.facade.IsOpenSeatFacade;
+import nirvana.cash.loan.privilege.fegin.facade.OrderTopFacade;
 import nirvana.cash.loan.privilege.service.base.IService;
 import nirvana.cash.loan.privilege.common.util.ResResult;
 import nirvana.cash.loan.privilege.domain.User;
@@ -67,4 +68,9 @@ public interface UserService extends IService<User> {
     void isOpenSeat(IsOpenSeatFacade isOpenSeatFacade);
 
     void addExtNumber(ExtNumberFacade extNumberFacade);
+
+    List<User> getReviewUser(Integer isSeperate);
+
+    void updateOrderTop(OrderTopFacade orderTopFacade);
+    
 }

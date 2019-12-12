@@ -9,10 +9,7 @@ import nirvana.cash.loan.privilege.controller.springmvc.base.BaseController;
 import nirvana.cash.loan.privilege.domain.Dept;
 import nirvana.cash.loan.privilege.domain.Role;
 import nirvana.cash.loan.privilege.domain.User;
-import nirvana.cash.loan.privilege.fegin.facade.AuditUserFacade;
-import nirvana.cash.loan.privilege.fegin.facade.ExtNumberFacade;
-import nirvana.cash.loan.privilege.fegin.facade.IsDivideOrderFacade;
-import nirvana.cash.loan.privilege.fegin.facade.IsOpenSeatFacade;
+import nirvana.cash.loan.privilege.fegin.facade.*;
 import nirvana.cash.loan.privilege.service.DeptService;
 import nirvana.cash.loan.privilege.service.RoleService;
 import nirvana.cash.loan.privilege.service.UserRoleService;
@@ -211,6 +208,19 @@ public class UserController extends BaseController {
         return ResResult.success(userList);
     }
 
+    /**
+     * 获取借款审核人员信息
+     *
+     * @param isSeperate(是否分单)
+     * @return
+     */
+    @RequestMapping("/user/getReviewUser")
+    public ResResult getReviewUser(Integer isSeperate) {
+
+        List<User> userList = userService.getReviewUser(isSeperate);
+        return ResResult.success(userList);
+    }
+
 
     /**
      * 根据userId获取借款审核人员信息
@@ -238,6 +248,22 @@ public class UserController extends BaseController {
         PageInfo pageInfo = new PageInfo(userList);
         return ResResult.success(pageInfo);
     }
+
+    /**
+     * 分页查询复审人员信息
+     *
+     * @return
+     */
+    @PostMapping("/user/getPageReviewUser")
+    public ResResult getPageReviewUser(@RequestBody AuditUserFacade auditUserFacade) {
+
+        PageHelper.startPage(auditUserFacade.getPageNum(), auditUserFacade.getPageSize());
+        List<User> userList = userService.getReviewUser(null);
+        PageInfo pageInfo = new PageInfo(userList);
+        return ResResult.success(pageInfo);
+    }
+
+
 
     /**
      * 审核专员是否分单
@@ -293,6 +319,26 @@ public class UserController extends BaseController {
         return ResResult.success();
     }
 
+    /**
+     * 修改接单上限
+     *
+     * @param orderTopFacade
+     * @return
+     */
+    @PostMapping(value = "/user/updateOrderTop")
+    public ResResult updateOrderTop(@RequestBody OrderTopFacade orderTopFacade) {
+        if (orderTopFacade == null) {
+            return ResResult.error("参数为空");
+        }
+        try {
+            userService.updateOrderTop(orderTopFacade);
+
+        } catch (Exception e) {
+            logger.error("修改失败:{}", e);
+            return ResResult.error("分机号修改失败");
+        }
+        return ResResult.success();
+    }
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
         Map<Object, Boolean> seen = new ConcurrentHashMap<>();
