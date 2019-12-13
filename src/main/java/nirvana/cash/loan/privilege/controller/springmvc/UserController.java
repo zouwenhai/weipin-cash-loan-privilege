@@ -209,7 +209,9 @@ public class UserController extends BaseController {
     }
 
     /**
-     * 获取借款审核人员信息
+     *
+     *
+     * 获取复审人员信息
      *
      * @param isSeperate(是否分单)
      * @return
@@ -262,7 +264,6 @@ public class UserController extends BaseController {
         PageInfo pageInfo = new PageInfo(userList);
         return ResResult.success(pageInfo);
     }
-
 
 
     /**
